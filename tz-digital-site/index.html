@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="google-site-verification" content="QQ92_uAoOLwoqaTS5nRIkx6FfVvNYnTxSxorkSH0Z5I" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TZ Digital | Website-Design &amp; SEO für Unternehmen in Essen</title>
+  <meta name="description" content="TZ Digital entwickelt Websites, Shopify-Stores, NFC-Bewertungstags und KI-Agenten für lokale Unternehmen in Essen. Jetzt unverbindliches Angebot anfordern.">
+
+  <link rel="canonical" href="https://tz-digital.de/">
+  <link rel="alternate" hreflang="de" href="https://tz-digital.de/">
+  <link rel="alternate" hreflang="nl" href="https://tz-digital.nl/nl/">
+  <link rel="alternate" hreflang="x-default" href="https://tz-digital.de/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="TZ Digital | Website-Design &amp; SEO für Unternehmen in Essen">
+  <meta property="og:description" content="TZ Digital entwickelt Websites, Shopify-Stores, NFC-Bewertungstags und KI-Agenten für lokale Unternehmen in Essen.">
+  <meta property="og:url" content="https://tz-digital.de/">
+  <meta property="og:locale" content="de_DE">
+  <meta name="twitter:card" content="summary">
+
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "@id": "https://tz-digital.de/#business",
+    "name": "TZ Digital",
+    "url": "https://tz-digital.de/",
+    "description": "Website-Design, Shopify-Stores, SEO, NFC-Bewertungstags und KI-Agenten für lokale Unternehmen in Essen.",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Am Ruhrstein 56",
+      "postalCode": "45133",
+      "addressLocality": "Essen",
+      "addressCountry": "DE"
+    },
+    "areaServed": [
+      { "@type": "City", "name": "Essen" },
+      { "@type": "Place", "name": "Ruhrgebiet" }
+    ],
+    "availableLanguage": ["de"],
+    "email": "albertjnr.zapke@t-online.de",
+    "telephone": "+4915172507603",
+    "logo": "https://tz-digital.de/assets/logo.jpg",
+    "sameAs": ["https://www.instagram.com/t_z_digital"]
+  }
+  </script>
+
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
+  <link rel="stylesheet" href="css/styles.css?v=79">
+</head>
+<body>
+
+  <nav class="nav" id="nav" aria-label="Hauptnavigation">
+    <div class="nav__inner">
+      <div class="nav__pill nav__pill--logo">
+        <a href="#" class="nav__logo"><span class="nav__logo-mark">TZ</span> Digital</a>
+      </div>
+      <div class="nav__pill nav__pill--links">
+        <ul class="nav__links">
+          <li><a href="#arbeiten" data-nav-link>Arbeiten</a></li>
+          <li><a href="#leistungen" data-nav-link>Leistungen</a></li>
+          <li><a href="#ueber-uns" data-nav-link>Über uns</a></li>
+          <!-- Mobile-only: the top bar can't fit the Kontakt pill next to
+               logo + lang toggle + hamburger at phone widths, so on small
+               screens it lives here instead, inside the dropdown. Hidden
+               by default; shown only under the max-width:640px query.
+               (The lang toggle used to have a duplicate row here too, but
+               it now stays in the top bar on all breakpoints — see
+               .nav__right below.) -->
+          <li class="nav__links-mobile-only"><a href="#kontakt" class="nav__links-cta" data-nav-link data-open-contact>Kontakt</a></li>
+        </ul>
+        <button type="button" class="nav__toggle" id="nav-toggle" aria-expanded="false" aria-label="Menü öffnen/schließen">
+          <span class="nav__toggle-icon"></span>
+        </button>
+      </div>
+      <div class="nav__right">
+        <div class="nav__pill nav__pill--lang" role="group" aria-label="Sprache wählen">
+          <button type="button" class="nav__lang-btn is-active" data-lang="de" aria-pressed="true">DE</button>
+          <button type="button" class="nav__lang-btn" data-lang="en" aria-pressed="false">EN</button>
+        </div>
+        <a href="#kontakt" class="nav__pill nav__pill--cta" data-nav-link data-open-contact>Kontakt</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero — morez.co-style rotating badge, brought back and blown up to
+       fill the screen: a giant text ring ("Design · Development · Growth")
+       spins dead center with the headline/subtext sitting inside it. Pinned
+       for 120vh (20vh of actual scroll runway beyond the viewport — half
+       of the original 40vh, so the next section arrives twice as fast).
+       The ring spins constantly on its own (idle time-based spin) with an
+       extra scroll-linked "wheel" turn layered on top in js/main.js's
+       updateHeroBadge() — reversible on scroll-up. Past ZOOM_START the TZ
+       mark scales up from hidden to as large as it can get while staying
+       inside the ring (headline/subtext fade out under it, the ring text
+       itself never fades). Pin releases right as the mark hits full size
+       and it just stays put, straight into the rest of the page. No CTA
+       in this hero — headline + one subtext line only, by request. -->
+  <div class="hero-pin" id="hero-pin">
+    <section class="hero" id="hero" aria-label="Einführung">
+      <div class="hero__badge" id="hero-badge" aria-hidden="true">
+        <svg class="hero__badge-ring" id="hero-badge-ring" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <path id="hero-badge-circle" d="M 300,300 m -260,0 a 260,260 0 1,1 520,0 a 260,260 0 1,1 -520,0" />
+          </defs>
+          <text class="hero__badge-text">
+            <textPath href="#hero-badge-circle" startOffset="0%" textLength="1634" lengthAdjust="spacing">Design &#8195;&#8226;&#8195;Development &#8195;&#8226;&#8195;Growth &#8195;&#8226;&#8195;Design &#8195;&#8226;&#8195;Development &#8195;&#8226;&#8195;Growth &#8195;&#8226;&#8195;</textPath>
+          </text>
+        </svg>
+        <img class="hero__badge-mark" id="hero-mark" src="assets/logo-tz-mark-transparent.png" alt="">
+      </div>
+      <div class="hero__content" id="hero-content">
+        <h1 class="hero__headline" id="hero-headline">Digital design &amp; development agency</h1>
+        <p class="hero__desc" id="hero-desc">We design and build digital products, brands and websites for companies ready to move beyond the ordinary.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- Our Work — two counter-scrolling marquee rows of real desktop
+       screenshots (morez.co client-logo-strip format, applied to our own
+       project shots instead of logos — no backdrop photos anymore). Each
+       row's track is its 3 projects rendered twice back-to-back so the
+       loop in main.js (wraps at exactly half the track width) is seamless.
+       Row A drifts left, row B drifts right; both speed up for a beat
+       whenever the page is scrolled. -->
+  <section class="portfolio section--light" id="arbeiten" aria-label="Unsere Arbeiten">
+    <div class="container">
+      <header class="portfolio__header section-header fade-in-view">
+        <h2 class="section-headline">Featured Work</h2>
+      </header>
+    </div>
+
+    <div class="portfolio-marquee" id="portfolio-marquee">
+      <div class="portfolio-marquee__row portfolio-marquee__row--a">
+        <div class="portfolio-marquee__track" id="portfolio-track-a">
+
+          <a class="portfolio-tile" href="https://roundabout69.nl/" target="_blank" rel="noopener" aria-label="Projekt: The Roundabout">
+            <img src="assets/work/screenshots/roundabout-home.jpg" alt="Screenshot der Startseite von The Roundabout" loading="lazy" width="1400" height="795">
+            <span class="portfolio-tile__label"><span class="portfolio-tile__name">The Roundabout</span><span class="portfolio-tile__desc">Coffeeshop-Website, Maastricht</span></span>
+          </a>
+          <a class="portfolio-tile" href="https://kapsalondevriendschap.nl/" target="_blank" rel="noopener" aria-label="Projekt: de Vriendschap Kapsalon">
+            <img src="assets/work/screenshots/vriendschap-kapsalon.jpg" alt="Screenshot der Website von de Vriendschap Kapsalon" loading="lazy" width="1400" height="795">
+            <span class="portfolio-tile__label"><span class="portfolio-tile__name">de Vriendschap Kapsalon</span><span class="portfolio-tile__desc">Friseursalon &amp; Barbershop, Maastricht</span></span>
+          </a>
+          <div class="portfolio-tile" aria-label="Projekt: Cato by Cato">
+            <img src="assets/work/screenshots/cato-by-cato.jpg" alt="Screenshot der Website von Cato by Cato" loading="lazy" width="1400" height="795">
+            <span class="portfolio-tile__label"><span class="portfolio-tile__name">Cato by Cato</span><span class="portfolio-tile__desc">Restaurant &amp; Catering</span></span>
+          </div>
+
+          <!-- duplicate set — the seamless-loop half -->
+          <a class="portfolio-tile" href="https://roundabout69.nl/" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">
+            <img src="assets/work/screenshots/roundabout-home.jpg" alt="" loading="lazy" width="1400" height="795">
+            <span class="portfolio-tile__label"><span class="portfolio-tile__name">The Roundabout</span><span class="portfolio-tile__desc">Coffeeshop-Website, Maastricht</span></span>
+          </a>
+          <a class="portfolio-tile" href="https://kapsalondevriendschap.nl/" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">
+            <img src="assets/work/screenshots/vriendschap-kapsalon.jpg" alt="" loading="lazy" width="1400" height="795">
+            <span class="portfolio-tile__label"><span class="portfolio-tile__name">de Vriendschap Kapsalon</span><span class="portfolio-tile__desc">Friseursalon &amp; Barbershop, Maastricht</span></span>
+          </a>
+          <div class="portfolio-tile" aria-hidden="true">
+            <img src="assets/work/screenshots/cato-by-cato.jpg" alt="" loading="lazy" width="1400" height="795">
+            <span class="portfolio-tile__label"><span class="portfolio-tile__name">Cato by Cato</span><span class="portfolio-tile__desc">Restaurant &amp; Catering</span></span>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="portfolio-marquee__row portfolio-marquee__row--b">
+        <div class="portfolio-marquee__track" id="portfolio-track-b">
+
+          <div class="portfolio-tile" aria-label="Projekt: Love Kebab">
+            <img src="assets/work/screenshots/lovekebab-home.jpg" alt="Screenshot der Startseite von Love Kebab" loading="lazy" width="1400" height="795">
+            <span class="portfolio-tile__label"><span class="portfolio-tile__name">Love Kebab</span><span class="portfolio-tile__desc">Döner-Restaurant</span></span>
+          </div>
+          <a class="portfolio-tile" href="https://violaeyewear.myshopify.com/" target="_blank" rel="noopener" aria-label="Projekt: Viola">
+            <img src="assets/work/screenshots/viola-eyewear.jpg" alt="Screenshot des Shopify-Stores von Viola" loading="lazy" width="1400" height="795">
+            <span class="portfolio-tile__label"><span class="portfolio-tile__name">Viola</span><span class="portfolio-tile__desc">Shopify-Store, Eyewear-Marke</span></span>
+          </a>
+          <a class="portfolio-tile" href="https://devriendschapmaastricht.nl/" target="_blank" rel="noopener" aria-label="Projekt: de Vriendschap">
+            <img src="assets/work/screenshots/vriendschap-hub.jpg" alt="Screenshot der Website von de Vriendschap" loading="lazy" width="1400" height="795">
+            <span class="portfolio-tile__label"><span class="portfolio-tile__name">de Vriendschap</span><span class="portfolio-tile__desc">Haut- &amp; Haarsalon, Maastricht</span></span>
+          </a>
+
+          <!-- duplicate set — the seamless-loop half -->
+          <div class="portfolio-tile" aria-hidden="true">
+            <img src="assets/work/screenshots/lovekebab-home.jpg" alt="" loading="lazy" width="1400" height="795">
+            <span class="portfolio-tile__label"><span class="portfolio-tile__name">Love Kebab</span><span class="portfolio-tile__desc">Döner-Restaurant</span></span>
+          </div>
+          <a class="portfolio-tile" href="https://violaeyewear.myshopify.com/" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">
+            <img src="assets/work/screenshots/viola-eyewear.jpg" alt="" loading="lazy" width="1400" height="795">
+            <span class="portfolio-tile__label"><span class="portfolio-tile__name">Viola</span><span class="portfolio-tile__desc">Shopify-Store, Eyewear-Marke</span></span>
+          </a>
+          <a class="portfolio-tile" href="https://devriendschapmaastricht.nl/" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">
+            <img src="assets/work/screenshots/vriendschap-hub.jpg" alt="" loading="lazy" width="1400" height="795">
+            <span class="portfolio-tile__label"><span class="portfolio-tile__name">de Vriendschap</span><span class="portfolio-tile__desc">Haut- &amp; Haarsalon, Maastricht</span></span>
+          </a>
+
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- Services — stacked one-way scroll-reveal cards (cuberto.com
+       "What We Do" pattern). Every card starts collapsed (~100px, light
+       gray). As the user scrolls normally, when a card crosses the
+       vertical center of the viewport it permanently expands into a tall
+       near-black card with its description and a decorative ring graphic —
+       it never collapses again if the user scrolls back up. No
+       scroll-jacking or pinning: plain IntersectionObserver, see main.js. -->
+  <section class="services section--light" id="leistungen" aria-label="Leistungen">
+    <div class="container">
+      <header class="section-header fade-in-view">
+        <h2 class="section-headline">Was wir tun</h2>
+      </header>
+
+      <div class="services-panel fade-in-view">
+        <div class="services-panel__list" id="services-list">
+
+          <div class="services-panel__item fade-in-view" data-index="0">
+            <div class="services-panel__item-graphic" aria-hidden="true"></div>
+            <div class="services-panel__item-head" id="service-head-0">
+              <span class="services-panel__item-name">Website-Design &amp; Entwicklung</span>
+              <span class="services-panel__item-index">01</span>
+            </div>
+            <div class="services-panel__item-body">
+              <div class="services-panel__item-body-inner">
+                <p class="services-panel__item-desc">Eine individuelle, mobilfreundliche Website, die um Ihr Unternehmen herum entwickelt wird – kein Baukasten-Template. Jede Seite wird gezielt für Ihre Zielgruppe und Ihre Dienstleistungen gestaltet – schnell, für Google optimiert und darauf ausgelegt, aus Besuchern zahlende Kunden zu machen.</p>
+                <div class="services-panel__item-tags">
+                  <span class="tag-pill">Individuelles Design</span>
+                  <span class="tag-pill">Responsive</span>
+                  <span class="tag-pill">SEO-Grundlage</span>
+                </div>
+                <a href="website-friseursalon-essen.html" class="services-panel__item-link">Beispiel: Websites für Friseursalons →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="services-panel__item fade-in-view" data-index="1">
+            <div class="services-panel__item-graphic" aria-hidden="true"></div>
+            <div class="services-panel__item-head" id="service-head-1">
+              <span class="services-panel__item-name">Shopify &amp; E-Commerce</span>
+              <span class="services-panel__item-index">02</span>
+            </div>
+            <div class="services-panel__item-body">
+              <div class="services-panel__item-body-inner">
+                <p class="services-panel__item-desc">Ein Shopify-Store, der Besucher tatsächlich in zahlende Kunden verwandelt. Von Produktseiten bis Checkout entwickeln wir einen Onlineshop, der einfach zu bedienen ist, mobil überzeugt und für jede Zahlungsart bereit ist – damit aus Klicks echte Bestellungen werden.</p>
+                <div class="services-panel__item-tags">
+                  <span class="tag-pill">Onlineshop</span>
+                  <span class="tag-pill">Zahlungsanbindung</span>
+                  <span class="tag-pill">Produktverwaltung</span>
+                </div>
+                <a href="shopify-store-essen.html" class="services-panel__item-link">Mehr erfahren: Shopify für Einzelhändler →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="services-panel__item fade-in-view" data-index="2">
+            <div class="services-panel__item-graphic" aria-hidden="true"></div>
+            <div class="services-panel__item-head" id="service-head-2">
+              <span class="services-panel__item-name">SEO-Optimierung</span>
+              <span class="services-panel__item-index">03</span>
+            </div>
+            <div class="services-panel__item-body">
+              <div class="services-panel__item-body-inner">
+                <p class="services-panel__item-desc">Wir sorgen dafür, dass Ihr Unternehmen bei Google gefunden wird – damit Kunden zuerst Sie finden. Wir optimieren Ihre lokale Sichtbarkeit, Inhalte und technische Basis, damit Sie bei den Suchanfragen erscheinen, die tatsächlich zu Anfragen führen – nicht nur bei irgendwelchen Keywords.</p>
+                <div class="services-panel__item-tags">
+                  <span class="tag-pill">Local SEO</span>
+                  <span class="tag-pill">Google Rankings</span>
+                  <span class="tag-pill">Content</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="services-panel__item fade-in-view" data-index="3">
+            <div class="services-panel__item-graphic" aria-hidden="true"></div>
+            <div class="services-panel__item-head" id="service-head-3">
+              <span class="services-panel__item-name">Google-Bewertungen</span>
+              <span class="services-panel__item-index">04</span>
+            </div>
+            <div class="services-panel__item-body">
+              <div class="services-panel__item-body-inner">
+                <p class="services-panel__item-desc">NFC-Tags, Bewertungs- und SMS-Systeme, die zufriedene Kunden zuverlässig in 5-Sterne-Google-Bewertungen verwandeln. Ein einfaches Antippen oder eine automatische SMS-Erinnerung genügt – zufriedene Kunden hinterlassen mit einem Klick eine Bewertung, während unzufriedenes Feedback zuerst intern landet, bevor es online sichtbar wird.</p>
+                <div class="services-panel__item-tags">
+                  <span class="tag-pill">NFC-Tags</span>
+                  <span class="tag-pill">Bewertungssystem</span>
+                  <span class="tag-pill">SMS-Erinnerungen</span>
+                </div>
+                <a href="nfc-bewertungstags-essen.html" class="services-panel__item-link">Mehr erfahren: NFC-Tags &amp; Google-Bewertungen →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="services-panel__item fade-in-view" data-index="4">
+            <div class="services-panel__item-graphic" aria-hidden="true"></div>
+            <div class="services-panel__item-head" id="service-head-4">
+              <span class="services-panel__item-name">KI-Agenten</span>
+              <span class="services-panel__item-index">05</span>
+            </div>
+            <div class="services-panel__item-body">
+              <div class="services-panel__item-body-inner">
+                <p class="services-panel__item-desc">Ein individueller KI-Agent, der Fragen beantwortet und Buchungen für Sie übernimmt. Rund um die Uhr im Einsatz beantwortet er Kundenfragen, bucht Termine und leitet Anfragen weiter – trainiert auf Ihr Unternehmen, damit kein Anruf und keine Anfrage mehr verloren geht.</p>
+                <div class="services-panel__item-tags">
+                  <span class="tag-pill">Automatisierung</span>
+                  <span class="tag-pill">Buchungen</span>
+                  <span class="tag-pill">24/7 verfügbar</span>
+                </div>
+                <a href="ki-agentur-essen.html" class="services-panel__item-link">Mehr erfahren →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="services-panel__item fade-in-view" data-index="5">
+            <div class="services-panel__item-graphic" aria-hidden="true"></div>
+            <div class="services-panel__item-head" id="service-head-5">
+              <span class="services-panel__item-name">Private &amp; öffentliche Apps</span>
+              <span class="services-panel__item-index">06</span>
+            </div>
+            <div class="services-panel__item-body">
+              <div class="services-panel__item-body-inner">
+                <p class="services-panel__item-desc">Maßgeschneiderte Apps für Ihr Unternehmen – interne Tools für Ihr Team und öffentliche Apps für Ihre Kunden, individuell entwickelt. Ob internes Tool zur Verwaltung Ihres Teams oder öffentliche App für Ihre Kunden – wir entwickeln Software, die genau auf Ihre Abläufe zugeschnitten ist, statt Sie an eine Standardlösung anzupassen.</p>
+                <div class="services-panel__item-tags">
+                  <span class="tag-pill">Interne Tools</span>
+                  <span class="tag-pill">Kunden-Apps</span>
+                  <span class="tag-pill">Individuelle Entwicklung</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="services-panel__item fade-in-view" data-index="6">
+            <div class="services-panel__item-graphic" aria-hidden="true"></div>
+            <div class="services-panel__item-head" id="service-head-6">
+              <span class="services-panel__item-name">Marketing</span>
+              <span class="services-panel__item-index">07</span>
+            </div>
+            <div class="services-panel__item-body">
+              <div class="services-panel__item-body-inner">
+                <p class="services-panel__item-desc">Wir betreuen Ihre Social-Media-Kanäle und bauen E-Mail-Funnels, die aus Followern und Besuchern zahlende Kunden machen. Von Content-Planung über Social-Media-Betreuung bis zu automatisierten E-Mail-Funnels – wir bauen ein System, das Follower und Website-Besucher kontinuierlich in Anfragen und Kunden verwandelt.</p>
+                <div class="services-panel__item-tags">
+                  <span class="tag-pill">Social Media</span>
+                  <span class="tag-pill">E-Mail-Funnels</span>
+                  <span class="tag-pill">Content</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="about section--light" id="ueber-uns" aria-label="Über uns">
+    <div class="container">
+      <div class="about__hero-bleed">
+      <div class="about__hero fade-in-view" id="about-hero">
+        <h2 class="sr-only">Wir bauen. Sie wachsen.</h2>
+
+        <div class="about__hero-row about__hero-row--top">
+          <div class="about__block about__block--a">
+            <p data-reveal>TZ Digital übernimmt den kompletten digitalen Aufbau für Unternehmen in ganz Europa – mit Websites, KI-Bots, Marketing und Apps, die aufeinander abgestimmt sind statt isoliert nebeneinander zu stehen.</p>
+          </div>
+          <p class="about__headline-line about__headline-line--build" aria-hidden="true">Wir bauen.</p>
+        </div>
+
+        <div class="about__hero-row about__hero-row--bottom">
+          <p class="about__headline-line about__headline-line--grow" aria-hidden="true">Sie wachsen.</p>
+          <div class="about__block about__block--b">
+            <p data-reveal>Wir behandeln jedes Unternehmen, mit dem wir arbeiten, als langfristigen Partner – wir bleiben dabei, um es zu betreuen und weiterzuentwickeln, wenn sich die Anforderungen ändern.</p>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <div class="about__team-row">
+        <div class="team-card fade-in-view">
+          <div class="team-card__photo">
+            <img src="assets/team-albert.jpg" alt="Albert, TZ Digital" loading="lazy" width="400" height="400"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="team-card__fallback">A</div>
+          </div>
+          <div>
+            <p class="team-card__name">Albert</p>
+            <p class="team-card__role">Kundenbetreuung &amp; Wachstum</p>
+          </div>
+        </div>
+
+        <div class="team-card fade-in-view">
+          <div class="team-card__photo">
+            <img src="assets/team-julius.jpg" alt="Julius, TZ Digital" loading="lazy" width="400" height="400"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="team-card__fallback">J</div>
+          </div>
+          <div>
+            <p class="team-card__name">Julius</p>
+            <p class="team-card__role">Lead-Entwickler</p>
+          </div>
+        </div>
+
+        <div class="team-card fade-in-view">
+          <div class="team-card__photo">
+            <img src="assets/team-maxim.jpg" alt="Maxim, TZ Digital" loading="lazy" width="400" height="400"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="team-card__fallback">M</div>
+          </div>
+          <div>
+            <p class="team-card__name">Maxim</p>
+            <p class="team-card__role">Betrieb</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="trust-grid" id="trust-grid">
+        <article class="trust-card trust-card--square">
+          <div class="trust-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M16 5 L18.2 12.4 L25.5 14.5 L18.2 16.6 L16 24 L13.8 16.6 L6.5 14.5 L13.8 12.4 Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="trust-card__title">KI-first Ansatz</h3>
+            <p class="trust-card__text">Wir bauen von Anfang an mit KI-gestützten Werkzeugen und Agenten – für smartere Websites und ein Unternehmen, das effizienter läuft.</p>
+          </div>
+        </article>
+
+        <article class="trust-card trust-card--square">
+          <div class="trust-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M17.5 4 L8 18 H15 L14 28 L24 13 H17 Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="trust-card__title">Schnelle Lieferung</h3>
+            <p class="trust-card__text">Keine wochenlangen Abstimmungsschleifen. Wir liefern zügig und sauber, ohne bei der Qualität Abstriche zu machen.</p>
+          </div>
+        </article>
+
+        <article class="trust-card trust-card--rect">
+          <div class="trust-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="9" stroke="currentColor" stroke-width="1.6"/>
+              <circle cx="16" cy="16" r="4" stroke="currentColor" stroke-width="1.6"/>
+              <line x1="16" y1="7" x2="16" y2="12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              <line x1="16" y1="20" x2="16" y2="25" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              <line x1="7" y1="16" x2="12" y2="16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              <line x1="20" y1="16" x2="25" y2="16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="trust-card__body">
+            <h3 class="trust-card__title">Laufender Support</h3>
+            <p class="trust-card__text">Nach dem Launch sind wir nicht weg. Wir betreuen, aktualisieren und unterstützen Sie dauerhaft.</p>
+          </div>
+        </article>
+      </div>
+
+      <!-- Mobile-only — team-row and trust-grid above are hidden below 768px;
+           this swipeable, one-pairing-per-slide carousel replaces them there.
+           Each slide locks one trust point to the teammate who owns it. -->
+      <div class="team-trust-carousel" id="team-trust-carousel" aria-label="Warum TZ Digital">
+        <div class="team-trust-carousel__track" id="team-trust-track">
+          <div class="team-trust-slide">
+            <div class="team-trust-slide__icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none">
+                <path d="M17.5 4 L8 18 H15 L14 28 L24 13 H17 Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3 class="team-trust-slide__title">Schnelle Lieferung</h3>
+            <p class="team-trust-slide__text">Keine wochenlangen Abstimmungsschleifen. Wir liefern zügig und sauber, ohne bei der Qualität Abstriche zu machen.</p>
+            <div class="team-trust-slide__person">
+              <div class="team-trust-slide__photo">
+                <img src="assets/team-albert.jpg" alt="Albert, TZ Digital" loading="lazy" width="72" height="72"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="team-trust-slide__fallback">A</div>
+              </div>
+              <p class="team-trust-slide__name">Albert</p>
+              <p class="team-trust-slide__role">Kundenbetreuung &amp; Wachstum</p>
+            </div>
+          </div>
+
+          <div class="team-trust-slide">
+            <div class="team-trust-slide__icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none">
+                <path d="M16 5 L18.2 12.4 L25.5 14.5 L18.2 16.6 L16 24 L13.8 16.6 L6.5 14.5 L13.8 12.4 Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3 class="team-trust-slide__title">KI-first Ansatz</h3>
+            <p class="team-trust-slide__text">Wir bauen von Anfang an mit KI-gestützten Werkzeugen und Agenten – für smartere Websites und ein Unternehmen, das effizienter läuft.</p>
+            <div class="team-trust-slide__person">
+              <div class="team-trust-slide__photo">
+                <img src="assets/team-julius.jpg" alt="Julius, TZ Digital" loading="lazy" width="72" height="72"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="team-trust-slide__fallback">J</div>
+              </div>
+              <p class="team-trust-slide__name">Julius</p>
+              <p class="team-trust-slide__role">Lead-Entwickler</p>
+            </div>
+          </div>
+
+          <div class="team-trust-slide">
+            <div class="team-trust-slide__icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none">
+                <circle cx="16" cy="16" r="9" stroke="currentColor" stroke-width="1.6"/>
+                <circle cx="16" cy="16" r="4" stroke="currentColor" stroke-width="1.6"/>
+                <line x1="16" y1="7" x2="16" y2="12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                <line x1="16" y1="20" x2="16" y2="25" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                <line x1="7" y1="16" x2="12" y2="16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                <line x1="20" y1="16" x2="25" y2="16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3 class="team-trust-slide__title">Laufender Support</h3>
+            <p class="team-trust-slide__text">Nach dem Launch sind wir nicht weg. Wir betreuen, aktualisieren und unterstützen Sie dauerhaft.</p>
+            <div class="team-trust-slide__person">
+              <div class="team-trust-slide__photo">
+                <img src="assets/team-maxim.jpg" alt="Maxim, TZ Digital" loading="lazy" width="72" height="72"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="team-trust-slide__fallback">M</div>
+              </div>
+              <p class="team-trust-slide__name">Maxim</p>
+              <p class="team-trust-slide__role">Betrieb</p>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="team-trust-carousel__arrow team-trust-carousel__arrow--prev" id="team-trust-prev" aria-label="Zurück">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5 L8 12 L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button type="button" class="team-trust-carousel__arrow team-trust-carousel__arrow--next" id="team-trust-next" aria-label="Weiter">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5 L16 12 L9 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <div class="team-trust-carousel__dots" id="team-trust-dots" role="tablist" aria-label="Folie wählen">
+          <button type="button" class="team-trust-carousel__dot is-active" data-slide="0" role="tab" aria-selected="true" aria-label="Folie 1: Albert"></button>
+          <button type="button" class="team-trust-carousel__dot" data-slide="1" role="tab" aria-selected="false" aria-label="Folie 2: Julius"></button>
+          <button type="button" class="team-trust-carousel__dot" data-slide="2" role="tab" aria-selected="false" aria-label="Folie 3: Maxim"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews — cuberto.com "Trusted by our clients" pattern: 5 cards start
+       fanned into a clumped pile, then scrub-animate (scroll-linked, not
+       pinned) apart into their final bento grid position as the section
+       scrolls through view. See main.js for the transform math.
+       NOTE: placeholder quotes — swap in real client testimonials
+       (with permission) before this goes live. -->
+  <section class="reviews section--light" id="bewertungen" aria-label="Kundenstimmen">
+    <div class="container">
+      <header class="section-header fade-in-view">
+        <h2 class="section-headline">Das sagen unsere Kunden</h2>
+      </header>
+
+      <div class="reviews-grid" id="reviews-grid">
+        <article class="review-card">
+          <span class="review-card__quote-mark" aria-hidden="true">&ldquo;</span>
+          <p class="review-card__text">Julius und sein Team haben unsere Website von Grund auf neu gedacht. Kein stures Baukasten-Design, sondern etwas, das wirklich zu uns passt – und seitdem bekommen wir spürbar mehr Anfragen.</p>
+          <div class="review-card__divider" aria-hidden="true"></div>
+          <p class="review-card__author">Sarah K.</p>
+          <p class="review-card__role">Inhaberin, Friseursalon</p>
+        </article>
+
+        <article class="review-card">
+          <span class="review-card__quote-mark" aria-hidden="true">&ldquo;</span>
+          <p class="review-card__text">Was uns am meisten beeindruckt hat: die Geschwindigkeit. Innerhalb von zwei Wochen stand unser neuer Shopify-Store, ohne dass wir bei der Qualität Abstriche machen mussten.</p>
+          <div class="review-card__divider" aria-hidden="true"></div>
+          <p class="review-card__author">Markus T.</p>
+          <p class="review-card__role">Geschäftsführer, Einzelhandel</p>
+        </article>
+
+        <article class="review-card">
+          <span class="review-card__quote-mark" aria-hidden="true">&ldquo;</span>
+          <p class="review-card__text">Der KI-Bot beantwortet inzwischen die Hälfte unserer Kundenanfragen automatisch. Das spart uns jeden Tag mehrere Stunden Zeit.</p>
+          <div class="review-card__divider" aria-hidden="true"></div>
+          <p class="review-card__author">Elena R.</p>
+          <p class="review-card__role">Betriebsleiterin, Gastronomie</p>
+        </article>
+
+        <article class="review-card review-card--wide">
+          <span class="review-card__quote-mark" aria-hidden="true">&ldquo;</span>
+          <p class="review-card__text">Nach dem Launch haben wir uns nie allein gelassen gefühlt. TZ Digital meldet sich von selbst, wenn etwas aktualisiert werden sollte, und reagiert innerhalb weniger Stunden, wenn wir eine Frage haben.</p>
+          <div class="review-card__divider" aria-hidden="true"></div>
+          <p class="review-card__author">Daniel B.</p>
+          <p class="review-card__role">Inhaber, Handwerksbetrieb</p>
+        </article>
+
+        <article class="review-card review-card--wide">
+          <span class="review-card__quote-mark" aria-hidden="true">&ldquo;</span>
+          <p class="review-card__text">Wir hatten vorher schon zwei Agenturen ausprobiert. TZ Digital war das erste Team, das unsere Ideen wirklich verstanden und technisch sauber umgesetzt hat.</p>
+          <div class="review-card__divider" aria-hidden="true"></div>
+          <p class="review-card__author">Nina W.</p>
+          <p class="review-card__role">Marketingleitung, Dienstleistung</p>
+        </article>
+      </div>
+
+      <!-- Mobile-only — the bento grid + scroll-scrub pile animation above is
+           hidden below 768px; this swipeable, one-review-per-slide carousel
+           replaces it there. Same mechanism as the team × trust carousel:
+           native scroll-snap track, dots, and prev/next arrows pinned to
+           each slide's divider line. -->
+      <div class="reviews-carousel" id="reviews-carousel" aria-label="Kundenstimmen">
+        <div class="reviews-carousel__track" id="reviews-track">
+          <article class="reviews-carousel__slide">
+            <span class="reviews-carousel__quote-mark" aria-hidden="true">&ldquo;</span>
+            <p class="reviews-carousel__text">Julius und sein Team haben unsere Website von Grund auf neu gedacht. Kein stures Baukasten-Design, sondern etwas, das wirklich zu uns passt – und seitdem bekommen wir spürbar mehr Anfragen.</p>
+            <div class="reviews-carousel__divider" aria-hidden="true"></div>
+            <p class="reviews-carousel__author">Sarah K.</p>
+            <p class="reviews-carousel__role">Inhaberin, Friseursalon</p>
+          </article>
+
+          <article class="reviews-carousel__slide">
+            <span class="reviews-carousel__quote-mark" aria-hidden="true">&ldquo;</span>
+            <p class="reviews-carousel__text">Was uns am meisten beeindruckt hat: die Geschwindigkeit. Innerhalb von zwei Wochen stand unser neuer Shopify-Store, ohne dass wir bei der Qualität Abstriche machen mussten.</p>
+            <div class="reviews-carousel__divider" aria-hidden="true"></div>
+            <p class="reviews-carousel__author">Markus T.</p>
+            <p class="reviews-carousel__role">Geschäftsführer, Einzelhandel</p>
+          </article>
+
+          <article class="reviews-carousel__slide">
+            <span class="reviews-carousel__quote-mark" aria-hidden="true">&ldquo;</span>
+            <p class="reviews-carousel__text">Der KI-Bot beantwortet inzwischen die Hälfte unserer Kundenanfragen automatisch. Das spart uns jeden Tag mehrere Stunden Zeit.</p>
+            <div class="reviews-carousel__divider" aria-hidden="true"></div>
+            <p class="reviews-carousel__author">Elena R.</p>
+            <p class="reviews-carousel__role">Betriebsleiterin, Gastronomie</p>
+          </article>
+
+          <article class="reviews-carousel__slide">
+            <span class="reviews-carousel__quote-mark" aria-hidden="true">&ldquo;</span>
+            <p class="reviews-carousel__text">Nach dem Launch haben wir uns nie allein gelassen gefühlt. TZ Digital meldet sich von selbst, wenn etwas aktualisiert werden sollte, und reagiert innerhalb weniger Stunden, wenn wir eine Frage haben.</p>
+            <div class="reviews-carousel__divider" aria-hidden="true"></div>
+            <p class="reviews-carousel__author">Daniel B.</p>
+            <p class="reviews-carousel__role">Inhaber, Handwerksbetrieb</p>
+          </article>
+
+          <article class="reviews-carousel__slide">
+            <span class="reviews-carousel__quote-mark" aria-hidden="true">&ldquo;</span>
+            <p class="reviews-carousel__text">Wir hatten vorher schon zwei Agenturen ausprobiert. TZ Digital war das erste Team, das unsere Ideen wirklich verstanden und technisch sauber umgesetzt hat.</p>
+            <div class="reviews-carousel__divider" aria-hidden="true"></div>
+            <p class="reviews-carousel__author">Nina W.</p>
+            <p class="reviews-carousel__role">Marketingleitung, Dienstleistung</p>
+          </article>
+        </div>
+
+        <!-- Prev/next + dots now share one bottom row (arrows flank the dots)
+             instead of the arrows floating mid-card — see .reviews-carousel__nav. -->
+        <div class="reviews-carousel__nav">
+          <button type="button" class="reviews-carousel__arrow reviews-carousel__arrow--prev" id="reviews-prev" aria-label="Zurück">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5 L8 12 L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+
+          <div class="reviews-carousel__dots" id="reviews-dots" role="tablist" aria-label="Bewertung wählen">
+            <button type="button" class="reviews-carousel__dot is-active" data-slide="0" role="tab" aria-selected="true" aria-label="Bewertung 1: Sarah K."></button>
+            <button type="button" class="reviews-carousel__dot" data-slide="1" role="tab" aria-selected="false" aria-label="Bewertung 2: Markus T."></button>
+            <button type="button" class="reviews-carousel__dot" data-slide="2" role="tab" aria-selected="false" aria-label="Bewertung 3: Elena R."></button>
+            <button type="button" class="reviews-carousel__dot" data-slide="3" role="tab" aria-selected="false" aria-label="Bewertung 4: Daniel B."></button>
+            <button type="button" class="reviews-carousel__dot" data-slide="4" role="tab" aria-selected="false" aria-label="Bewertung 5: Nina W."></button>
+          </div>
+
+          <button type="button" class="reviews-carousel__arrow reviews-carousel__arrow--next" id="reviews-next" aria-label="Weiter">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5 L16 12 L9 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA / Contact — merged, opens the slide-in contact overlay -->
+  <section class="cta-merge" id="kontakt" aria-label="Kontakt">
+    <div class="cta-merge__pin">
+      <div class="container cta-merge__inner">
+        <h2 class="cta-merge__headline">Lassen Sie uns etwas bauen.</h2>
+        <button type="button" class="btn btn--swap" data-open-contact>
+          <span class="btn__icon-slot" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10.25" stroke="currentColor" stroke-width="1.5"/><path d="M7 12h9.5M13 8l3.5 4-3.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="btn__label">Kontakt aufnehmen</span>
+        </button>
+      </div>
+      <div class="cta-merge__footer">
+        <span class="cta-merge__copy">&copy; 2026 TZ Digital</span>
+        <nav class="cta-merge__legal" aria-label="Rechtliches">
+          <a href="impressum.html">Impressum</a>
+          <a href="datenschutz.html">Datenschutz</a>
+          <button type="button" data-open-consent-settings>Cookie-Einstellungen</button>
+        </nav>
+        <span class="cta-merge__clock" id="cta-clock"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact overlay — slide-in panel triggered by [data-open-contact] -->
+  <div class="contact-overlay" id="contact-overlay" aria-hidden="true">
+    <div class="contact-overlay__backdrop" data-close-contact></div>
+    <div class="contact-overlay__panel" role="dialog" aria-modal="true" aria-labelledby="contact-overlay-title">
+      <button type="button" class="contact-overlay__close" id="contact-overlay-close" aria-label="Schließen" data-close-contact>
+        <span aria-hidden="true">&times;</span>
+      </button>
+
+      <p class="eyebrow">Kontakt</p>
+      <h2 class="contact-overlay__title" id="contact-overlay-title">Lassen Sie uns etwas bauen</h2>
+      <p class="contact-overlay__support">Erzählen Sie uns von Ihrem Unternehmen – wir melden uns innerhalb von 24 Stunden bei Ihnen.</p>
+      <p class="contact-overlay__direct">
+        <a href="mailto:albertjnr.zapke@t-online.de">albertjnr.zapke@t-online.de</a>
+        <span aria-hidden="true">·</span>
+        <a href="tel:+4915172507603">+49 1517 2507603</a>
+      </p>
+
+      <form class="contact__form" id="contact-form" action="https://formspree.io/f/mbdnowwp" method="POST">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label for="email">E-Mail</label>
+          <input type="email" id="email" name="email" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="message">Nachricht</label>
+          <textarea id="message" name="message" required></textarea>
+        </div>
+        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+        <input type="hidden" name="_subject" value="Neue Anfrage über die TZ Digital Website (DE)">
+        <button type="submit" class="btn btn--accent">Nachricht senden</button>
+        <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="js/main.js?v=55"></script>
+  <script src="js/cursor-trail.js?v=3"></script>
+  <script src="js/consent.js"></script>
+</body>
+</html>

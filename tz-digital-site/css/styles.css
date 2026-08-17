@@ -1,0 +1,2456 @@
+/* ==========================================================================
+   TZ Digital DE — Design System
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fonts/inter-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fonts/inter-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fonts/inter-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fonts/inter-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('../assets/fonts/jetbrains-mono-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Fraunces';
+  src: url('../assets/fonts/fraunces-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Accent ramp — same electric indigo/violet as the Maastricht site (brand identity) */
+  --accent-50: #f3f2ff;
+  --accent-100: #e8e6ff;
+  --accent-200: #d4d0ff;
+  --accent-300: #b5adff;
+  --accent-400: #9488ff;
+  --accent-500: #7b61ff;
+  --accent-600: #6c5ce7;
+  --accent-700: #5a4acb;
+  --accent-800: #4839a8;
+  --accent-900: #3d3189;
+
+  /* Neutral ramp — true black, per the Cuberto-style black-everywhere
+     rebuild (was a warm parchment ramp). Clean/cool, not brown-black, so
+     it reads as genuine black rather than a tinted dark mode. */
+  --neutral-50: #f7f7f8;
+  --neutral-100: #e7e7ea;
+  --neutral-200: #cfcfd6;
+  --neutral-300: #a3a3ac;
+  --neutral-400: #7c7c86;
+  --neutral-500: #5c5c66;
+  --neutral-600: #45454e;
+  --neutral-700: #303038;
+  --neutral-800: #1c1c21;
+  --neutral-900: #0d0d10;
+  --neutral-950: #000000;
+
+  /* Status colors */
+  --success-500: #22c55e;
+  --warning-500: #f59e0b;
+  --danger-500: #ef4444;
+  --info-500: #3b82f6;
+
+  /* Semantic aliases */
+  --text-primary: var(--neutral-50);
+  --text-secondary: var(--neutral-400);
+  --border-subtle: var(--neutral-800);
+  --bg-elevated: #0a0a0d;
+  --bg-base: var(--neutral-950);
+  /* Dark violet-black card surface — for components that used to sit on a
+     light or accent-tinted card (reviews, trust badges); keeps their brand
+     tint without breaking the black-everywhere backdrop. */
+  --surface-tint: #120f1f;
+  --accent: var(--accent-500);
+
+  /* Typography — single grotesk sans everywhere (cuberto.com reference):
+     large scale, heavy weight, tight tracking/leading on headings. Fraunces
+     stays loaded but unused; Inter now also carries every heading. */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Fraunces', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Spacing */
+  --section-pad-y: clamp(4rem, 8vw, 6.5rem);
+  --section-pad-x: clamp(1.25rem, 4vw, 3rem);
+  --container-max: 1200px;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.35);
+
+  /* Transitions */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ==========================================================================
+   Reset & Base
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-base);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Branded pointer — swaps the native OS arrow for a small outlined shape
+   (assets/cursor/cursor-arrow.png), the same technique morez.co uses:
+   plain `cursor: url()`, no JS, no per-frame cost. Desktop-with-a-mouse
+   only (`hover: hover` + `pointer: fine`) — touch devices never see a
+   cursor at all, so swapping it there would be dead weight.
+
+   PNG, not SVG: Safari has a long-standing bug where an SVG cursor image
+   gets re-decoded on nearly every pointer-move, which reads as laggy
+   tracking and sometimes drops back to the system arrow when idle. A
+   raster cursor doesn't have that problem — this is the standard fix.
+   `image-set()` layers in the @2x file for a crisp edge on Retina
+   displays; the plain `url()` line above it is what browsers without
+   image-set support (invalid function = declaration dropped) actually
+   use, so both are needed, in this order. The "5 6" hotspot is the
+   arrow's tip scaled to the 30x30 render, so the click point lines up
+   with the visual tip, not the image's corner.
+
+   It never switches — not to `pointer` over links/buttons, not to
+   anything else. The stylesheet has ~15 separate `cursor: pointer`
+   declarations scattered across component rules below, several with
+   higher specificity or later source order than a plain override could
+   beat reliably — `!important` on a universal `*` selector is what
+   actually guarantees this wins everywhere, unconditionally, rather than
+   fixing them one at a time and hoping nothing new slips in
+   later. Text fields are the one deliberate exception: a pointer icon
+   there would hide where you're actually about to type, and that rule's
+   selector specificity beats `*` even under `!important`, so it still
+   wins correctly. */
+@media (hover: hover) and (pointer: fine) {
+  html, body, * {
+    cursor: url('../assets/cursor/cursor-arrow.png') 5 6, auto !important;
+    cursor: -webkit-image-set(
+      url('../assets/cursor/cursor-arrow.png') 1x,
+      url('../assets/cursor/cursor-arrow@2x.png') 2x
+    ) 5 6, auto !important;
+    cursor: image-set(
+      url('../assets/cursor/cursor-arrow.png') 1x,
+      url('../assets/cursor/cursor-arrow@2x.png') 2x
+    ) 5 6, auto !important;
+  }
+
+  input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  [contenteditable="true"] {
+    cursor: text !important;
+  }
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button, input, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.eyebrow::before { content: "[ "; }
+.eyebrow::after { content: " ]"; }
+
+.stat-callout {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: clamp(2rem, 5vw, 3rem);
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  line-height: 1.1;
+}
+
+.section-headline {
+  font-family: var(--font-sans);
+  font-size: clamp(2.25rem, 6vw, 4.25rem);
+  font-weight: 700;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+}
+
+/* "Was wir tun" used to run a size step above the shared .section-headline
+   scale — pulled that override so it, "Featured Work", and "Das sagen
+   unsere Kunden" all render at the same size/position (the About section's
+   headline is a deliberately different, much larger treatment and stays
+   untouched). */
+
+.section-support {
+  font-size: clamp(1rem, 2vw, 1.125rem);
+  color: var(--text-secondary);
+  max-width: 52ch;
+  margin-top: 1rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   Layout Utilities
+   ========================================================================== */
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--section-pad-x);
+}
+
+.section-header {
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.section-header .eyebrow {
+  margin-bottom: 0.75rem;
+}
+
+.section--dark {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+}
+
+/* Was a light (parchment) section, alternating against .section--dark.
+   Black-everywhere rebuild: both now share the same black backdrop —
+   .section--light just steps up to --bg-elevated for a faint two-tone
+   rhythm instead of a hard light/dark swap. */
+.section--light {
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+.page-section {
+  padding-block: var(--section-pad-y);
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.75rem;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: background-color 0.25s var(--ease-out), transform 0.1s ease-out, box-shadow 0.25s var(--ease-out);
+}
+
+/* Instant press feedback — fires on pointer-down via :active, not on
+   release, so a tap gets a response before the resulting action even
+   happens. Matters most on touch, where :hover never fires at all. */
+.btn:active { transform: scale(0.97); }
+
+.btn--accent {
+  background-color: var(--accent-500);
+  color: var(--neutral-50);
+}
+.btn--accent:hover { background-color: var(--accent-600); }
+
+.btn--outline {
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+}
+.btn--outline:hover { border-color: var(--accent-500); color: var(--accent-400); }
+
+.btn--light {
+  background-color: var(--neutral-50);
+  color: var(--accent-700);
+}
+.btn--light:hover { background-color: var(--neutral-100); }
+
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1.5rem var(--section-pad-x) 0;
+  pointer-events: none;
+}
+
+.nav__inner {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  /* Three-column layout: logo pinned left, links pill genuinely centered
+     (not just centered-within-the-cluster), CTA + language toggle pinned
+     right — the two 1fr edge columns do the centering work for the
+     middle column regardless of how wide the left/right content is. */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav__pill--logo { justify-self: start; }
+.nav__pill--links { justify-self: center; }
+
+.nav__right {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  pointer-events: none;
+}
+
+.nav__pill {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  background-color: rgba(13, 13, 16, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-pill);
+  transition: background-color 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
+}
+
+.nav--scrolled .nav__pill {
+  background-color: rgba(0, 0, 0, 0.85);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Sized up from the original pill nav — same floating two/three-pill
+   layout, just bigger, closer to cuberto.com's more prominent header
+   scale. */
+.nav__pill--logo { padding: 1rem 1.75rem; }
+.nav__pill--links { padding: 0.8rem 0.875rem 0.8rem 1.75rem; }
+
+.nav__logo {
+  font-weight: 700;
+  font-size: 1.3125rem;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  transition: color 0.2s var(--ease-out);
+}
+
+.nav__logo-mark {
+  color: var(--accent);
+  transition: color 0.2s var(--ease-out);
+}
+
+.nav__links {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav__links a {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 3px;
+  font-size: 1.0625rem;
+  /* White at all times now — the underline alone (see .is-active below)
+     carries the active/hover state, text doesn't dim in between. */
+  color: #fff;
+}
+
+/* Third pill, standing apart from the logo/links pills — a solid-fill
+   accent button so "Kontakt" reads as the CTA, same role as cuberto.com's
+   black "Contacts" pill button next to its plain nav links. */
+.nav__pill--cta {
+  padding: 1rem 1.75rem;
+  background-color: var(--accent-500);
+  border-color: var(--accent-500);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  color: #fff;
+  transition: background-color 0.25s var(--ease-out), border-color 0.25s var(--ease-out), transform 0.1s ease-out;
+}
+.nav__pill--cta:hover { background-color: var(--accent-600); border-color: var(--accent-600); }
+.nav__pill--cta:active { transform: scale(0.96); }
+
+/* DE/EN language toggle — sits just left of the Kontakt button. Purely a
+   UI toggle for now: it swaps which button reads as active, but there's
+   no English copy behind it yet, so it doesn't change any page content. */
+.nav__pill--lang {
+  padding: 0.3125rem;
+  gap: 0.125rem;
+}
+
+.nav__lang-btn {
+  -webkit-appearance: none;
+  appearance: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 0.875rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+  transition: background-color 0.25s var(--ease-out), color 0.25s var(--ease-out);
+}
+.nav__lang-btn:hover { color: var(--text-primary); }
+.nav__lang-btn.is-active {
+  background-color: rgba(255, 255, 255, 0.14);
+  color: var(--text-primary);
+}
+
+/* Wrapper reused inside the mobile dropdown (.nav__pill--lang is the
+   desktop version, styled off the shared glass-pill look; this is a
+   plain flex row since it already sits inside the dropdown's own
+   background). */
+.nav__lang {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Hidden by default (desktop/tablet show Kontakt + the lang toggle in
+   .nav__right instead) — only surfaced inside the phone dropdown, see
+   the max-width:640px block below. */
+.nav__links-mobile-only { display: none; }
+
+.nav__links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 1px;
+  background-color: var(--accent-400);
+  transform-origin: left;
+  transition: width 0.35s var(--ease-out);
+}
+
+/* Hover-only now — it no longer stays lit for whichever section is
+   currently scrolled into view (that read as "stuck" since a section
+   can stay in view for a while); it just responds to the cursor. */
+.nav__links a:hover::after { width: 100%; }
+
+.nav__toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  margin-left: 0.25rem;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.15s var(--ease-out), transform 0.1s ease-out;
+}
+.nav__toggle:active {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(0.94);
+}
+
+.nav__toggle-icon {
+  position: relative;
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: background-color 0.2s var(--ease-out);
+}
+
+.nav__toggle-icon::before,
+.nav__toggle-icon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 20px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform 0.2s var(--ease-out), top 0.2s var(--ease-out);
+}
+
+.nav__toggle-icon::before { top: -6px; }
+.nav__toggle-icon::after { top: 6px; }
+
+.nav--open .nav__toggle-icon { background: transparent; }
+.nav--open .nav__toggle-icon::before { top: 0; transform: rotate(45deg); }
+.nav--open .nav__toggle-icon::after { top: 0; transform: rotate(-45deg); }
+
+@media (max-width: 640px) {
+  /* Three pills (logo, lang toggle, hamburger) fit fine on one row at
+     phone widths — only Kontakt is too much, so it alone moves into the
+     dropdown (see .nav__links-mobile-only and its styling below). */
+  .nav__pill--cta { display: none; }
+
+  /* Base layout centers the middle grid column (it's flanked by two 1fr
+     edge columns sized for the full 3-pill desktop row), which leaves the
+     hamburger pill floating mid-header once the CTA pill disappears.
+     Switch to a flex row instead: logo pinned left, then lang toggle +
+     hamburger grouped snugly at the right via margin-left:auto on
+     .nav__right (order puts it right after the logo, ahead of the
+     hamburger pill, so the lang toggle lands to the hamburger's left). */
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .nav__right {
+    display: flex;
+    margin-left: auto;
+    order: 1;
+    /* Same fix as .nav__pill--logo below: a static box loses to any
+       positioned+z-index descendant of .nav (the overlay included) no
+       matter the numbers, so the DE/EN pill needs promoting too or the
+       curtain paints over it exactly like it did the logo. */
+    position: relative;
+    z-index: 95;
+  }
+
+  .nav__pill--links {
+    position: relative;
+    order: 2;
+  }
+
+  /* .nav__links is position:fixed with its own z-index (90), but as a
+     descendant of .nav (which is itself the stacking context, via its
+     own fixed+z-index:100) that 90 is only compared against other
+     positioned-with-z-index elements inside .nav's context — and neither
+     pill is one by default (plain static boxes lose to any positioned+
+     z-index descendant regardless of the number), so the overlay was
+     painting over both no matter what .nav's own z-index said.
+     .nav__pill--logo doesn't contain .nav__links, so promoting it here is
+     enough — it now competes directly against the overlay's 90 and wins. */
+  .nav__pill--logo {
+    position: relative;
+    z-index: 95;
+  }
+
+  /* .nav__pill--links DOES contain .nav__links (the hamburger button and
+     the overlay share a parent) — giving the pill itself z-index would
+     make it a stacking context of its own and trap the overlay inside
+     it, right back to the same problem one level down. So its background
+     is deliberately left non-positioned (it disappears under the overlay
+     when open, which is invisible anyway once both are the same solid
+     violet) and only the toggle button — the thing that actually needs
+     to stay above the curtain — gets promoted, straight into .nav's
+     shared top-level context alongside .nav__links, where 95 > 90 wins. */
+  .nav__toggle {
+    position: relative;
+    z-index: 95;
+  }
+
+  /* The links pill's padding (0.8rem/1.75rem) is sized for the desktop
+     row of nav links ending in the hamburger button; on mobile it's the
+     hamburger alone, so the wide left padding just leaves an oversized
+     pill around a small icon. Tighten it to a snug, even ring instead. */
+  .nav__pill--links { padding: 0.375rem; }
+
+  /* backdrop-filter establishes a containing block for position:fixed
+     descendants — left in place, .nav__links (fixed, inset:0, meant to
+     cover the viewport) would instead size itself to this tiny pill.
+     Dropping the blur here only matters for a beat anyway: closed it's a
+     small icon-only pill, open it's solid violet via .nav--inverted. */
+  .nav__pill--links {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .nav__toggle { display: flex; margin-left: 0; }
+
+  /* Full-bleed reveal, modeled on soma.ca's mobile menu (re-checked frame
+     by frame from the recording — this is NOT one single wipe over the
+     whole screen). Each nav item is its own full-width band that clip-path
+     wipes in independently, staggered a beat apart — so the page fills in
+     stages, one link at a time cascading down, with the still-unrevealed
+     bands showing the actual page behind them until their turn comes
+     (exactly what the frames show: "Réals" wipes in, then "Nous", then
+     "Contact", each already sized to its final slot before its own
+     reveal starts — never a single sheet growing over everyone at once).
+     .nav__links itself is just the fixed full-viewport flex column
+     (transparent, no background of its own); every <li> is flex:1 so the
+     four bands already reserve their final, equal slice of the screen
+     from the very first frame — clip-path only wipes each slice's own
+     violet fill + text into view, it never resizes the slice.
+     Bar asymmetry carried over from the logo-flip pass: OPEN inverts the
+     bar instantly (nav--inverted added together with nav--open); CLOSE
+     retracts the bands first and only flips the bar back once the last
+     one finishes (main.js delays removing nav--inverted to match). */
+  .nav__links {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    flex-direction: column;
+    padding: 7.5rem 1.75rem 2.5rem;
+    gap: 0;
+    pointer-events: none;
+  }
+
+  .nav--open .nav__links { pointer-events: auto; }
+
+  .nav__links li {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background-color: var(--accent-500);
+    clip-path: inset(0 0 100% 0);
+    -webkit-clip-path: inset(0 0 100% 0);
+    transition: clip-path 0.42s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  .nav--open .nav__links li {
+    clip-path: inset(0 0 0% 0);
+    -webkit-clip-path: inset(0 0 0% 0);
+  }
+  /* Cascade down on open: each band's reveal starts a beat after the one
+     above it — Arbeiten leads, Kontakt trails in last. */
+  .nav--open .nav__links li:nth-child(1) { transition-delay: 0.02s; }
+  .nav--open .nav__links li:nth-child(2) { transition-delay: 0.1s; }
+  .nav--open .nav__links li:nth-child(3) { transition-delay: 0.18s; }
+  .nav--open .nav__links li:nth-child(4) { transition-delay: 0.26s; }
+
+  /* Reverse on close — snappier per-band retract, last item first (the
+     recording's collapse read faster than the drop and un-staggered in
+     the opposite order: Contact gone, then Nous, "Réals" lingering). */
+  .nav:not(.nav--open) .nav__links li { transition-duration: 0.3s; }
+  .nav:not(.nav--open) .nav__links li:nth-child(1) { transition-delay: 0.18s; }
+  .nav:not(.nav--open) .nav__links li:nth-child(2) { transition-delay: 0.12s; }
+  .nav:not(.nav--open) .nav__links li:nth-child(3) { transition-delay: 0.06s; }
+  .nav:not(.nav--open) .nav__links li:nth-child(4) { transition-delay: 0s; }
+
+  /* SOMA-style flip (soma.ca): both pills — logo and hamburger alike —
+     fill solid violet with near-black ink, reading as one continuous bar
+     the instant the menu opens; reverts once .nav--inverted comes off
+     (see main.js's delayed removal on close). Desktop nav is untouched —
+     this whole block only applies under 640px. */
+  .nav--inverted .nav__pill--logo,
+  .nav--inverted .nav__pill--links {
+    background-color: var(--accent-500);
+    border-color: var(--accent-500);
+  }
+  .nav--inverted .nav__logo,
+  .nav--inverted .nav__logo-mark,
+  .nav--inverted .nav__toggle {
+    color: var(--bg-base);
+  }
+
+  .nav__links a {
+    display: block;
+    width: 100%;
+    padding: 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(2rem, 9vw, 2.75rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--bg-base);
+  }
+  .nav__links a::after { display: none; }
+
+  /* Overlay-only row: the Kontakt link — same band treatment as the
+     plain links above, just reusing the CTA class for now-unused color
+     override (both already resolve to the same dark ink here). */
+  .nav__links-mobile-only { display: list-item; }
+
+  .nav__links-cta {
+    font-weight: 700;
+    color: var(--bg-base);
+  }
+}
+
+/* ==========================================================================
+   Hero — giant rotating morez.co-style badge (brought back from the very
+   first design, blown up to fill the screen instead of sitting as a small
+   card accent). Structure: .hero-pin is a 120vh scroll runway; ScrollTrigger
+   pins .hero for its duration (see main.js) and feeds scroll progress 0→1
+   into updateHeroBadge() in main.js, which drives CSS custom properties
+   read below — --badge-rotation/--mark-scale/--mark-opacity/--badge-fade.
+   The ring's rotation is idle-spin (time-based, always running — the words
+   circle the TZ mark constantly, scroll or not) plus a scroll-linked
+   "wheel" term layered on top (reversible on scroll-up); --badge-fade only
+   ever touches .hero__content (headline/desc) — the ring itself stays
+   fully visible always, it never fades. Past a threshold the TZ mark
+   scales from hidden up to as large as it can get while still sitting
+   inside the ring's text circle; the pin releases right as it reaches
+   that size and it just stays put (no fade-out) as the page continues
+   into the rest of the content.
+   ========================================================================== */
+
+.hero-pin { position: relative; height: calc(var(--vh, 1vh) * 120); }
+
+.hero {
+  position: relative;
+  height: calc(var(--vh, 1vh) * 100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: var(--bg-base);
+}
+
+.hero__badge {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.hero__badge-ring {
+  width: min(94vw, 94vh);
+  height: min(94vw, 94vh);
+  transform: rotate(var(--badge-rotation, 0deg));
+}
+.hero__badge-text {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  fill: var(--text-primary);
+}
+
+.hero__badge-mark {
+  position: absolute;
+  z-index: 2;
+  width: min(26vw, 26vh);
+  height: auto;
+  opacity: var(--mark-opacity, 0);
+  transform: scale(var(--mark-scale, 0.6));
+  filter: drop-shadow(0 4px 30px rgba(123, 97, 255, 0.5));
+}
+
+.hero__content {
+  position: relative;
+  z-index: 3;
+  max-width: 640px;
+  margin-inline: auto;
+  padding-inline: var(--section-pad-x);
+  text-align: center;
+  opacity: var(--badge-fade, 1);
+  pointer-events: none;
+}
+
+.hero__headline {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 4.4vw, 3.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  opacity: 0;
+  transform: translateY(1rem);
+}
+.hero__headline.is-visible {
+  animation: heroFadeUp 0.7s var(--ease-out) forwards;
+}
+
+.hero__desc {
+  margin: 1.25rem auto 0;
+  max-width: 46ch;
+  font-size: clamp(0.9375rem, 1.2vw, 1.0625rem);
+  line-height: 1.6;
+  color: var(--text-primary);
+  opacity: 0;
+  transform: translateY(1rem);
+}
+.hero__desc.is-visible {
+  animation: heroFadeUp 0.7s var(--ease-out) 0.12s forwards;
+}
+
+@keyframes heroFadeUp { to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 860px) {
+  .hero__badge-text { font-size: 12px; }
+  .hero__badge-mark { width: min(34vw, 34vh); }
+
+  /* Ring letters sit at z-index:1, .hero__content at z-index:3 — the
+     content already wins wherever a headline/desc glyph is drawn, but the
+     gaps between words and lines are transparent, so ring letters/dots
+     that fall inside that gap still show through underneath. On the
+     cramped mobile viewport the ring sits much closer to the text, so
+     this soft vignette (same color as .hero's own background, invisible
+     on its own) sits behind the headline/desc but still ahead of the
+     ring, masking out ring text that would otherwise peek through —
+     desktop has enough breathing room that the gaps never collide, so it
+     stays mobile-only. */
+  .hero__content::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -1.75rem -1.25rem;
+    background: radial-gradient(ellipse at center, var(--bg-base) 62%, transparent 85%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-pin { height: auto; }
+  .hero { min-height: 100vh; height: auto; }
+  .hero__badge-ring { transform: none; }
+  .hero__badge-mark { opacity: 0.9; transform: scale(1); }
+  .hero__headline, .hero__desc { opacity: 1; transform: none; animation: none; }
+}
+
+/* ==========================================================================
+   Our Work — two counter-scrolling marquee rows of real desktop screenshots
+   (morez.co client-logo-strip format, applied to our own project shots
+   instead of logos). Structure: .portfolio-marquee > two
+   .portfolio-marquee__row (each just an overflow:hidden window) >
+   .portfolio-marquee__track (the list, rendered twice back-to-back so
+   wrapping the scroll offset at exactly half its width loops seamlessly) >
+   .portfolio-tile (plain screenshot, no backdrop photo behind it).
+   Row A drifts left, row B drifts right; both auto-drift continuously and
+   speed up for a beat whenever the page itself is scrolled — see the
+   marquee driver in main.js. No 3D, no drag, no pinning. */
+
+.portfolio {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  padding-top: clamp(1.5rem, 3vw, 2.25rem);
+  padding-bottom: var(--section-pad-y);
+}
+
+.portfolio__header .section-headline { color: var(--text-primary); }
+
+/* Full-bleed breakout — rows span the viewport edge to edge so tiles crop
+   cleanly at the browser edge instead of stopping at the container. */
+.portfolio-marquee {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 2.4vw, 1.75rem);
+  padding-block: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.portfolio-marquee__row {
+  overflow: hidden;
+  width: 100%;
+}
+
+.portfolio-marquee__track {
+  display: flex;
+  width: max-content;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  padding-inline: clamp(1rem, 2vw, 1.5rem);
+  will-change: transform;
+  /* offset driven every frame from JS — no CSS transition, it would fight the RAF loop */
+}
+
+.portfolio-tile {
+  position: relative;
+  flex: 0 0 auto;
+  display: block;
+  width: clamp(300px, 30vw, 460px);
+  aspect-ratio: 1400 / 795;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--neutral-900);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
+  text-decoration: none;
+}
+
+.portfolio-tile:focus-visible {
+  outline: 2px solid var(--accent-500);
+  outline-offset: 4px;
+}
+
+.portfolio-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.portfolio-tile__label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1rem 1.1rem 0.9rem;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 100%);
+}
+.portfolio-tile__name { display: block; font-weight: 700; font-size: 0.9375rem; color: #fff; }
+.portfolio-tile__desc { display: block; font-size: 0.8125rem; color: rgba(255, 255, 255, 0.72); margin-top: 0.15rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-marquee__track { transition: none; }
+}
+
+/* ==========================================================================
+   Services — stacked one-way scroll-reveal cards (cuberto.com "What We Do"
+   pattern). Every row starts collapsed to a ~100px light-gray bar. main.js
+   watches each row with an IntersectionObserver whose rootMargin is a thin
+   band around the viewport's vertical center; the instant a row crosses it,
+   `.is-open` is added and the row is unobserved — it grows into a tall
+   near-black card (description + decorative rings fade in) and STAYS that
+   way. Scrolling back up never re-collapses a row. No scroll-jacking, no
+   pinning — this is a plain scroll position readout via IntersectionObserver.
+   ========================================================================== */
+
+/* True black backdrop, matching the hero/Featured Work sections above it —
+   .section--light's --bg-elevated (#0a0a0d) reads as an off-black seam
+   next to those, so this steps back up to pure black like .portfolio does. */
+.services { padding-block: var(--section-pad-y); background-color: var(--bg-base); }
+
+/* On mobile, three sections in a row (Arbeiten, Leistungen, Über uns) each
+   carry a full --section-pad-y top+bottom — fine on their own, but the two
+   seams between them double that padding up and read as an oversized black
+   void. Trim just those two seams (portfolio's bottom, services' both
+   sides, about's top); every other section transition keeps the full
+   --section-pad-y and is left alone. */
+@media (max-width: 760px) {
+  .portfolio { padding-bottom: clamp(1.5rem, 4vw, 2rem); }
+  .services { padding-block: clamp(1.5rem, 4vw, 2rem); }
+  .about { padding-top: clamp(1.5rem, 4vw, 2rem); }
+}
+
+.services-panel__list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.services-panel__item {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  /* Deep purple-black, same family as --surface-tint used for reviews/
+     trust cards elsewhere on the site — reads as premium and dark rather
+     than a loud solid-purple bar; the purple now lives in the header text
+     and accents instead of the fill. */
+  background-color: var(--surface-tint);
+  transition: background-color 0.9s var(--ease-out), background-image 0.9s var(--ease-out), border-radius 0.9s var(--ease-out);
+}
+
+/* Reveal each card in scroll order — reuses the site's generic .fade-in-view
+   utility (see main.js's fadeObserver), with a slight per-row stagger so
+   several rows crossing the trigger band at once still read as sequential
+   rather than popping in together. This only affects the card's own
+   entrance; the open/closed (.is-open) state above is independent. */
+.services-panel__item.fade-in-view:nth-child(1) { transition-delay: 0ms; }
+.services-panel__item.fade-in-view:nth-child(2) { transition-delay: 70ms; }
+.services-panel__item.fade-in-view:nth-child(3) { transition-delay: 140ms; }
+.services-panel__item.fade-in-view:nth-child(4) { transition-delay: 210ms; }
+.services-panel__item.fade-in-view:nth-child(5) { transition-delay: 280ms; }
+.services-panel__item.fade-in-view:nth-child(6) { transition-delay: 350ms; }
+.services-panel__item.fade-in-view:nth-child(7) { transition-delay: 420ms; }
+
+.services-panel__item.is-open {
+  /* A touch lighter/richer than the collapsed fill so the open card still
+     reads as "activated", without going back to a loud solid purple. */
+  background-color: #1c1732;
+  background-image: linear-gradient(160deg, #241d40 0%, var(--surface-tint) 100%);
+}
+
+/* Decorative graphic — concentric rings fading toward the title, revealed
+   only once the card is open. Pure CSS, no image asset. */
+.services-panel__item-graphic {
+  position: absolute;
+  inset: 0;
+  right: -8%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s var(--ease-out) 0.2s;
+  background-image: repeating-radial-gradient(
+    circle at 86% 50%,
+    transparent 0,
+    transparent 26px,
+    rgba(255, 255, 255, 0.08) 26px,
+    rgba(255, 255, 255, 0.08) 27px
+  );
+  -webkit-mask-image: linear-gradient(to left, black 0%, black 45%, transparent 88%);
+  mask-image: linear-gradient(to left, black 0%, black 45%, transparent 88%);
+}
+.services-panel__item:nth-child(even) .services-panel__item-graphic { transform: scaleX(-1); }
+.services-panel__item.is-open .services-panel__item-graphic { opacity: 1; }
+
+.services-panel__item-head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+  min-height: clamp(64px, 6vw, 80px);
+  padding-inline: clamp(1.25rem, 4vw, 2.25rem);
+  padding-block: clamp(0.85rem, 1.8vw, 1.1rem);
+  /* Body copy (desc/link) and title both stay white on the dark fill. */
+  color: #fff;
+}
+
+.services-panel__item-index {
+  font-family: var(--font-mono);
+  /* Sized to match the title next to it, same as cuberto.com's reference
+     pattern — no longer a small corner badge. */
+  font-size: clamp(1.375rem, 2.8vw, 1.875rem);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.55);
+  flex: 0 0 auto;
+  /* Fixed column, right-aligned — the name column below grows to soak up
+     whatever space it doesn't need, so 01–07 always land in the same spot
+     regardless of how long each title is. */
+  width: 2.5ch;
+  text-align: right;
+  transition: color 0.8s var(--ease-out);
+}
+.services-panel__item.is-open .services-panel__item-index {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.services-panel__item-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--font-sans);
+  /* White title on the dark card, sized the same big scale whether the
+     row is open or still collapsed — collapsed rows no longer read as a
+     smaller/lesser heading than the open one. */
+  color: #fff;
+  font-size: clamp(1.375rem, 2.8vw, 1.875rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  transition: font-size 0.8s var(--ease-out), color 0.8s var(--ease-out);
+}
+
+/* Expand/collapse: grid-rows trick animates height without JS measuring */
+.services-panel__item-body {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.9s var(--ease-out);
+}
+.services-panel__item.is-open .services-panel__item-body {
+  grid-template-rows: 1fr;
+}
+
+.services-panel__item-body-inner {
+  overflow: hidden;
+}
+
+.services-panel__item-desc {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  max-width: 54ch;
+  padding-inline: clamp(1.25rem, 4vw, 2.25rem);
+  padding-top: 0.125rem;
+  padding-bottom: 0.875rem;
+}
+
+.services-panel__item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding-inline: clamp(1.25rem, 4vw, 2.25rem);
+  padding-bottom: 0.875rem;
+}
+
+.tag-pill {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  background-color: rgba(123, 97, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  color: #fff;
+}
+
+.services-panel__item-link {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #fff;
+  margin-inline: clamp(1.25rem, 4vw, 2.25rem);
+  margin-bottom: 1.25rem;
+}
+.services-panel__item-link:hover { text-decoration: underline; }
+
+@media (max-width: 760px) {
+  /* Same size open or collapsed on mobile too — no more shrinking down
+     the title until the row is tapped open. */
+  .services-panel__item-name { font-size: 1.1875rem; }
+  .services-panel__item-graphic { right: -30%; }
+
+  /* Tap-to-open accordion (see main.js) — the head becomes a real control
+     here, so it gets a pointer cursor and a chevron that flips on open. */
+  .services-panel__item-head {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .services-panel__item-head::after {
+    content: '';
+    width: 9px;
+    height: 9px;
+    flex-shrink: 0;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.5s var(--ease-out);
+  }
+  .services-panel__item.is-open .services-panel__item-head::after {
+    transform: rotate(225deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* main.js adds .is-open to every card immediately for reduced-motion
+     users instead of relying on the observer — see main.js. Height/opacity
+     transitions are skipped globally by the site's base reduced-motion rule. */
+  .services-panel__item,
+  .services-panel__item-head,
+  .services-panel__item-index,
+  .services-panel__item-name,
+  .services-panel__item-body,
+  .services-panel__item-graphic {
+    transition: none;
+  }
+}
+
+/* Legacy card classes kept in case any subpage still references them */
+.service-card__features {
+  list-style: disc;
+  margin-top: 1rem;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+.service-card__features li + li { margin-top: 0.375rem; }
+
+/* ==========================================================================
+   Pricing
+   ========================================================================== */
+
+.pricing { padding-block: var(--section-pad-y); }
+
+.pricing__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+.pricing__grid .pricing-card:nth-child(4) { grid-column: 2; }
+
+@media (max-width: 860px) {
+  .pricing__grid { grid-template-columns: 1fr; }
+  .pricing__grid .pricing-card:nth-child(4) { grid-column: auto; }
+}
+
+.pricing-card {
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pricing-card__tier {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+.pricing-card__name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+  min-height: 2.6em;
+  margin-bottom: 1.5rem;
+}
+
+.pricing-card__price { margin-bottom: 0.5rem; }
+.pricing-card__note { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 2rem; }
+
+.pricing-card .service-card__features {
+  text-align: left;
+  width: 100%;
+  margin: -0.5rem 0 1.5rem;
+  color: var(--text-secondary);
+}
+
+.pricing-card .btn { margin-top: auto; }
+
+/* ==========================================================================
+   About
+   ========================================================================== */
+
+.about { padding-block: var(--section-pad-y); background-color: var(--bg-base); }
+.about__content { max-width: 60ch; }
+.about__content p { color: var(--text-secondary); margin-top: 1rem; line-height: 1.7; }
+.about__content p + p { margin-top: 1.25rem; }
+
+/* Hero — headline + two flanking copy blocks. Same scroll-scrubbed word
+   reveal ("Hey founder" style) as before; .reveal-word spans are injected
+   by JS onto every [data-reveal] element (headline lines + both blocks),
+   base color inherits from .section--light.
+
+   .about__hero-bleed breaks the hero out of the site's normal 1200px
+   .container so the giant headline words have real room to breathe
+   (Instrument-style edge-to-edge scale) — width:100vw + vw margins are
+   viewport-relative, not parent-relative, so this works regardless of
+   how narrow the ancestor .container is. */
+.about__hero-bleed {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+.about__hero {
+  max-width: 1800px;
+  margin-inline: auto;
+  padding-inline: var(--section-pad-x);
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 2vw, 1.25rem);
+}
+.about__hero-eyebrow { margin: 0; }
+
+/* Each row pairs a wide copy block against a giant headline word that
+   takes the rest of the row. A real grid track (not flex-wrap) reserves
+   the copy block's column no matter how wide the nowrap headline word
+   renders, so long German compounds in the copy never force the whole
+   row to collapse onto a second line — the headline just sits flush
+   against its column edge, Instrument-style. */
+.about__hero-row {
+  display: grid;
+  align-items: start;
+  gap: clamp(1.5rem, 5vw, 4rem);
+}
+.about__hero-row--top { grid-template-columns: minmax(260px, min(30vw, 460px)) 1fr; }
+.about__hero-row--top .about__block { grid-column: 1; }
+.about__hero-row--top .about__headline-line { grid-column: 2; }
+
+.about__hero-row--bottom {
+  grid-template-columns: 1fr minmax(260px, min(30vw, 460px));
+  align-items: end;
+}
+.about__hero-row--bottom .about__headline-line { grid-column: 1; }
+.about__hero-row--bottom .about__block { grid-column: 2; }
+
+.about__block p {
+  font-family: var(--font-sans);
+  font-size: clamp(1.0625rem, 1.5vw, 1.3125rem);
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+.about__headline-line {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: clamp(3rem, 10vw, 10rem);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  /* Always fully visible — no scroll-triggered fill here, unlike the
+     two copy blocks below (see #about-hero JS, which now only wraps
+     [data-reveal] elements, and these lines carry no such attribute). */
+  color: var(--text-primary);
+}
+.about__headline-line--build { text-align: right; }
+.about__headline-line--grow { text-align: left; }
+
+/* Dim starting state for the scroll-scrubbed word reveal — sits directly on
+   the black section bg, so this needs to read as "not yet lit up" against
+   black rather than the old light-bg dimming. */
+.reveal-word { color: var(--neutral-700); }
+
+@media (max-width: 760px) {
+  .about__hero-row,
+  .about__hero-row--top,
+  .about__hero-row--bottom {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .about__hero-row--top .about__block,
+  .about__hero-row--top .about__headline-line,
+  .about__hero-row--bottom .about__headline-line,
+  .about__hero-row--bottom .about__block {
+    grid-column: 1;
+  }
+  /* Desktop's side-by-side grid puts the top row's copy block in the DOM
+     before its headline word (they sit in separate columns, so order
+     doesn't matter there). Stacked on mobile that puts the paragraph
+     above "Wir bauen." — flip it so the headline leads, matching the
+     bottom row where "Sie wachsen." already sits above its paragraph. */
+  .about__hero-row--top .about__headline-line { order: -1; }
+  .about__headline-line {
+    white-space: normal;
+    text-align: left !important;
+    font-size: clamp(2.25rem, 13vw, 3.75rem);
+  }
+}
+
+.about__team-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(2rem, 5vw, 3.5rem);
+  margin-top: clamp(3rem, 6vw, 4.5rem);
+}
+
+.about__team-row .team-card {
+  flex: 1 1 220px;
+}
+
+.team-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: left;
+  transition: transform 200ms ease;
+}
+.team-card:hover { transform: translateX(4px); }
+
+.team-card__photo {
+  position: relative;
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--accent-500);
+  flex-shrink: 0;
+}
+
+.team-card__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.team-card__fallback {
+  display: none;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-100);
+  color: var(--accent-700);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 44px;
+}
+
+.team-card__name {
+  font-family: var(--font-sans);
+  font-size: clamp(1.375rem, 2.2vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+}
+.team-card__role { font-size: 1rem; color: var(--text-secondary); margin: 0; }
+
+.trust-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  margin-top: clamp(3rem, 6vw, 4rem);
+}
+
+.trust-card {
+  padding: clamp(1.75rem, 3vw, 2.25rem);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-elevated);
+  opacity: 0;
+  transform: translateY(36px) scale(0.92);
+  transition: opacity 620ms cubic-bezier(0.16, 0.8, 0.24, 1),
+              transform 700ms cubic-bezier(0.16, 0.8, 0.24, 1);
+}
+
+.trust-grid.is-visible .trust-card {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.trust-grid.is-visible .trust-card:nth-child(1) { transition-delay: 0ms; }
+.trust-grid.is-visible .trust-card:nth-child(2) { transition-delay: 120ms; }
+.trust-grid.is-visible .trust-card:nth-child(3) { transition-delay: 240ms; }
+
+.trust-card--square {
+  grid-column: span 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: clamp(220px, 22vw, 300px);
+}
+
+.trust-card--rect {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+
+.trust-card__icon {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  background: var(--accent-100);
+  color: var(--accent-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.trust-card__icon svg { width: 26px; height: 26px; }
+.trust-card--square .trust-card__icon { margin-bottom: 1.75rem; }
+
+.trust-card__body { flex: 1; }
+
+.trust-card__title {
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.trust-card__text {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trust-card { opacity: 1; transform: none; transition: none; }
+}
+
+/* ==========================================================================
+   Team × Trust pairing carousel — mobile only (below 768px). Replaces the
+   separate team-row + trust-grid there with one swipeable strip: each slide
+   locks a trust point to the teammate who owns it (icon+copy on top, that
+   teammate's photo+name below). Plain horizontal scroll-snap — no JS-driven
+   momentum — with dots kept in sync by main.js off the track's scroll
+   position, and click-to-jump on the dots themselves.
+   ========================================================================== */
+
+.team-trust-carousel { display: none; }
+
+@media (max-width: 760px) {
+  .about__team-row,
+  .trust-grid { display: none; }
+
+  .team-trust-carousel {
+    display: block;
+    position: relative;
+    margin-top: 2.5rem;
+  }
+
+  /* Prev/next arrows — pinned dead center of the carousel at a fixed
+     height, same spot on every slide (a JS-measured position used to chase
+     each slide's divider line, but that made the arrows hop up/down as
+     copy length changed between slides). Sitting mid-slide now instead of
+     on a blank divider, so the fill is translucent + blurred rather than
+     solid, to keep from fully blocking whatever copy is behind it. Prev
+     hides on the first slide, next hides on the last — nowhere further to
+     go. */
+  .team-trust-carousel__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--neutral-300);
+    background: rgba(247, 247, 248, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: var(--neutral-700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: opacity 200ms ease, background-color 200ms ease, color 200ms ease;
+  }
+  .team-trust-carousel__arrow svg { width: 17px; height: 17px; }
+  .team-trust-carousel__arrow:hover,
+  .team-trust-carousel__arrow:focus-visible { background: var(--accent-100); color: var(--accent-600); }
+  .team-trust-carousel__arrow--prev { left: 0; }
+  .team-trust-carousel__arrow--next { right: 0; }
+  .team-trust-carousel__arrow[hidden] { display: none; }
+
+  .team-trust-carousel__track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-inline: calc(-1 * var(--section-pad-x));
+  }
+  .team-trust-carousel__track::-webkit-scrollbar { display: none; }
+
+  .team-trust-slide {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+    padding: 2rem var(--section-pad-x) 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .team-trust-slide__icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: var(--accent-100);
+    color: var(--accent-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+  .team-trust-slide__icon svg { width: 30px; height: 30px; }
+
+  .team-trust-slide__title {
+    font-family: var(--font-sans);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .team-trust-slide__text {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    max-width: 34ch;
+    margin: 0 0 1.75rem;
+  }
+
+  .team-trust-slide__person {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--neutral-200);
+    width: 100%;
+    max-width: 220px;
+  }
+
+  .team-trust-slide__photo {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--accent-500);
+    flex-shrink: 0;
+    margin-bottom: 0.75rem;
+  }
+  .team-trust-slide__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .team-trust-slide__fallback {
+    display: none;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-100);
+    color: var(--accent-700);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 28px;
+  }
+
+  .team-trust-slide__name {
+    font-family: var(--font-sans);
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .team-trust-slide__role {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 2px 0 0;
+  }
+
+  .team-trust-carousel__dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+
+  .team-trust-carousel__dot {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--neutral-300);
+    cursor: pointer;
+    transition: background-color 200ms ease, transform 200ms ease;
+  }
+  .team-trust-carousel__dot.is-active {
+    background: var(--accent-600);
+    transform: scale(1.25);
+  }
+}
+
+/* Reviews — cuberto.com "Trusted by our clients" bento (3 narrow cards over
+   2 wide cards, on a 6-column track so 2+2+2 / 3+3 line up cleanly). Cards
+   start fanned into a pile and scrub apart into this grid on scroll — see
+   main.js for the transform math; this file only defines their rest state. */
+.reviews { padding-block: var(--section-pad-y); background-color: var(--bg-base); }
+
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: clamp(1rem, 2vw, 1.5rem);
+  margin-top: clamp(3rem, 6vw, 4rem);
+}
+
+.review-card {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.75rem, 3vw, 2.25rem);
+  border-radius: var(--radius-lg);
+  min-height: clamp(240px, 24vw, 300px);
+  background-color: var(--surface-tint);
+  border: 1px solid var(--border-subtle);
+  will-change: transform;
+}
+
+.review-card--wide { grid-column: span 3; }
+
+.review-card__quote-mark {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--accent-400);
+  margin-bottom: 0.25rem;
+}
+
+.review-card__text {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  flex: 1;
+  margin: 0;
+}
+
+.review-card__divider {
+  width: 32px;
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 1.5rem 0 1rem;
+}
+
+.review-card__author {
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 2px;
+}
+
+.review-card__role {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .review-card { transform: none !important; }
+}
+
+/* ==========================================================================
+   Reviews carousel — mobile only (below 768px). Replaces the bento grid +
+   scroll-scrub pile animation there (main.js skips that ScrollTrigger
+   entirely on mobile) with one swipeable, one-review-per-slide carousel.
+   Same mechanism as the team × trust carousel: native horizontal
+   scroll-snap track, dots kept in sync off scroll position, prev/next
+   arrows pinned to each slide's divider line (re-measured per slide).
+   ========================================================================== */
+
+.reviews-carousel { display: none; }
+
+@media (max-width: 760px) {
+  .reviews-grid { display: none; }
+
+  .reviews-carousel {
+    display: block;
+    position: relative;
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .reviews-carousel__track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-inline: calc(-1 * var(--section-pad-x));
+  }
+  .reviews-carousel__track::-webkit-scrollbar { display: none; }
+
+  .reviews-carousel__slide {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+    margin-inline: var(--section-pad-x);
+    padding: clamp(1.75rem, 6vw, 2.25rem);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-tint);
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .reviews-carousel__quote-mark {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--accent-400);
+    margin-bottom: 0.25rem;
+  }
+
+  .reviews-carousel__text {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  .reviews-carousel__divider {
+    width: 32px;
+    height: 1px;
+    background: var(--border-subtle);
+    margin: 0.75rem 0 0.5rem;
+  }
+
+  .reviews-carousel__author {
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 2px;
+  }
+
+  .reviews-carousel__role {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* Prev/next + dots — one row below the card, arrows flanking the dots,
+     instead of the arrows floating mid-card over the quote text (which is
+     what the translucent/blurred fill below was originally compensating
+     for — kept anyway since it still reads well against the section's dark
+     background). Prev hides on the first slide, next on the last; hidden
+     via visibility (not display) so the dots don't re-center and shift
+     sideways when an arrow disappears. */
+  .reviews-carousel__nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.875rem;
+    margin-top: 1.25rem;
+  }
+
+  .reviews-carousel__arrow {
+    width: 34px;
+    height: 34px;
+    flex: none;
+    border-radius: 50%;
+    border: 1px solid var(--neutral-300);
+    background: rgba(247, 247, 248, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: var(--neutral-700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 200ms ease, background-color 200ms ease, color 200ms ease;
+  }
+  .reviews-carousel__arrow svg { width: 17px; height: 17px; }
+  .reviews-carousel__arrow:hover,
+  .reviews-carousel__arrow:focus-visible { background: var(--accent-100); color: var(--accent-600); }
+  .reviews-carousel__arrow[hidden] {
+    display: flex;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .reviews-carousel__dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .reviews-carousel__dot {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--neutral-300);
+    cursor: pointer;
+    transition: background-color 200ms ease, transform 200ms ease;
+  }
+  .reviews-carousel__dot.is-active {
+    background: var(--accent-600);
+    transform: scale(1.25);
+  }
+}
+
+.legal-page { padding-block: var(--section-pad-y); }
+.legal-content { max-width: 70ch; }
+.legal-content h1 { margin-bottom: 1.5rem; }
+.legal-content h2 { font-size: 1.25rem; font-weight: 600; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+.legal-content p { color: var(--text-secondary); line-height: 1.7; margin-bottom: 1rem; }
+.legal-content a { text-decoration: underline; }
+
+/* ==========================================================================
+   CTA Band — fully saturated, per design differentiator #4 (bolder than
+   the Maastricht site's lighter accent band)
+   ========================================================================== */
+
+.cta-band {
+  padding-block: var(--section-pad-y);
+  background: linear-gradient(160deg, var(--accent-500) 0%, var(--accent-900) 100%);
+  text-align: center;
+}
+
+.cta-band__inner { max-width: 44rem; margin-inline: auto; }
+.cta-band__headline { color: var(--neutral-50); }
+.cta-band .eyebrow { color: var(--neutral-50); opacity: 0.85; }
+.cta-band__support { margin-top: 1rem; font-size: 1.0625rem; color: var(--neutral-50); opacity: 0.85; }
+.cta-band .btn { margin-top: 2rem; }
+
+/* ==========================================================================
+   CTA / Contact merge — homepage only. Condensed purple-gradient band with
+   a single icon-slide CTA that opens the slide-in contact overlay.
+   ========================================================================== */
+
+/* One continuous gradient painted across a two-viewport-tall section — no
+   background-position tricks, so the top stop lines up exactly with the
+   section above and there's no seam. The headline/button/footer are pinned
+   centered on screen for the section's full scroll length (main.js,
+   ScrollTrigger) while the gradient underneath scrolls past them and the
+   headline/button blur-reveal in, scrubbed to scroll position. */
+.cta-merge {
+  position: relative;
+  min-height: 220vh;
+  /* Black at both ends — matches the black backdrop the rest of the page
+     sits on, so the section opens and closes flush with no seam. A handful
+     of widely-spaced stops (even eased ones) each bend the slope sharply
+     enough to read as a visible streak — the eye picks out every kink as
+     its own band (Mach-band effect), so two eased stops looked like two
+     streaks instead of one smoother one. Fixed by sampling a smooth sine
+     hump at every 10%, capped well below accent-700's full brightness, so
+     no single segment's slope changes enough to stand out — the purple
+     stays a soft, even wash instead of a spike. */
+  background: linear-gradient(180deg,
+    #000 0%,
+    #0e0b1f 10%,
+    #1a163c 20%,
+    #241e52 30%,
+    #2b2361 40%,
+    #2d2566 50%,
+    #2b2361 60%,
+    #241e52 70%,
+    #1a163c 80%,
+    #0e0b1f 90%,
+    #000 100%);
+  text-align: center;
+  overflow: hidden;
+}
+
+.cta-merge__pin {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-block: var(--section-pad-y);
+}
+
+.cta-merge__inner { max-width: 46rem; margin-inline: auto; }
+
+.cta-merge__headline {
+  font-family: var(--font-sans);
+  font-size: clamp(3.25rem, 9vw, 7rem);
+  font-weight: 700;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  color: var(--neutral-50);
+}
+
+.cta-merge .btn { margin-top: 2.75rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-merge { min-height: auto; }
+  .cta-merge__pin { height: auto; }
+}
+
+/* Swap button — icon and label glide past each other and trade places on
+   hover; travel distances are measured per-button in JS (main.js) so they
+   stay correct at any label length. */
+.btn--swap {
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  color: var(--neutral-50);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 0.9rem 2rem;
+}
+.btn--swap:hover { background-color: rgba(255, 255, 255, 0.2); }
+.btn--swap:active { transform: scale(0.97); }
+
+.btn__icon-slot,
+.btn__label {
+  transition: transform 0.4s var(--ease-out);
+}
+
+.btn__icon-slot svg {
+  width: 26px;
+  height: 26px;
+  display: block;
+  transition: transform 0.4s var(--ease-out);
+}
+
+.btn--swap:hover .btn__icon-slot,
+.btn--swap:focus-visible .btn__icon-slot {
+  transform: translateX(var(--icon-shift, 0px));
+}
+.btn--swap:hover .btn__label,
+.btn--swap:focus-visible .btn__label {
+  transform: translateX(calc(-1 * var(--label-shift, 0px)));
+}
+.btn--swap:hover .btn__icon-slot svg,
+.btn--swap:focus-visible .btn__icon-slot svg {
+  transform: rotate(45deg);
+}
+
+.cta-merge__footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 1.75rem;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+  padding-inline: var(--section-pad-x);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--neutral-50);
+  opacity: 0.85;
+}
+
+.cta-merge__clock { text-align: right; }
+
+.cta-merge__legal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.25rem;
+}
+
+.cta-merge__legal a,
+.cta-merge__legal button {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--neutral-50);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.cta-merge__legal a:hover,
+.cta-merge__legal button:hover { opacity: 0.65; }
+
+@media (max-width: 640px) {
+  .cta-merge__footer { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .cta-merge__clock { text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn__icon-slot,
+  .btn__label,
+  .btn__icon-slot svg { transition: none; }
+}
+
+/* ==========================================================================
+   Contact overlay — slide-in panel from the right, dimmed/blurred backdrop
+   ========================================================================== */
+
+.contact-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  visibility: hidden;
+}
+
+.contact-overlay.is-open { visibility: visible; }
+
+.contact-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-out);
+}
+
+.contact-overlay.is-open .contact-overlay__backdrop { opacity: 1; }
+
+.contact-overlay__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(480px, 100vw);
+  overflow-y: auto;
+  background-color: var(--bg-elevated);
+  border-left: 1px solid var(--border-subtle);
+  padding: clamp(2rem, 5vw, 3rem);
+  transform: translateX(100%);
+  transition: transform 0.45s var(--ease-out);
+  /* Let vertical scroll (the form is often taller than the viewport) pass
+     through untouched; horizontal drags are claimed by the swipe-to-close
+     pointer handlers in main.js — same split as the portfolio carousel. */
+  touch-action: pan-y;
+}
+
+.contact-overlay.is-open .contact-overlay__panel { transform: translateX(0); }
+
+/* Active drag — 1:1 pointer tracking (see main.js) needs the transform to
+   apply instantly, not animate through the 0.45s open/close transition
+   above; gsap's release-time tween takes back over once the drag ends. */
+.contact-overlay__panel.is-dragging { transition: none; }
+
+.contact-overlay__close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, transform 0.1s ease-out;
+}
+.contact-overlay__close:hover { border-color: var(--accent-500); color: var(--accent-400); }
+.contact-overlay__close:active { transform: scale(0.92); }
+
+.contact-overlay__title {
+  font-family: var(--font-sans);
+  font-size: clamp(1.5rem, 3vw, 1.875rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-top: 0.75rem;
+}
+
+.contact-overlay__support {
+  color: var(--text-secondary);
+  margin-top: 0.75rem;
+  line-height: 1.6;
+}
+
+.contact-overlay__direct {
+  margin-top: 1rem;
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+}
+.contact-overlay__direct a { color: var(--accent-400); }
+.contact-overlay__direct a:hover { text-decoration: underline; }
+.contact-overlay__direct span { margin: 0 0.5rem; opacity: 0.5; }
+
+.contact-overlay .contact__form { margin-top: 2rem; }
+
+@media (max-width: 640px) {
+  .contact-overlay__panel { width: 100vw; border-left: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-overlay__backdrop,
+  .contact-overlay__panel { transition: none; }
+}
+
+/* ==========================================================================
+   Contact form (shared — used inside the contact overlay)
+   ========================================================================== */
+
+.contact__form { display: flex; flex-direction: column; gap: 1.25rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+.form-group label { font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); }
+
+.form-group input,
+.form-group textarea {
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.875rem 1rem;
+  transition: border-color 0.2s;
+}
+.form-group input:focus,
+.form-group textarea:focus { outline: none; border-color: var(--accent-500); }
+.form-group textarea { min-height: 140px; resize: vertical; }
+
+.form-status { font-size: 0.875rem; min-height: 1.25rem; }
+.form-status--success { color: var(--success-500); }
+.form-status--error { color: var(--danger-500); }
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+.footer {
+  padding: 3rem var(--section-pad-x);
+  border-top: 1px solid var(--border-subtle);
+  background-color: var(--bg-base);
+}
+
+.footer__inner {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.footer__logo { font-weight: 700; font-size: 1rem; }
+.footer__nav { display: flex; gap: 1.5rem; }
+.footer__nav a { font-size: 0.875rem; color: var(--text-secondary); transition: color 0.2s; }
+.footer__nav a:hover { color: var(--accent-400); }
+.footer__copy { width: 100%; font-size: 0.8125rem; color: var(--text-secondary); margin-top: 0.5rem; }
+
+/* ==========================================================================
+   Fade-in on view (IntersectionObserver)
+   ========================================================================== */
+
+.fade-in-view {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+}
+.fade-in-view.is-visible { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in-view { opacity: 1; transform: none; transition: none; }
+}
+
+/* ==========================================================================
+   Cookie consent banner
+   ========================================================================== */
+
+.consent-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+  background-color: rgba(0, 0, 0, 0.97);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-lg);
+}
+
+.consent-banner[hidden] {
+  display: none;
+}
+
+.consent-banner__inner {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding: 1.5rem var(--section-pad-x);
+}
+
+.consent-banner__title {
+  font-weight: 700;
+  font-size: 1.0625rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.consent-banner__text {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 68ch;
+  margin-bottom: 1.25rem;
+}
+
+.consent-banner__categories {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-elevated);
+}
+
+.consent-banner__categories[hidden] {
+  display: none;
+}
+
+.consent-banner__category {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.consent-banner__category input {
+  margin-top: 0.2rem;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--accent-500);
+}
+
+.consent-banner__category strong {
+  color: var(--text-primary);
+}
+
+.consent-banner__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.consent-banner__actions[hidden] {
+  display: none;
+}
+
+/*
+ * All three primary choices (and the "save selection" confirm button) share this one
+ * neutral button style deliberately — none of them uses the site's --accent CTA
+ * treatment, so no option is visually favored over another.
+ */
+.consent-banner__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease-out), background-color 0.2s var(--ease-out);
+}
+
+.consent-banner__btn:hover,
+.consent-banner__btn:focus-visible {
+  border-color: var(--accent-500);
+  background-color: var(--neutral-800);
+}
+
+/* Footer "Cookie-Einstellungen" trigger — styled to match the surrounding footer links */
+.footer__nav button[data-open-consent-settings] {
+  font: inherit;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.footer__nav button[data-open-consent-settings]:hover {
+  color: var(--accent-400);
+}
+
+/* Placeholder shown in place of the Google Maps embed until consent is granted */
+.consent-embed-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  text-align: center;
+  padding: 1.5rem;
+  background-color: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.consent-embed-placeholder[hidden] {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .consent-banner__actions {
+    flex-direction: column;
+  }
+
+  .consent-banner__btn {
+    width: 100%;
+  }
+}
+
+/* ==========================================================================
+   Reduced transparency / increased contrast — every surface above that
+   relies on backdrop-filter for its "floating glass" look. Users with this
+   OS setting on get the same layered structure at a near-solid background
+   instead, so hierarchy still reads once blur is turned off.
+   ========================================================================== */
+
+@media (prefers-reduced-transparency: reduce) {
+  .nav__pill,
+  .nav__links {
+    background-color: rgba(10, 10, 12, 0.96);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .btn--swap {
+    background-color: rgba(40, 40, 44, 0.92);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .contact-overlay__backdrop {
+    background-color: rgba(0, 0, 0, 0.92);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .consent-banner {
+    background-color: rgba(0, 0, 0, 1);
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .nav__pill {
+    background-color: #000;
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+  .btn--swap {
+    background-color: #000;
+    border-color: #fff;
+  }
+  .contact-overlay__panel {
+    border-left-width: 2px;
+  }
+  .contact-overlay__close {
+    border-width: 2px;
+  }
+}

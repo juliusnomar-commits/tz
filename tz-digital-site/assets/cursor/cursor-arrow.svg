@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 24 24">
+  <!-- Source of truth for cursor-arrow.png / cursor-arrow@2x.png. Rasterize
+       with sips in "format png" mode at the target pixel size if this ever
+       changes. Do NOT use "qlmanage -t" — it frames SVGs in an opaque
+       white QuickLook card instead of preserving transparency (that was
+       the "white box around the cursor" bug). Filled black with a white
+       border, per reference. -->
+  <path d="M4.037 4.688a.495.495 0 0 1 .651-.651l16 6.5a.5.5 0 0 1-.063.947l-6.124 1.58a2 2 0 0 0-1.438 1.435l-1.579 6.126a.5.5 0 0 1-.947.063z"
+    fill="#000000" stroke="#ffffff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>

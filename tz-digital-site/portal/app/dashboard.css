@@ -72,6 +72,7 @@
 .dash-task-icon{width:21px;height:21px;border:1px solid #7b61ff;border-radius:50%;flex:none;margin-top:2px;color:var(--accent-light);font-size:13px;text-align:center;line-height:19px}
 .dash-task-icon.is-done{background:#252042}
 .dash-task-copy strong{display:block;font-size:15px;font-weight:600}
+.dash-task-copy a{color:#fff;text-decoration:none}.dash-task-copy a:hover{color:var(--accent-light);text-decoration:underline}
 .dash-task-copy span{display:block;color:var(--muted);font-size:12px;margin-top:3px}
 .dash-empty-inline{color:var(--muted);font-size:14px;padding:17px 0;margin:0}
 .dash-activity-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:24px}

@@ -38,15 +38,17 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const data: DashboardData = { organization, projects, activeProject, tasks: [], milestones: [], activity: [], reviews: [], fileCount: 0 }
   if (activeProject) {
     const projectId = activeProject.id
-    const [taskResult, milestoneResult, activityResult, reviewResult, fileResult] = await Promise.all([
+    const [taskResult, milestoneResult, activityResult, reviewResult, fileResult, intakeResult] = await Promise.all([
       supabase.from('portal_tasks').select('id, title, owner_type, status, due_at').eq('project_id', projectId).order('due_at', { ascending: true, nullsFirst: false }),
       supabase.from('portal_milestones').select('id, title, status, window_label, position').eq('project_id', projectId).order('position'),
       supabase.from('portal_activity').select('id, title, detail, actor_type, created_at').eq('project_id', projectId).order('created_at', { ascending: false }).limit(8),
       supabase.from('portal_review_rounds').select('id, title, status, due_at').eq('project_id', projectId).order('created_at', { ascending: false }).limit(3),
       supabase.from('portal_file_records').select('id', { count: 'exact', head: true }).eq('project_id', projectId),
+      supabase.from('portal_project_intakes').select('status').eq('project_id', projectId).maybeSingle(),
     ])
-    for (const result of [taskResult, milestoneResult, activityResult, reviewResult, fileResult]) if (result.error) throw result.error
+    for (const result of [taskResult, milestoneResult, activityResult, reviewResult, fileResult, intakeResult]) if (result.error) throw result.error
     data.tasks = (taskResult.data ?? []) as DashboardTask[]
+    if (activeProject.service === 'website') data.tasks.unshift({ id: `intake-${projectId}`, title: 'Complete your website intake', owner_type: 'client', status: ['submitted', 'accepted'].includes(intakeResult.data?.status ?? '') ? 'done' : 'waiting_client', due_at: null, href: `/projects/${projectId}/intake` })
     data.milestones = (milestoneResult.data ?? []) as DashboardMilestone[]
     data.activity = (activityResult.data ?? []) as DashboardActivity[]
     data.reviews = (reviewResult.data ?? []) as DashboardReview[]

@@ -17,6 +17,7 @@ export type DashboardTask = {
   owner_type: 'client' | 'agency' | 'external' | 'shared'
   status: string
   due_at: string | null
+  href?: string
 }
 
 export type DashboardMilestone = {

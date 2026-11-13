@@ -11,7 +11,7 @@ The login action validates the ID, throttles attempts per ID, IP, and pair throu
 ## Setup
 
 1. Create a **non-production** Supabase project for Preview.
-2. Apply the SQL files in `supabase/migrations/` in filename order through the reviewed migration workflow. The second migration adds dashboard milestones, activity, review summaries, and file metadata.
+2. Apply the SQL files in `supabase/migrations/` in filename order through the reviewed migration workflow. The second migration adds dashboard records; the third adds website intake and a private `portal-intake` Storage bucket.
 3. In Supabase Auth settings, disable public sign-up. Configure the Preview site URL and allowed redirects. Do not configure preview with production data or service keys.
 4. Install dependencies with `npm install` in this directory.
 5. Set `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and a random 32+ character `PORTAL_LOGIN_HASH_SECRET` in the local shell or `.env.local`. Keep the service key out of client code and Git.
@@ -19,4 +19,8 @@ The login action validates the ID, throttles attempts per ID, IP, and pair throu
 
 The dashboard reads projects, milestones, tasks, review rounds, file counts, and client-visible activity through tenant-scoped Supabase policies. It supports switching between authorized projects, and clearly distinguishes client and agency work. The timeline and launch window are displayed as agency-provided estimates; the scheduling engine is not part of this dashboard slice.
 
-For visual review, run `npm run dev` and open `/demo`. That route uses synthetic data and returns 404 in production builds. It does not exercise authentication or Supabase. The app has no seeded clients or credentials. The supplied static site is not connected to this app yet. Agency provisioning UI, uploads, comment handling, and CMS actions require later workflow work and a configured Preview backend.
+Every website project has a real “Complete your website intake” task. Clients can save answers as drafts, then submit business information, legal/footer inputs, an optional Our Story section, and a design brief. The task becomes complete when the intake is submitted. The footer-link suggestions are planning prompts, not automatically published legal text. TZ Digital must review business-specific legal pages before launch.
+
+Clients can drop brand images and existing legal PDFs/images into the intake. Uploads use short-lived signed upload tokens, a private Storage bucket, tenant/project-scoped object paths, and authenticated download links. Images are never auto-published. Uploads are limited to JPG, PNG, WebP, or PDF under 10 MB; the brand-image area accepts images only. The API checks project membership and edit role before creating uploads or changing answers. To exercise save/submit/upload end to end, run this app with the three migrations and all four environment variables against a local or isolated Supabase project.
+
+For visual review, run `npm run dev` and open `/demo`, then follow the intake task to `/demo/intake`. Those routes use synthetic data and return 404 in production builds. They do not save, upload, or exercise authentication. The app has no seeded clients or credentials. The supplied static site is not connected to this app yet. Agency provisioning UI, comment handling, and CMS actions require later workflow work.

@@ -5,7 +5,7 @@ import { type DashboardData, formatDate, statusLabel } from '@/lib/dashboard'
 function TaskItem({ task, timezone }: { task: DashboardData['tasks'][number], timezone: string }) {
   return <li className="dash-task">
     <span className={`dash-task-icon ${task.status === 'done' ? 'is-done' : ''}`} aria-hidden="true">{task.status === 'done' ? '✓' : ''}</span>
-    <div className="dash-task-copy"><strong>{task.title}</strong><span>{statusLabel(task.status)}{task.due_at && task.status !== 'done' ? ` · Requested by ${formatDate(task.due_at, timezone)}` : ''}</span></div>
+    <div className="dash-task-copy"><strong>{task.href ? <a href={task.href}>{task.title} ↗</a> : task.title}</strong><span>{statusLabel(task.status)}{task.due_at && task.status !== 'done' ? ` · Requested by ${formatDate(task.due_at, timezone)}` : ''}</span></div>
   </li>
 }
 
@@ -35,7 +35,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
 
       {!project ? <section className="dash-no-project"><span className="eyebrow accent">WORKSPACE READY</span><h2>Your first project will appear here.</h2><p>Your TZ Digital team is setting things up. When they add your project, this page will show its next action, timeline, tasks, and updates.</p><a href="https://tz-digital.de/#kontakt">Contact your team <span aria-hidden="true">↗</span></a></section> : <>
         <section className={`dash-action ${needsYou ? 'needs-you' : ''}`} aria-labelledby="next-action-title">
-          <div className="dash-action-icon" aria-hidden="true">↗</div><div className="dash-action-main"><span className="eyebrow">{needsYou ? 'NEXT ACTION FOR YOU' : 'CURRENT STATUS'}</span><h2 id="next-action-title">{nextAction ? nextAction.title : activeReview ? `Review ${activeReview.title}` : 'You’re all caught up.'}</h2><p>{nextAction ? `Your input helps us move to ${project.next_milestone ?? 'the next milestone'}.` : activeReview ? 'Your feedback is needed before we continue with the next revision.' : 'Your TZ Digital team is working on the next step. We’ll update this space when we need you.'}</p></div><a className="dash-action-link" href={nextAction ? '#your-tasks' : activeReview ? '#review' : '#activity'}>{needsYou ? 'See details' : 'See updates'} <span aria-hidden="true">↗</span></a>
+          <div className="dash-action-icon" aria-hidden="true">↗</div><div className="dash-action-main"><span className="eyebrow">{needsYou ? 'NEXT ACTION FOR YOU' : 'CURRENT STATUS'}</span><h2 id="next-action-title">{nextAction ? nextAction.title : activeReview ? `Review ${activeReview.title}` : 'You’re all caught up.'}</h2><p>{nextAction ? `Your input helps us move to ${project.next_milestone ?? 'the next milestone'}.` : activeReview ? 'Your feedback is needed before we continue with the next revision.' : 'Your TZ Digital team is working on the next step. We’ll update this space when we need you.'}</p></div><a className="dash-action-link" href={nextAction?.href ?? (nextAction ? '#your-tasks' : activeReview ? '#review' : '#activity')}>{nextAction?.href ? 'Open task' : needsYou ? 'See details' : 'See updates'} <span aria-hidden="true">↗</span></a>
         </section>
 
         <section className="dash-project-summary" aria-labelledby="project-title">

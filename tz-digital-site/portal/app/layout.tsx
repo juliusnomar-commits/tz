@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './portal.css'
+import './dashboard.css'
 
 export const metadata: Metadata = {
   title: 'Client Portal | TZ Digital',

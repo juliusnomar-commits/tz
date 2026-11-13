@@ -26,8 +26,8 @@ export async function login(form: FormData) {
   ])
   if (checks.some(({ data, error }) => error || !data)) redirect('/login?error=1')
 
-  const { data: loginId } = await admin.from('portal_login_ids').select('auth_user_id').eq('login_id', clientId).maybeSingle()
-  const email = loginId ? `client-${clientId}@tz-digital.de` : `missing-${createHash('sha256').update(clientId).digest('hex').slice(0, 16)}@tz-digital.de`
+  const { data: loginId } = await admin.from('portal_login_ids').select('auth_user_id, auth_email').eq('login_id', clientId).maybeSingle()
+  const email = loginId?.auth_email ?? `missing-${createHash('sha256').update(clientId).digest('hex').slice(0, 16)}@tz-digital.de`
   const supabase = await userClient()
   const { data, error } = await supabase.auth.signInWithPassword({ email, password })
   const user = data.user

@@ -17,6 +17,7 @@ create index portal_memberships_user_idx on public.portal_memberships(user_id);
 create table public.portal_login_ids (
   login_id text primary key check (login_id ~ '^[0-9]{6}$'),
   auth_user_id uuid not null unique references auth.users(id) on delete cascade,
+  auth_email text not null unique,
   created_at timestamptz not null default now()
 );
 revoke all on public.portal_login_ids from anon, authenticated;

@@ -1,14 +1,13 @@
-import { notFound } from 'next/navigation'
 import { DashboardView } from '@/app/dashboard/dashboard-view'
 import type { DashboardData } from '@/lib/dashboard'
 
 export const dynamic = 'force-dynamic'
 
-const project: DashboardData['activeProject'] = { id: 'preview-project', tenant_id: 'preview-tenant', name: 'Northstar Coffee website', service: 'website', status: 'waiting_on_client', summary: 'A new digital home for the neighborhood coffee shop.', next_milestone: 'First design draft', target_window: 'Early December 2026', project_timezone: 'Europe/Berlin', updated_at: '2026-11-13T10:00:00Z' }
+const project: DashboardData['activeProject'] = { id: 'preview-project', tenant_id: 'preview-tenant', name: 'The Roundabout website', service: 'website', status: 'waiting_on_client', summary: 'A visual review example for the Maastricht website.', next_milestone: 'First design draft', target_window: 'Example only', project_timezone: 'Europe/Amsterdam', updated_at: '2026-11-13T10:00:00Z' }
 
 const previewData: DashboardData = {
   demo: true,
-  organization: 'Northstar Coffee',
+  organization: 'The Roundabout',
   projects: [project!],
   activeProject: project,
   milestones: [
@@ -36,6 +35,5 @@ const previewData: DashboardData = {
 }
 
 export default function Demo() {
-  if (process.env.NODE_ENV !== 'development') notFound()
   return <DashboardView data={previewData} />
 }

@@ -9,7 +9,36 @@ export const intakeFields = [
 export type IntakeField = typeof intakeFields[number]
 export type IntakeAnswers = Record<IntakeField, string>
 export type IntakeStatus = 'draft' | 'submitted' | 'changes_requested' | 'accepted'
+export type IntakeSection = 'legal' | 'business' | 'story' | 'design' | 'files'
+export type SectionStatuses = Partial<Record<IntakeSection, 'submitted'>>
 export type IntakeFile = { id: string; display_name: string; category: 'brand' | 'legal' | 'project'; mime_type: string | null; byte_size: number | null; uploaded_at: string }
+
+export const sectionFields: Record<IntakeSection, readonly IntakeField[]> = {
+  legal: ['country','legalName','tradingName','legalForm','representative','streetAddress','postalCode','city','registrationNumber','registrationAuthority','vatId','regulator','publicEmail','publicPhone','privacyContact','dataCollected','thirdPartyTools','cookiesAnalytics','existingPrivacyUrl','existingImprintUrl','existingTermsUrl','termsNeeded','footerLinks'],
+  business: ['businessHours','businessDescription','services','audience','serviceArea','primaryContact','existingWebsite','socialLinks'],
+  story: ['storyEnabled','storyText','storyMilestones','storyFounder'],
+  design: ['designFeel','designColors','designAvoid','designExamples','designPriorities','designFeatures','designNotes'],
+  files: [],
+}
+
+export const requiredFields: { section: IntakeSection; key: IntakeField; label: string }[] = [
+  { section: 'legal', key: 'country', label: 'business country' },
+  { section: 'legal', key: 'legalName', label: 'legal business name' },
+  { section: 'legal', key: 'streetAddress', label: 'business address' },
+  { section: 'legal', key: 'postalCode', label: 'postal code' },
+  { section: 'legal', key: 'city', label: 'city' },
+  { section: 'legal', key: 'publicEmail', label: 'public email' },
+  { section: 'business', key: 'businessDescription', label: 'business description' },
+  { section: 'business', key: 'services', label: 'services or products' },
+  { section: 'design', key: 'designFeel', label: 'site feeling' },
+  { section: 'design', key: 'designPriorities', label: 'visitor priority' },
+]
+
+export function progress(answers: IntakeAnswers) {
+  const fields = [...requiredFields]
+  if (answers.storyEnabled === 'yes') fields.push({ section: 'story', key: 'storyText', label: 'Our Story text' })
+  return { complete: fields.filter(field => field.key === 'publicEmail' ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(answers.publicEmail.trim()) : Boolean(answers[field.key].trim())).length, total: fields.length }
+}
 
 export function emptyAnswers(): IntakeAnswers {
   return Object.fromEntries(intakeFields.map(key => [key, ''])) as IntakeAnswers
@@ -37,14 +66,19 @@ export function parseAnswers(input: unknown): IntakeAnswers {
   return answers
 }
 
+export function validateSection(answers: IntakeAnswers, section: IntakeSection) {
+  if (!Object.hasOwn(sectionFields, section)) throw new Error('Unknown section')
+  const fields = requiredFields.filter(field => field.section === section)
+  if (section === 'story' && answers.storyEnabled === 'yes') fields.push({ section: 'story', key: 'storyText', label: 'Our Story text' })
+  const missing = fields.filter(({ key }) => !answers[key]).map(({ label }) => label)
+  if (missing.length) throw new Error(`Please add: ${missing.join(', ')}.`)
+  if (section === 'legal' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(answers.publicEmail)) throw new Error('Enter a valid public email address')
+}
+
 export function validateSubmission(answers: IntakeAnswers) {
-  const required: { key: IntakeField; label: string }[] = [
-    { key: 'country', label: 'business country' }, { key: 'legalName', label: 'legal business name' },
-    { key: 'streetAddress', label: 'business address' }, { key: 'postalCode', label: 'postal code' },
-    { key: 'city', label: 'city' }, { key: 'publicEmail', label: 'public email' },
-    { key: 'businessDescription', label: 'business description' }, { key: 'services', label: 'services or products' },
-  ]
-  const missing = required.filter(({ key }) => !answers[key]).map(({ label }) => label)
+  const fields = [...requiredFields]
+  if (answers.storyEnabled === 'yes') fields.push({ section: 'story', key: 'storyText', label: 'Our Story text' })
+  const missing = fields.filter(field => !answers[field.key].trim()).map(field => field.label)
   if (missing.length) throw new Error(`Please add: ${missing.join(', ')}.`)
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(answers.publicEmail)) throw new Error('Enter a valid public email address')
 }

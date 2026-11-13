@@ -18,6 +18,7 @@ export type DashboardTask = {
   status: string
   due_at: string | null
   href?: string
+  progressPercent?: number
 }
 
 export type DashboardMilestone = {

@@ -19,7 +19,7 @@ const previewData: DashboardData = {
     { id: 'm5', title: 'Launch', status: 'upcoming', window_label: 'After approval', position: 5 },
   ],
   tasks: [
-    { id: 't1', title: 'Complete your website intake', owner_type: 'client', status: 'waiting_client', due_at: '2026-11-18T17:00:00Z', href: '/demo/intake' },
+    { id: 't1', title: 'Complete your website intake', owner_type: 'client', status: 'waiting_client', due_at: '2026-11-18T17:00:00Z', href: '/demo/intake', progressPercent: 60 },
     { id: 't2', title: 'Approve the content brief', owner_type: 'client', status: 'todo', due_at: '2026-11-20T17:00:00Z' },
     { id: 't3', title: 'Confirm business details', owner_type: 'client', status: 'done', due_at: null },
     { id: 't4', title: 'Plan page structure', owner_type: 'agency', status: 'done', due_at: null },

@@ -5,7 +5,7 @@ import { type DashboardData, formatDate, statusLabel } from '@/lib/dashboard'
 function TaskItem({ task, timezone }: { task: DashboardData['tasks'][number], timezone: string }) {
   return <li className="dash-task">
     <span className={`dash-task-icon ${task.status === 'done' ? 'is-done' : ''}`} aria-hidden="true">{task.status === 'done' ? '✓' : ''}</span>
-    <div className="dash-task-copy"><strong>{task.href ? <a href={task.href}>{task.title} ↗</a> : task.title}</strong><span>{statusLabel(task.status)}{task.due_at && task.status !== 'done' ? ` · Requested by ${formatDate(task.due_at, timezone)}` : ''}</span></div>
+    <div className="dash-task-copy"><strong>{task.href ? <a href={task.href}>{task.title} ↗</a> : task.title}</strong><span>{statusLabel(task.status)}{task.progressPercent !== undefined ? ` · ${task.progressPercent}% ready` : ''}{task.due_at && task.status !== 'done' ? ` · Requested by ${formatDate(task.due_at, timezone)}` : ''}</span>{task.progressPercent !== undefined && <div className="dash-task-progress" role="progressbar" aria-label="Intake required answers completed" aria-valuemin={0} aria-valuemax={100} aria-valuenow={task.progressPercent}><i style={{ width: `${task.progressPercent}%` }} /></div>}</div>
   </li>
 }
 
@@ -42,6 +42,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
           <div className="dash-project-head"><div><span className="eyebrow">CURRENT PROJECT</span><h2 id="project-title">{project.name}</h2><p>{project.summary ?? 'Follow each step with your TZ Digital team.'}</p></div><span className="dash-status"><span className="dash-status-dot" aria-hidden="true" />{statusLabel(project.status)}</span></div>
           {projects.length > 1 && <form method="get" action="/dashboard" className="dash-project-switch"><label htmlFor="project-picker">Switch project</label><select id="project-picker" name="project" defaultValue={project.id}>{projects.map(item => <option value={item.id} key={item.id}>{item.name}</option>)}</select><button type="submit">View</button></form>}
           <div className="dash-project-meta"><span>{project.service.toUpperCase()} PROJECT</span><span>{organization}</span><span>Updated {formatDate(project.updated_at, timezone)}</span></div>
+          {project.service === 'website' && <div className="dash-project-tools"><a href={data.demo ? '/demo/intake' : `/projects/${project.id}/intake`}>Website intake ↗</a><a href={data.demo ? '/demo/content' : `/projects/${project.id}/content`}>Edit website content ↗</a></div>}
         </section>
 
         <div className="dash-section-grid"><section className="dash-timeline" id="milestones" aria-labelledby="timeline-title"><div className="dash-section-heading"><div><span className="eyebrow accent">THE ROAD AHEAD</span><h2 id="timeline-title">Project timeline</h2></div><span>{milestones.length.toString().padStart(2, '0')} STEPS</span></div>

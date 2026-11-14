@@ -2,6 +2,12 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function proxy(request: NextRequest) {
+  const path = request.nextUrl.pathname
+  if (path === '/' || path.endsWith('.html') || path === '/sitemap.xml' || path === '/robots.txt') {
+    const response = NextResponse.next({ request })
+    if (request.nextUrl.hostname.endsWith('.vercel.app')) response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive')
+    return response
+  }
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
   if (!url || !key) {

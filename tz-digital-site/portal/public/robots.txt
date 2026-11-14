@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tz-digital.de/sitemap.xml

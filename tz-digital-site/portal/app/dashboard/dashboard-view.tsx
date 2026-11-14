@@ -23,7 +23,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
   return <main className="dash-app" id="overview">
     <header className="dash-header">
       <a className="brand dash-brand" href="/dashboard" aria-label="TZ Digital client portal home"><Image src="/tz-mark.png" width={34} height={34} alt="" /><span>TZ <b>Digital</b></span></a>
-      <nav aria-label="Portal navigation" className="dash-nav"><a href="#overview" aria-current="page">Overview</a><a href="#milestones">Timeline</a><a href="#tasks">Tasks</a><a href="#activity">Updates</a></nav>
+      <nav aria-label="Portal navigation" className="dash-nav"><a href="#overview" aria-current="page">Overview</a><a href="#milestones">Timeline</a><a href="#tasks">Tasks</a><a href="#activity">Updates</a><a href="/">Website ↗</a></nav>
       {data.demo ? <a className="dash-signout" href="/login">Exit preview <span aria-hidden="true">↗</span></a> : <form action={logout}><button className="dash-signout" type="submit">Sign out <span aria-hidden="true">↗</span></button></form>}
     </header>
 
@@ -33,7 +33,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
       <div className="dash-topline"><span className="eyebrow accent">CLIENT WORKSPACE / {organization.toUpperCase()}</span><span className="eyebrow">YOUR PROJECT, ALL IN ONE PLACE</span></div>
       <div className="dash-intro"><div><h1>Good to have<br />you here<span className="dot">.</span></h1><p>One place for your project, decisions, and next steps.</p></div><div className="dash-issue-number" aria-hidden="true">01<span>/</span>TZ</div></div>
 
-      {!project ? <section className="dash-no-project"><span className="eyebrow accent">WORKSPACE READY</span><h2>Your first project will appear here.</h2><p>Your TZ Digital team is setting things up. When they add your project, this page will show its next action, timeline, tasks, and updates.</p><a href="https://tz-digital.de/#kontakt">Contact your team <span aria-hidden="true">↗</span></a></section> : <>
+      {!project ? <section className="dash-no-project"><span className="eyebrow accent">WORKSPACE READY</span><h2>Your first project will appear here.</h2><p>Your TZ Digital team is setting things up. When they add your project, this page will show its next action, timeline, tasks, and updates.</p><a href="/#kontakt">Contact your team <span aria-hidden="true">↗</span></a></section> : <>
         <section className={`dash-action ${needsYou ? 'needs-you' : ''}`} aria-labelledby="next-action-title">
           <div className="dash-action-icon" aria-hidden="true">↗</div><div className="dash-action-main"><span className="eyebrow">{needsYou ? 'NEXT ACTION FOR YOU' : 'CURRENT STATUS'}</span><h2 id="next-action-title">{nextAction ? nextAction.title : activeReview ? `Review ${activeReview.title}` : 'You’re all caught up.'}</h2><p>{nextAction ? `Your input helps us move to ${project.next_milestone ?? 'the next milestone'}.` : activeReview ? 'Your feedback is needed before we continue with the next revision.' : 'Your TZ Digital team is working on the next step. We’ll update this space when we need you.'}</p></div><a className="dash-action-link" href={nextAction?.href ?? (nextAction ? '#your-tasks' : activeReview ? '#review' : '#activity')}>{nextAction?.href ? 'Open task' : needsYou ? 'See details' : 'See updates'} <span aria-hidden="true">↗</span></a>
         </section>
@@ -55,7 +55,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
 
         <section className="dash-activity" id="activity" aria-labelledby="activity-title"><div className="dash-section-heading"><div><span className="eyebrow accent">STAY IN THE LOOP</span><h2 id="activity-title">Latest updates</h2></div><span>PROJECT ACTIVITY</span></div>{activity.length ? <ol className="dash-activity-list">{activity.map(item => <li key={item.id}><span className="dash-activity-marker" aria-hidden="true"/><div><span className="eyebrow">{item.actor_type.toUpperCase()} · {formatDate(item.created_at, timezone)}</span><h3>{item.title}</h3>{item.detail && <p>{item.detail}</p>}</div></li>)}</ol> : <p className="dash-empty-inline">Project updates will appear here as work progresses.</p>}</section>
       </>}
-      <footer className="dash-footer"><span>TZ DIGITAL · CLIENT PORTAL</span><a href="https://tz-digital.de/#kontakt">Need help? Contact your team ↗</a></footer>
+      <footer className="dash-footer"><span>TZ DIGITAL · CLIENT PORTAL</span><a href="/#kontakt">Need help? Contact your team ↗</a></footer>
     </div>
   </main>
 }

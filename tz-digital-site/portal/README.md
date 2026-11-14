@@ -1,6 +1,6 @@
 # TZ Digital Client Portal — foundation
 
-The public site remains in the parent directory. This isolated Next.js app is intended for a protected Preview deployment and, later, a dedicated portal host. It uses the German site's real Inter font, black surfaces, and violet accent. No public navigation link has been added.
+The production app serves the original German TZ Digital website at `/`, including its static subpages and assets. The original files remain in the parent directory and `npm run build` syncs them into `public/`. A matching “Kundenportal” link on the site opens `/login`; the dashboard, intake, and visual editor stay on their portal routes. Until Supabase is configured, login shows a link to the clearly labeled synthetic Roundabout demo.
 
 ## Customer access
 

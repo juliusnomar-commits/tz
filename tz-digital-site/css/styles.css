@@ -432,6 +432,7 @@ ul {
      carries the active/hover state, text doesn't dim in between. */
   color: #fff;
 }
+.nav__links .nav__portal-link { color: var(--accent-300, #bba8ff); font-weight: 700; }
 
 /* Third pill, standing apart from the logo/links pills — a solid-fill
    accent button so "Kontakt" reads as the CTA, same role as cuberto.com's
@@ -728,12 +729,15 @@ ul {
     letter-spacing: -0.02em;
     color: var(--bg-base);
   }
+  .nav__links .nav__portal-link { color: var(--bg-base); }
   .nav__links a::after { display: none; }
 
   /* Overlay-only row: the Kontakt link — same band treatment as the
      plain links above, just reusing the CTA class for now-unused color
      override (both already resolve to the same dark ink here). */
   .nav__links-mobile-only { display: list-item; }
+  .nav--open .nav__links li:nth-child(5) { transition-delay: 0.34s; }
+  .nav:not(.nav--open) .nav__links li:nth-child(5) { transition-delay: 0s; }
 
   .nav__links-cta {
     font-weight: 700;

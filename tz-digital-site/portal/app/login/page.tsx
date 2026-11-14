@@ -7,27 +7,29 @@ export default async function Login({ searchParams }: { searchParams: Promise<{ 
   return <main className="login-layout">
     <section className="login-intro">
       <a className="brand" href="/"><Image src="/tz-mark.png" width={42} height={42} alt="" /><span>TZ <b>Digital</b></span></a>
-      <div className="intro-copy"><span className="eyebrow">CLIENT PORTAL / 01</span><h1>Everything moving.<br /><em>All in one place.</em></h1><p>See what comes next, share what we need, and follow your project from first brief to launch.</p></div>
-      <div className="intro-foot">A clearer way to build together. <span>↗</span></div>
+      <div className="intro-copy"><span className="eyebrow">TZ DIGITAL / CLIENT SPACE</span><h1>Your website.<br /><em>In your hands.</em></h1><p>See your project take shape, share what matters, and review every detail in one calm space.</p></div>
+      <div className="login-showcase" aria-hidden="true"><div className="login-showcase-top"><span>THE ROUNDABOUT / EXAMPLE PROJECT</span><span>↗</span></div><div className="login-showcase-image"><Image src="/roundabout-demo-terrace.jpg" alt="" width={600} height={270} /><span>YOUR SITE, IN VIEW.</span></div><div className="login-showcase-bottom"><span><b>01</b> Share the details</span><span><b>02</b> Review the design</span><span><b>03</b> Send feedback</span></div></div>
+      <div className="intro-foot">Built with you, every step of the way. <span>© TZ DIGITAL</span></div>
     </section>
     <section className="login-panel">
-      <div className="login-top">PRIVATE ACCESS <span>↗</span></div>
+      <div className="login-top">SECURE CLIENT ACCESS <span>↗</span></div>
       <div className="login-content">
-        <span className="eyebrow accent">WELCOME BACK</span>
-        <h2>Sign in to<br />your space.</h2>
-        <p className="muted">{accessReady ? 'Use the six-digit client ID and password your TZ Digital team gave you.' : 'Customer access is being set up. Explore the Roundabout example while the portal is configured.'}</p>
-        {accessReady ? <form action={login} className="login-form">
-          <label htmlFor="client-id">Client ID</label>
-          <input id="client-id" name="clientId" type="text" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} minLength={6} autoComplete="username" placeholder="000000" required />
+        <span className="eyebrow accent">WELCOME TO YOUR SPACE</span>
+        <h2>Welcome to<br />your space.</h2>
+        <p className="muted">Enter the six-digit ID and password from TZ Digital. No account setup needed.</p>
+        <form action={login} className="login-form">
+          <label htmlFor="client-id">Your six-digit client ID</label>
+          <input id="client-id" name="clientId" type="text" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} minLength={6} autoComplete="username" placeholder="e.g. 146069" required />
           <label htmlFor="password">Password</label>
-          <input id="password" name="password" type="password" autoComplete="current-password" required />
-          {error && <p className="form-error" role="alert">We couldn’t sign you in. Check your ID and password, or contact your TZ Digital team.</p>}
-          <button type="submit">Open client portal <span>↗</span></button>
-        </form> : <p className="help"><a href="/demo">Open the interactive demo ↗</a></p>}
-        {accessReady && <p className="help">Need access or a new password? <a href="/#kontakt">Contact your TZ Digital team</a>.</p>}
-        <p className="help"><a href="/">← Zurück zur TZ Digital Website</a></p>
+          <input id="password" name="password" type="password" autoComplete="current-password" placeholder="Enter your password" required />
+          {error && <p className="form-error" role="alert">That ID and password did not match. Check the details and try again.</p>}
+          <button type="submit">Enter client portal <span>↗</span></button>
+        </form>
+        <div className="login-demo-card"><span className="login-demo-label">TRY THE ROUNDABOUT EXAMPLE</span><p>Use the sample details to explore the client experience.</p><div><span>Client ID <strong>146069</strong></span><span>Password <strong>RoundaboutDemo26!</strong></span></div></div>
+        <p className="help">{accessReady ? 'Need access or a new password?' : 'Your real client login will be available once your project is connected.'} {accessReady && <a href="/#kontakt">Contact TZ Digital</a>}</p>
+        <p className="help login-back"><a href="/">← Back to TZ Digital</a></p>
       </div>
-      <div className="login-bottom">YOUR PROJECT, ALL IN ONE PLACE <span>© TZ DIGITAL</span></div>
+      <div className="login-bottom">A CLEARER WAY TO BUILD TOGETHER <span>© TZ DIGITAL</span></div>
     </section>
   </main>
 }

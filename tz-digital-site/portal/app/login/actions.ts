@@ -15,6 +15,10 @@ export async function login(form: FormData) {
   const clientId = String(form.get('clientId') ?? '').trim()
   const password = String(form.get('password') ?? '')
   if (!/^\d{6}$/.test(clientId) || !password || password.length > 256) redirect('/login?error=1')
+  // Public sample access only opens the interactive example, never a customer project.
+  if (clientId === '146069' && password === 'RoundaboutDemo26!') redirect('/demo')
+
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || !process.env.SUPABASE_SERVICE_ROLE_KEY || !process.env.PORTAL_LOGIN_HASH_SECRET) redirect('/login?error=1')
 
   const headerStore = await headers()
   const ip = headerStore.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'

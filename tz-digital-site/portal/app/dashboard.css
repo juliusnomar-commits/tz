@@ -93,3 +93,48 @@
 @media(max-width:1000px){.dash-section-grid{grid-template-columns:1fr;margin-top:38px}.dash-side{grid-template-columns:1fr 1fr}.dash-header{grid-template-columns:1fr auto}.dash-nav{grid-column:1/-1;grid-row:2;justify-content:space-between;border-top:1px solid var(--line);height:48px}.dash-header{height:auto;padding-top:17px}.dash-intro{padding-bottom:43px}}
 @media(max-width:680px){.dash-header{padding:17px 20px 0;gap:14px}.dash-brand{font-size:19px}.dash-nav{gap:15px;overflow-x:auto}.dash-nav a{font-size:12px}.dash-signout{padding:8px 12px}.dash-signout span{display:none}.dash-body{padding:32px 20px}.dash-topline .eyebrow:last-child{display:none}.dash-intro{padding:34px 0}.dash-intro h1{font-size:clamp(57px,14vw,88px)}.dash-issue-number{display:none}.dash-project-head{display:block}.dash-status{margin-top:25px}.dash-project-meta{margin-top:35px;gap:12px 22px}.dash-action{grid-template-columns:43px 1fr;gap:16px;padding:21px;margin:0 0 20px}.dash-action-icon{width:43px;height:43px;font-size:23px}.dash-action-link{grid-column:1/-1;justify-content:space-between}.dash-section-heading h2{font-size:30px}.dash-section-heading>span{display:none}.dash-side{grid-template-columns:1fr 1fr}.dash-mini{padding:20px;min-height:190px}.dash-mini h3{font-size:22px}.dash-responsibility-grid{grid-template-columns:1fr;gap:35px}.dash-activity-list{grid-template-columns:1fr;gap:21px}.dash-footer{display:block}.dash-footer a{display:block;margin-top:12px}}
 @media(max-width:450px){.dash-side{grid-template-columns:1fr}.dash-mini{min-height:155px}.dash-timeline,.dash-responsibilities,.dash-activity{padding:22px}.dash-milestone{grid-template-columns:40px 1fr;gap:10px}.dash-milestone-index{height:37px;width:37px}.dash-milestone:not(:last-child)::after{left:18px;top:46px}.dash-milestone-state{display:none}.dash-timeline-foot{grid-template-columns:1fr}.dash-intro h1{font-size:62px}}
+
+/* Editorial dashboard refinement */
+.dash-app{background:radial-gradient(circle at 52% -15%,#171128 0,#050507 34%,#000 68%)}
+.dash-header .portal-pill-action{background:#7b61ff;border-color:#7b61ff;color:#fff}
+.dash-header .portal-pill-action:hover{background:#6c5ce7;border-color:#6c5ce7}
+.dash-body{padding-top:25px}
+.dash-topline{border-color:#ffffff24}
+.dash-intro{align-items:center;padding:42px 0 43px}
+.dash-intro h1{font-size:clamp(58px,6.1vw,90px);line-height:.96;margin-bottom:16px;max-width:760px}
+.dash-intro-em{color:#bba8ff}
+.dash-intro p{font-size:17px;line-height:1.5}
+.dash-overview-note{width:min(320px,32vw);border:1px solid #514765;border-radius:18px;padding:25px 27px;background:linear-gradient(145deg,#241c34,#0c0b0f 78%);box-shadow:0 15px 45px #0005}
+.dash-overview-note strong{display:block;font-size:23px;line-height:1.15;letter-spacing:-.04em;margin:14px 0 22px}
+.dash-overview-progress{height:5px;background:#3a3445;border-radius:99px;overflow:hidden}
+.dash-overview-progress i{display:block;height:100%;background:#bba8ff;border-radius:99px}
+.dash-overview-note small{display:block;margin-top:11px;color:#aca4b6;font-size:11px}
+.dash-action{border-radius:20px;grid-template-columns:56px minmax(0,1fr) auto;padding:27px 30px;margin-bottom:20px;background:#16131d}
+.dash-action.needs-you{background:linear-gradient(108deg,#342451,#21182c 52%,#121018 100%);border-color:#76609e;box-shadow:0 15px 50px #26133b33}
+.dash-action-icon{width:54px;height:54px;background:#bd9fff;color:#170e25;font-size:27px}
+.dash-action-main .eyebrow{color:#cdb6f8}
+.dash-action-main h2{font-size:clamp(22px,2.3vw,32px);margin:7px 0}
+.dash-action-link{background:#e9dcff;border-color:#e9dcff;border-radius:999px;padding:11px 17px 11px 20px;color:#1b102b;box-shadow:0 8px 20px #0004}
+.dash-action-link:hover{background:#fff;border-color:#fff;transform:translateY(-2px)}
+.dash-project-summary{position:relative;border-radius:22px;background:linear-gradient(130deg,#16121e,#0d0c10 70%);border-color:#50465e;padding:clamp(28px,3.5vw,48px)}
+.dash-project-summary.is-demo{min-height:330px}
+.dash-project-summary.is-demo .dash-project-head,.dash-project-summary.is-demo .dash-project-meta,.dash-project-summary.is-demo .dash-project-tools{position:relative;z-index:2;max-width:62%}
+.dash-project-art{position:absolute;right:0;top:0;bottom:0;width:43%;overflow:hidden;border-radius:0 21px 21px 0}
+.dash-project-art::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#15111d 0,transparent 38%),linear-gradient(0deg,#0c0b10b8,transparent 48%)}
+.dash-project-art img{width:100%;height:100%;object-fit:cover;filter:saturate(.75) brightness(.8)}
+.dash-project-art span{position:absolute;z-index:1;right:25px;bottom:22px;color:#fff;font-size:10px;font-weight:700;letter-spacing:.15em}
+.dash-project-head h2{font-size:clamp(35px,3.6vw,57px)}
+.dash-project-head p{font-size:14px;line-height:1.5}
+.dash-project-meta{margin-top:40px;border-color:#ffffff30}
+.dash-project-tools{margin-top:25px}
+.dash-project-tools a{border:1px solid #a891d7;border-radius:999px;background:#e2d3ff;color:#20162a;padding:12px 17px;font-size:12px;transition:background .2s,transform .2s}
+.dash-project-tools a:first-child{background:#251d31;color:#efddff;border-color:#766090}
+.dash-project-tools a:hover,.dash-project-tools a:first-child:hover{background:#fff;color:#211429;transform:translateY(-2px)}
+.dash-timeline,.dash-mini,.dash-responsibilities,.dash-activity{border-color:#3c3644;background:#0f0e12;border-radius:20px}
+.dash-mini{background:radial-gradient(circle at 100% 0,#261b38,#0f0e12 64%)}
+.dash-milestone-index{border-color:#5a4f67}
+.dash-task-icon{border-color:#ad95df}
+.dash-task-progress i{background:#bba8ff}
+.dash-footer{border-top:1px solid #292430;margin-top:60px}
+@media(max-width:1000px){.dash-overview-note{width:290px}.dash-project-summary.is-demo .dash-project-head,.dash-project-summary.is-demo .dash-project-meta,.dash-project-summary.is-demo .dash-project-tools{max-width:66%}}
+@media(max-width:680px){.dash-body{padding-top:23px}.dash-intro{display:block;padding:32px 0}.dash-intro h1{font-size:clamp(49px,11vw,72px)}.dash-overview-note{width:100%;margin-top:28px}.dash-action{grid-template-columns:44px 1fr;gap:15px;padding:22px}.dash-action-icon{width:44px;height:44px}.dash-action-link{grid-column:1/-1}.dash-project-summary.is-demo{padding-bottom:210px}.dash-project-summary.is-demo .dash-project-head,.dash-project-summary.is-demo .dash-project-meta,.dash-project-summary.is-demo .dash-project-tools{max-width:100%}.dash-project-art{width:100%;height:190px;top:auto;border-radius:0 0 21px 21px}.dash-project-art::after{background:linear-gradient(0deg,#0c0b10c9,transparent 70%)}.dash-project-meta{margin-top:32px}.dash-project-head h2{font-size:38px}}

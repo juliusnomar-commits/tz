@@ -12,3 +12,13 @@
 @media(max-width:650px){.intake-body{padding-top:32px}.intake-heading h1{font-size:clamp(47px,11vw,70px)}.intake-grid,.intake-upload-grid{grid-template-columns:1fr}.intake-card{padding:23px}.intake-actions{grid-template-columns:1fr}.intake-header>a:last-child{font-size:11px}}
 @media(max-width:650px){.intake-section-actions{align-items:stretch;flex-direction:column}.intake-section-actions button{width:100%}}
 @media(prefers-reduced-motion:reduce){.intake-progress-track>span{transition:none}}
+
+/* Refined intake controls */
+.intake-card,.intake-sidebar{border-radius:20px;border-color:#393140}
+.intake-section-actions button,.intake-actions button,.intake-cms-link{border-radius:999px;transition:background .2s,transform .2s,border-color .2s}
+.intake-section-actions button:hover:not(:disabled),.intake-actions button:hover:not(:disabled),.intake-cms-link:hover{transform:translateY(-2px)}
+.intake-section-actions button,.intake-submit{background:#decaff;border-color:#decaff;color:#21152d}
+.intake-section-actions button:hover:not(:disabled),.intake-submit:hover:not(:disabled){background:#fff;border-color:#fff}
+.intake-save{border-color:#a78bc9}
+.intake-jump a{border-radius:999px}
+.intake-choice label{border-radius:13px}

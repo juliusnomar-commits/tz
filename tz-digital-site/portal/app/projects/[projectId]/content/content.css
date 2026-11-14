@@ -89,3 +89,19 @@
 @media(max-width:1350px){.cms-workspace{grid-template-columns:170px minmax(0,1fr)}.cms-inspector{grid-column:2}.cms-site-title{font-size:clamp(50px,6.4vw,76px)}}
 @media(max-width:800px){.cms-workspace{grid-template-columns:1fr}.cms-inspector{grid-column:1}.cms-site-story-grid{grid-template-columns:1fr}.cms-site-title{font-size:clamp(45px,8vw,72px)}}
 @media(max-width:520px){.cms-preview-stage{padding:5px}.cms-preview-stage.is-mobile{padding:10px}.cms-site-nav-links{display:none}.cms-site-menu{display:block}.cms-site-content{padding:85px 22px 70px}.cms-site-details{grid-template-columns:1fr}.cms-site-details>div{border-right:0;border-bottom:1px solid #ffffff24}.cms-site-story,.cms-site-gallery,.cms-site-visit{padding:45px 23px}.cms-site-gallery-grid{grid-template-columns:1fr;height:auto}.cms-site-gallery-grid img,.cms-site-gallery-placeholder{height:200px}.cms-site-visit-grid{grid-template-columns:1fr}.cms-site-footer{display:grid;padding:28px 23px}.cms-site-title{font-size:clamp(42px,10vw,58px)}}
+
+/* Portal action controls */
+.cms-tools button,.cms-field-choices button,.cms-device-switch button{border-radius:999px}
+.cms-tools button{padding:10px 15px;background:#17131e;border-color:#5a4b6c}
+.cms-tools button:hover,.cms-field-choices button:hover{border-color:#b59ae2;background:#2b203e}
+.cms-tools button.active,.cms-field-choices button.active{background:#dbc9ff;color:#21152d;border-color:#dbc9ff}
+.cms-device-switch{border-radius:999px}
+.cms-device-switch button{padding:8px 15px}
+.cms-add-pin{border-radius:999px;background:#362550;border-color:#a481d5}
+.cms-add-pin:hover{background:#5d3b85}
+.cms-add-pin.active{background:#decaff;color:#1f112d}
+.cms-inspector .cms-actions button{border-radius:999px;transition:background .2s,transform .2s}
+.cms-inspector .cms-actions button:hover:not(:disabled){transform:translateY(-2px)}
+.cms-inspector .cms-primary{background:#decaff;border-color:#decaff;color:#1f142b}
+.cms-inspector .cms-primary:hover{background:#fff;border-color:#fff}
+.cms-inspector .cms-secondary{border-color:#8e75b6}

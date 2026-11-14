@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import { useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { emptyAnswers, progress, sectionFields, validateSection, validateSubmission, type IntakeAnswers, type IntakeField, type IntakeFile, type IntakeSection, type IntakeStatus, type SectionStatuses } from '@/lib/intake'
@@ -90,7 +89,7 @@ export function IntakeView({ projectId, projectName, initialAnswers, initialStat
   const links = [answers.country === 'Netherlands' ? 'Company details' : 'Impressum / company information', 'Privacy policy', answers.cookiesAnalytics === 'yes' && 'Cookie settings / declaration', answers.termsNeeded === 'yes' && 'Terms & conditions'].filter(Boolean)
 
   return <main className="intake-app">
-    <header className="intake-header"><a className="brand" href={preview ? '/demo' : '/dashboard'}><Image src="/tz-mark.png" width={32} height={32} alt="" /><span>TZ <b>Digital</b></span></a><a href={preview ? '/demo' : '/dashboard'}>← Back to dashboard</a></header>
+    <header className="intake-header portal-pill-header"><a className="portal-pill-logo" href={preview ? '/demo' : '/dashboard'}><span>TZ</span> Digital</a><nav className="portal-pill-links" aria-label="Portal navigation"><a href={preview ? '/demo' : '/dashboard'}>Dashboard</a><a href={preview ? '/demo/intake' : `/projects/${projectId}/intake`} aria-current="page">Website intake</a><a href={preview ? '/demo/content' : `/projects/${projectId}/content`}>Site review</a></nav><a className="portal-pill-action" href="/">TZ Digital site ↗</a></header>
     {preview && <div className="dash-demo-banner">Preview with synthetic data · Input is not saved</div>}
     <div className="intake-body"><div className="intake-heading"><span className="eyebrow accent">YOUR WEBSITE / PROJECT INTAKE</span><h1>Tell us what makes<br />your business <em>yours.</em></h1><p>Share the details we need for your site, footer links and design. Required answers are marked. Optional sections can be skipped. Send each section as you finish it, or submit everything together.</p><div className="intake-meta"><span>{projectName}</span><span className={`intake-status is-${status}`}>{status.replaceAll('_', ' ')}</span></div><div className="intake-progress-head"><strong>{percent}% ready</strong><span>{requiredProgress.complete} of {requiredProgress.total} required answers</span></div><div className="intake-progress-track" role="progressbar" aria-label="Required answers completed" aria-valuenow={requiredProgress.complete} aria-valuemin={0} aria-valuemax={requiredProgress.total}><span style={{ width: `${percent}%` }} /></div></div>
       <nav className="intake-jump" aria-label="Intake sections">{(['legal','business','story','design','files'] as const).map((key,index) => <a href={`#${key}`} key={key} className={sectionStatuses[key] === 'submitted' ? 'is-sent' : ''}>{String(index+1).padStart(2,'0')} {({legal:'Legal & footer',business:'Business basics',story:'Our Story',design:'Design direction',files:'Images & files'} as const)[key]} {sectionStatuses[key] === 'submitted' ? '✓' : ''}</a>)}</nav>

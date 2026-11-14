@@ -19,26 +19,28 @@ export function DashboardView({ data }: { data: DashboardData }) {
   const nextAction = pendingClient[0]
   const needsYou = Boolean(nextAction || activeReview)
   const currentMilestone = milestones.find(item => item.status === 'current') ?? milestones.find(item => item.status === 'upcoming')
+  const completedMilestones = milestones.filter(item => item.status === 'complete').length
+  const progress = milestones.length ? Math.round(completedMilestones / milestones.length * 100) : 0
 
   return <main className="dash-app" id="overview">
-    <header className="dash-header">
-      <a className="brand dash-brand" href="/dashboard" aria-label="TZ Digital client portal home"><Image src="/tz-mark.png" width={34} height={34} alt="" /><span>TZ <b>Digital</b></span></a>
-      <nav aria-label="Portal navigation" className="dash-nav"><a href="#overview" aria-current="page">Overview</a><a href="#milestones">Timeline</a><a href="#tasks">Tasks</a><a href="#activity">Updates</a><a href="/">Website ↗</a></nav>
-      {data.demo ? <a className="dash-signout" href="/login">Exit preview <span aria-hidden="true">↗</span></a> : <form action={logout}><button className="dash-signout" type="submit">Sign out <span aria-hidden="true">↗</span></button></form>}
+    <header className="dash-header portal-pill-header">
+      <a className="portal-pill-logo" href="/dashboard" aria-label="TZ Digital client portal home"><span>TZ</span> Digital</a>
+      <nav aria-label="Portal navigation" className="dash-nav portal-pill-links"><a href="#overview" aria-current="page">Overview</a><a href="#milestones">Timeline</a><a href="#tasks">Tasks</a><a href="#activity">Updates</a><a href="/">Website ↗</a></nav>
+      <div className="portal-pill-side">{data.demo ? <a className="dash-signout portal-pill-action" href="/login">Exit preview <span aria-hidden="true">↗</span></a> : <form action={logout}><button className="dash-signout portal-pill-action" type="submit">Sign out <span aria-hidden="true">↗</span></button></form>}</div>
     </header>
 
     {data.demo && <div className="dash-demo-banner" role="note">Preview with synthetic data · No customer information is shown</div>}
 
     <div className="dash-body">
       <div className="dash-topline"><span className="eyebrow accent">CLIENT WORKSPACE / {organization.toUpperCase()}</span><span className="eyebrow">YOUR PROJECT, ALL IN ONE PLACE</span></div>
-      <div className="dash-intro"><div><h1>Good to have<br />you here<span className="dot">.</span></h1><p>One place for your project, decisions, and next steps.</p></div><div className="dash-issue-number" aria-hidden="true">01<span>/</span>TZ</div></div>
+      <div className="dash-intro"><div><h1>Your project,<br /><span className="dash-intro-em">in motion.</span></h1><p>Everything you need to move the website forward.</p></div><div className="dash-overview-note"><span className="eyebrow accent">CURRENT PHASE</span><strong>{currentMilestone?.title ?? 'Getting started'}</strong><div className="dash-overview-progress"><i style={{ width: `${progress}%` }} /></div><small>{completedMilestones} of {milestones.length} milestones complete</small></div></div>
 
       {!project ? <section className="dash-no-project"><span className="eyebrow accent">WORKSPACE READY</span><h2>Your first project will appear here.</h2><p>Your TZ Digital team is setting things up. When they add your project, this page will show its next action, timeline, tasks, and updates.</p><a href="/#kontakt">Contact your team <span aria-hidden="true">↗</span></a></section> : <>
         <section className={`dash-action ${needsYou ? 'needs-you' : ''}`} aria-labelledby="next-action-title">
           <div className="dash-action-icon" aria-hidden="true">↗</div><div className="dash-action-main"><span className="eyebrow">{needsYou ? 'NEXT ACTION FOR YOU' : 'CURRENT STATUS'}</span><h2 id="next-action-title">{nextAction ? nextAction.title : activeReview ? `Review ${activeReview.title}` : 'You’re all caught up.'}</h2><p>{nextAction ? `Your input helps us move to ${project.next_milestone ?? 'the next milestone'}.` : activeReview ? 'Your feedback is needed before we continue with the next revision.' : 'Your TZ Digital team is working on the next step. We’ll update this space when we need you.'}</p></div><a className="dash-action-link" href={nextAction?.href ?? (nextAction ? '#your-tasks' : activeReview ? '#review' : '#activity')}>{nextAction?.href ? 'Open task' : needsYou ? 'See details' : 'See updates'} <span aria-hidden="true">↗</span></a>
         </section>
 
-        <section className="dash-project-summary" aria-labelledby="project-title">
+        <section className={`dash-project-summary ${data.demo ? 'is-demo' : ''}`} aria-labelledby="project-title">{data.demo && <div className="dash-project-art" aria-hidden="true"><Image src="/roundabout-demo-terrace.jpg" width={800} height={620} alt="" /><span>THE ROUNDABOUT / MAASTRICHT</span></div>}
           <div className="dash-project-head"><div><span className="eyebrow">CURRENT PROJECT</span><h2 id="project-title">{project.name}</h2><p>{project.summary ?? 'Follow each step with your TZ Digital team.'}</p></div><span className="dash-status"><span className="dash-status-dot" aria-hidden="true" />{statusLabel(project.status)}</span></div>
           {projects.length > 1 && <form method="get" action="/dashboard" className="dash-project-switch"><label htmlFor="project-picker">Switch project</label><select id="project-picker" name="project" defaultValue={project.id}>{projects.map(item => <option value={item.id} key={item.id}>{item.name}</option>)}</select><button type="submit">View</button></form>}
           <div className="dash-project-meta"><span>{project.service.toUpperCase()} PROJECT</span><span>{organization}</span><span>Updated {formatDate(project.updated_at, timezone)}</span></div>

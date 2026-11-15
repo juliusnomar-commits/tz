@@ -62,8 +62,7 @@
       if (key) { event.preventDefault(); event.stopPropagation(); send('select', { kind: mode, key }); }
     }
   }, true);
-  window.addEventListener('load', () => {
-    send('ready');
-    const timer = setInterval(() => { if (configured) clearInterval(timer); else send('ready'); }, 1000);
-  });
+  send('ready');
+  const timer = setInterval(() => { if (configured) clearInterval(timer); else send('ready'); }, 1000);
+  window.addEventListener('load', () => { if (configured) prepare(); else send('ready'); });
 })();

@@ -3,6 +3,7 @@ import { adminClient } from '@/lib/supabase'
 import { parseVisualPins } from '@/lib/content'
 import { projectAccess } from '@/lib/project-access'
 import { siteProfile, sitePage, validateSiteChanges, validateSiteColors, validateSiteImages } from '@/lib/site-profiles'
+import { CATO_PROJECT_ID, writeLivePage } from '@/lib/cato-live'
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params
@@ -17,7 +18,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const page = sitePage(profile, pageKey)
     if (!page) throw new Error('Choose a valid page')
     const intent = body.intent
-    if (!['save', 'submit', 'approve'].includes(intent)) throw new Error('Unknown action')
+    if (!['save', 'submit', 'approve', 'publish'].includes(intent)) throw new Error('Unknown action')
     const isAgency = access.role.startsWith('agency_')
     if (intent === 'approve' && !isAgency) return NextResponse.json({ error: 'Only TZ Digital can approve changes' }, { status: 403 })
     const changes = validateSiteChanges(profile, pageKey, body.changes)
@@ -39,6 +40,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       if (!fileId) continue
       const { data: file, error: fileError } = await db.from('portal_file_records').select('id, mime_type').eq('id', fileId).eq('project_id', projectId).eq('tenant_id', access.project.tenant_id).eq('category', 'brand').maybeSingle()
       if (fileError || !file?.mime_type?.startsWith('image/')) throw new Error('Choose an image from this project')
+    }
+    if (intent === 'publish') {
+      if (projectId !== CATO_PROJECT_ID || profile.key !== 'cato') return NextResponse.json({ error: 'Live publishing is unavailable for this site' }, { status: 403 })
+      await writeLivePage(pageKey, { changes, images, colors })
+      return NextResponse.json({ published: true, publishedAt: new Date().toISOString() })
     }
     if (snapshotPath) {
       const { data: capture, error: captureError } = await db.storage.from('portal-intake').info(snapshotPath)

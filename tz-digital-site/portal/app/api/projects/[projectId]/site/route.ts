@@ -42,7 +42,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
     if (snapshotPath) {
       const { data: capture, error: captureError } = await db.storage.from('portal-intake').info(snapshotPath)
-      if (captureError || !capture || capture.metadata?.mimetype !== 'image/jpeg' || Number(capture.metadata?.size) > 10 * 1024 * 1024) throw new Error('Page capture upload is missing or invalid')
+      const captureSize = Number(capture?.size)
+      if (captureError || !capture || capture.contentType !== 'image/jpeg' || !Number.isFinite(captureSize) || captureSize < 1 || captureSize > 10 * 1024 * 1024) throw new Error('Page capture upload is missing or invalid')
     }
     const { data: existing, error: lookupError } = await db.from('portal_site_pages').select('version, status, changes, images, colors, pins, submitted_at, snapshot_path, snapshot_device').eq('project_id', projectId).eq('page_key', pageKey).maybeSingle()
     if (lookupError) throw lookupError

@@ -41,8 +41,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const admin = adminClient()
     const { data: object, error: objectError } = await admin.storage.from(bucket).info(path)
     if (objectError || !object) throw new Error('Upload has not completed')
-    const mime = object.metadata?.mimetype ?? null
-    const size = Number(object.metadata?.size)
+    const mime = object.contentType ?? object.metadata?.mimetype ?? null
+    const size = Number(object.size ?? object.metadata?.size)
     if (!mime || !allowed.has(mime) || !Number.isFinite(size) || size < 1 || size > 10 * 1024 * 1024) throw new Error('Uploaded file is not allowed')
     if (allowed.get(mime) !== path.split('.').pop()) throw new Error('File type does not match')
     const { data: record, error } = await admin.from('portal_file_records').insert({ tenant_id: access.project.tenant_id, project_id: projectId, display_name: name.trim(), storage_path: path, category, mime_type: mime, byte_size: size }).select('id, display_name, category, mime_type, byte_size, uploaded_at').single()

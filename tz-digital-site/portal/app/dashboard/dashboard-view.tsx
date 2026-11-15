@@ -29,7 +29,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
       <div className="portal-pill-side">{data.demo ? <a className="dash-signout portal-pill-action" href="/login">Exit preview <span aria-hidden="true">↗</span></a> : <form action={logout}><button className="dash-signout portal-pill-action" type="submit">Sign out <span aria-hidden="true">↗</span></button></form>}</div>
     </header>
 
-    {data.demo && <div className="dash-demo-banner" role="note">Preview with synthetic data · No customer information is shown</div>}
+    {data.demo && <div className="dash-demo-banner" role="note">Preview with synthetic data · No customer information is shown · <a href="/demo/cato">Try the Cato site editor ↗</a></div>}
 
     <div className="dash-body">
       <div className="dash-topline"><span className="eyebrow accent">CLIENT WORKSPACE / {organization.toUpperCase()}</span><span className="eyebrow">YOUR PROJECT, ALL IN ONE PLACE</span></div>

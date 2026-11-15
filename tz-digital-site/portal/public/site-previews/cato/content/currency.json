@@ -1,0 +1,12 @@
+{
+  "notes": [
+    { "src": "images/currency-euro.jpg" },
+    { "src": "images/currency-dollar.png" },
+    { "src": "images/currency-franc.png" },
+    { "src": "images/currency-yen.jpg" },
+    { "src": "images/currency-rand.jpg" },
+    { "src": "images/currency-baht.jpg" },
+    { "src": "images/currency-kronor.jpg" },
+    { "src": "images/currency-riyal.jpg" }
+  ]
+}

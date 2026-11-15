@@ -17,8 +17,9 @@ export async function login(form: FormData) {
   if (!/^\d{6}$/.test(clientId) || !password || password.length > 256) redirect('/login?error=1')
   // Public sample access only opens the interactive example, never a customer project.
   if (clientId === '146069' && password === 'RoundaboutDemo26!') redirect('/demo')
+  if (clientId === '620314' && password === 'CatoPreview26!') redirect('/demo/cato')
 
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || !process.env.SUPABASE_SERVICE_ROLE_KEY || !process.env.PORTAL_LOGIN_HASH_SECRET) redirect('/login?error=1')
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || !(process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY) || !process.env.PORTAL_LOGIN_HASH_SECRET) redirect('/login?error=1')
 
   const headerStore = await headers()
   const ip = headerStore.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'

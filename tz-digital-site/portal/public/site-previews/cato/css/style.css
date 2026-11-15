@@ -1,0 +1,1506 @@
+/* ============================================================
+   CATO BY CATO — Main Stylesheet
+   ============================================================ */
+
+:root {
+  --teal:        #1C6E6E;
+  --teal-dark:   #134F4F;
+  --teal-light:  #E8F4F4;
+  --cream:       #FAF6EE;
+  --sand:        #E2C99A;
+  --yellow:      #F5C842;
+  --pink:        #E8A0A0;
+  --wood:        #8B6340;
+  --ink:         #1A1A18;
+  --muted:       #6B6560;
+}
+
+/* ---- Reset & Base ---- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  min-width: 320px;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  color: var(--ink);
+  background: var(--cream);
+  line-height: 1.6;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---- Typography ---- */
+h1, h2, h3, h4 {
+  font-family: 'Fraunces', serif;
+  line-height: 1.2;
+}
+
+.caveat {
+  font-family: 'Caveat', cursive;
+}
+
+/* ---- Navigation ---- */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 20px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.3s ease, padding 0.3s ease;
+}
+
+nav.scrolled {
+  background: var(--teal-dark);
+  padding: 14px 48px;
+}
+
+.nav-logo {
+  font-family: 'Fraunces', serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--cream);
+  letter-spacing: 0.02em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: 'Caveat', cursive;
+  font-size: 1.1rem;
+  color: var(--cream);
+  letter-spacing: 0.03em;
+  transition: opacity 0.2s;
+}
+
+.nav-links a:hover {
+  opacity: 0.75;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.lang-toggle {
+  font-family: 'Caveat', cursive;
+  font-size: 1rem;
+  color: var(--cream);
+  background: none;
+  border: 1px solid rgba(250,246,238,0.4);
+  padding: 4px 10px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: border-color 0.2s, opacity 0.2s;
+}
+
+.lang-toggle:hover {
+  border-color: var(--cream);
+  opacity: 0.85;
+}
+
+/* Hamburger */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--cream);
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+.hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Mobile nav overlay */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--teal);
+  z-index: 99;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-nav.open {
+  opacity: 1;
+}
+
+.mobile-nav a {
+  font-family: 'Fraunces', serif;
+  font-size: 2.5rem;
+  color: var(--cream);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: opacity 0.2s;
+}
+
+.mobile-nav a:hover {
+  opacity: 0.7;
+}
+
+.mobile-nav .lang-toggle {
+  font-size: 1.2rem;
+  margin-top: 16px;
+}
+
+/* ---- Hero (full viewport) ---- */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 560px;
+  background-color: var(--teal-dark);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  padding: 0 24px;
+}
+
+.hero-location {
+  font-family: 'Caveat', cursive;
+  font-size: 1.3rem;
+  color: var(--sand);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 700;
+  color: var(--cream);
+  max-width: 760px;
+  line-height: 1.15;
+  font-style: italic;
+}
+
+/* Sub-hero (contact page, non-image) */
+.hero-text-only {
+  background: var(--cream);
+  padding: 140px 48px 80px;
+  text-align: center;
+}
+
+.hero-text-only h1 {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  color: var(--teal-dark);
+}
+
+/* ---- Sections ---- */
+section {
+  padding: 96px 48px;
+}
+
+.section-inner {
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+/* ---- Bunting ---- */
+.bunting {
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  padding: 8px 0;
+  background: transparent;
+}
+
+.bunting svg {
+  display: block;
+  width: 100%;
+}
+
+/* ---- Polaroid ---- */
+.polaroid {
+  background: white;
+  padding: 12px 12px 32px 12px;
+  box-shadow: 3px 4px 14px rgba(0,0,0,0.18);
+  display: inline-block;
+}
+
+.polaroid img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  background: var(--sand);
+  min-height: 180px;
+}
+
+.polaroid:nth-child(odd)  { transform: rotate(-2deg); }
+.polaroid:nth-child(even) { transform: rotate(1.5deg); }
+.polaroid:nth-child(3n)   { transform: rotate(-1deg); }
+.polaroid:nth-child(4n)   { transform: rotate(2.5deg); }
+
+.polaroid:hover {
+  transform: rotate(0deg) scale(1.03);
+  transition: 0.2s ease;
+  z-index: 2;
+  position: relative;
+}
+
+.polaroid-caption {
+  font-family: 'Caveat', cursive;
+  font-size: 0.95rem;
+  color: var(--muted);
+  display: block;
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* ---- Two column grid ---- */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.two-col.reverse {
+  direction: rtl;
+}
+
+.two-col.reverse > * {
+  direction: ltr;
+}
+
+/* ---- About teaser (homepage) ---- */
+.about-teaser {
+  background: var(--cream);
+}
+
+.about-teaser h2 {
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  color: var(--teal-dark);
+  margin-bottom: 20px;
+}
+
+.about-teaser p {
+  font-size: 1.05rem;
+  color: var(--ink);
+  line-height: 1.75;
+  margin-bottom: 24px;
+}
+
+/* garden origin two-photo layout */
+.garden-origin-photos {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.garden-origin-photos .polaroid {
+  flex: 1 1 160px;
+}
+
+.garden-origin-photos .polaroid:nth-child(1) { transform: rotate(-2deg); }
+.garden-origin-photos .polaroid:nth-child(2) { transform: rotate(1.8deg); }
+
+/* 2×2 polaroid grid for who-are-we section */
+.about-polaroid-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.about-polaroid-grid .polaroid {
+  width: 100%;
+  transform: none;
+}
+
+.about-polaroid-grid .polaroid:nth-child(1) { transform: rotate(-2deg); }
+.about-polaroid-grid .polaroid:nth-child(2) { transform: rotate(1.5deg); }
+.about-polaroid-grid .polaroid:nth-child(3) { transform: rotate(1deg); }
+.about-polaroid-grid .polaroid:nth-child(4) { transform: rotate(-1.5deg); }
+
+.about-polaroid-grid .polaroid:hover {
+  transform: rotate(0deg) scale(1.03);
+  z-index: 2;
+  position: relative;
+  transition: 0.2s ease;
+}
+
+.text-link {
+  font-family: 'Caveat', cursive;
+  font-size: 1.2rem;
+  color: var(--teal);
+  border-bottom: 1px solid var(--teal);
+  padding-bottom: 2px;
+  transition: color 0.2s;
+}
+
+.text-link:hover {
+  color: var(--teal-dark);
+}
+
+/* ---- Restaurant teaser (homepage) ---- */
+.restaurant-teaser {
+  background: var(--teal-dark);
+  color: var(--cream);
+}
+
+.restaurant-teaser h2 {
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  color: var(--cream);
+  margin-bottom: 20px;
+}
+
+.restaurant-teaser p {
+  font-size: 1.05rem;
+  color: rgba(250,246,238,0.85);
+  line-height: 1.75;
+}
+
+/* ---- Catering teaser (homepage) ---- */
+.catering-teaser {
+  background: var(--sand);
+}
+
+.catering-teaser h2 {
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  color: var(--teal-dark);
+  margin-bottom: 20px;
+}
+
+.catering-teaser p {
+  font-size: 1.05rem;
+  color: var(--ink);
+  line-height: 1.75;
+}
+
+/* Instagram phone mockup */
+.phone-mockup {
+  width: 200px;
+  aspect-ratio: 9/16;
+  background: var(--ink);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+/* Full-column phone mockup for homepage restaurant teaser */
+.phone-mockup-fill {
+  width: 100%;
+  max-width: 340px;
+  aspect-ratio: 9/16;
+  background: var(--teal-dark);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 16px 56px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+.phone-mockup-bar {
+  background: var(--teal);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.phone-mockup-bar span {
+  font-family: 'Caveat', cursive;
+  color: var(--cream);
+  font-size: 0.9rem;
+}
+
+.phone-mockup-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--sand);
+  flex-shrink: 0;
+}
+
+.phone-mockup-body {
+  flex: 1;
+  background: var(--teal-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.phone-mockup-label {
+  font-family: 'Caveat', cursive;
+  color: rgba(250,246,238,0.6);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* ---- Restaurant page: How it works with side phone ---- */
+.how-with-phone {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.how-phone-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.how-phone-col .phone-mockup-large {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 9/16;
+  margin: 0 auto;
+}
+
+/* ---- Garden teaser (homepage) ---- */
+.garden-teaser {
+  background: var(--teal-light);
+}
+
+.garden-teaser h2 {
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  color: var(--teal-dark);
+  margin-bottom: 20px;
+}
+
+.garden-teaser p {
+  font-size: 1.05rem;
+  color: var(--ink);
+  line-height: 1.75;
+  margin-bottom: 24px;
+}
+
+.polaroid-grid {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+
+.polaroid-grid .polaroid {
+  flex: 1 1 200px;
+  max-width: 280px;
+}
+
+/* ---- Footer ---- */
+footer {
+  background: var(--teal-dark);
+  color: var(--cream);
+  padding: 56px 48px 32px;
+}
+
+.footer-inner {
+  max-width: 1140px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid rgba(250,246,238,0.15);
+}
+
+.footer-logo {
+  font-family: 'Fraunces', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--cream);
+}
+
+.footer-address {
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: rgba(250,246,238,0.8);
+  text-align: center;
+}
+
+.footer-social {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.footer-handle {
+  font-family: 'Caveat', cursive;
+  font-size: 1.1rem;
+  color: var(--sand);
+}
+
+.footer-bottom {
+  max-width: 1140px;
+  margin: 24px auto 0;
+  font-size: 0.8rem;
+  color: rgba(250,246,238,0.5);
+  font-family: 'Caveat', cursive;
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+/* ---- Restaurant page: How it works ---- */
+.how-section {
+  background: var(--cream);
+}
+
+.how-section h2 {
+  font-family: 'Caveat', cursive;
+  font-size: 1.5rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 56px;
+  text-transform: uppercase;
+}
+
+.how-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  max-width: 720px;
+}
+
+.how-step {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.step-num {
+  font-family: 'Caveat', cursive;
+  font-size: 3rem;
+  color: var(--teal);
+  line-height: 1;
+  padding-top: 4px;
+}
+
+.step-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.5rem;
+  color: var(--teal-dark);
+  margin-bottom: 8px;
+}
+
+.step-body {
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ---- Size cards ---- */
+.sizes-section {
+  background: var(--teal-light);
+}
+
+.sizes-section h2 {
+  font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+  color: var(--teal-dark);
+  margin-bottom: 48px;
+}
+
+.size-cards {
+  display: flex;
+  gap: 24px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.size-card {
+  background: var(--cream);
+  border: 2px solid var(--sand);
+  padding: 32px 28px;
+  flex: 1 1 180px;
+}
+
+.size-card:nth-child(1) {
+  padding-bottom: 28px;
+  max-width: 220px;
+}
+
+.size-card:nth-child(2) {
+  padding-bottom: 44px;
+  max-width: 260px;
+}
+
+.size-card:nth-child(3) {
+  padding-bottom: 60px;
+  max-width: 300px;
+}
+
+.size-label {
+  font-family: 'Caveat', cursive;
+  font-size: 1.8rem;
+  color: var(--teal);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.size-price {
+  font-family: 'Caveat', cursive;
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+/* ---- Stories section ---- */
+.stories-section {
+  background: var(--teal);
+  color: var(--cream);
+  text-align: center;
+}
+
+.stories-section h2 {
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  color: var(--cream);
+  margin-bottom: 16px;
+}
+
+.stories-section p {
+  color: rgba(250,246,238,0.85);
+  font-size: 1.05rem;
+  margin-bottom: 48px;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.phone-mockup-large {
+  width: 240px;
+  aspect-ratio: 9/16;
+  background: var(--ink);
+  border-radius: 32px;
+  overflow: hidden;
+  box-shadow: 0 16px 56px rgba(0,0,0,0.45);
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+/* ---- Catering page ---- */
+.catering-what {
+  background: var(--cream);
+}
+
+.catering-what-inner {
+  display: flex;
+  align-items: center;
+  gap: 64px;
+}
+
+.catering-what-inner .catering-what-polaroid + .catering-what-polaroid {
+  margin-left: -32px;
+}
+
+.catering-what-text {
+  flex: 1;
+}
+
+.catering-what-polaroid {
+  flex: 0 0 260px;
+  width: 260px;
+  transform: rotate(2deg);
+}
+
+.catering-what-polaroid-2 {
+  transform: rotate(-1.5deg);
+}
+
+.catering-what-polaroid .polaroid-placeholder {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--sand);
+  min-height: 180px;
+}
+
+.catering-what h2 {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  color: var(--teal-dark);
+  margin-bottom: 24px;
+}
+
+.catering-what p {
+  font-size: 1.1rem;
+  color: var(--ink);
+  line-height: 1.8;
+  max-width: 680px;
+}
+
+.cta-section {
+  background: var(--teal);
+  text-align: center;
+  padding: 96px 48px;
+}
+
+.cta-section h2 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  color: var(--cream);
+  margin-bottom: 16px;
+}
+
+.cta-section p {
+  color: rgba(250,246,238,0.85);
+  font-size: 1.1rem;
+  margin-bottom: 40px;
+}
+
+.btn-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #25D366;
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 16px 32px;
+  border-radius: 2px;
+  transition: filter 0.2s, transform 0.2s;
+}
+
+.btn-whatsapp:hover {
+  filter: brightness(0.92);
+  transform: translateY(-1px);
+}
+
+.btn-whatsapp svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.cta-note {
+  font-family: 'Caveat', cursive;
+  font-size: 1rem;
+  color: rgba(250,246,238,0.6);
+  margin-top: 20px;
+  display: block;
+}
+
+/* ---- Garden page ---- */
+.garden-origin {
+  background: var(--cream);
+}
+
+.garden-origin h2 {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  color: var(--teal-dark);
+  margin-bottom: 24px;
+}
+
+.garden-origin p {
+  font-size: 1.05rem;
+  color: var(--ink);
+  line-height: 1.8;
+}
+
+.garden-grows {
+  background: var(--teal-light);
+  text-align: center;
+}
+
+.garden-grows h2 {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  color: var(--teal-dark);
+  margin-bottom: 48px;
+}
+
+.journal-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px 28px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.journal-item {
+  font-family: 'Caveat', cursive;
+  font-size: 1.4rem;
+  color: var(--ink);
+  background: white;
+  border: 1px solid var(--sand);
+  padding: 8px 18px;
+  display: inline-block;
+}
+
+.journal-item:nth-child(1)  { transform: rotate(-2deg); }
+.journal-item:nth-child(2)  { transform: rotate(1deg);  }
+.journal-item:nth-child(3)  { transform: rotate(-1deg); }
+.journal-item:nth-child(4)  { transform: rotate(2deg);  }
+.journal-item:nth-child(5)  { transform: rotate(-1.5deg); }
+.journal-item:nth-child(6)  { transform: rotate(0.5deg); }
+.journal-item:nth-child(7)  { transform: rotate(-2.5deg); }
+.journal-item:nth-child(8)  { transform: rotate(1.5deg); }
+
+.garden-gallery {
+  background: var(--cream);
+  padding: 80px 48px;
+}
+
+.gallery-grid {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.gallery-grid .polaroid {
+  flex: 1 1 200px;
+  max-width: 260px;
+}
+
+.gallery-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  max-width: 1140px;
+  margin: 0 auto 40px;
+}
+
+.gallery-row:last-child {
+  margin-bottom: 0;
+}
+
+.gallery-row .polaroid {
+  width: 100%;
+}
+
+.polaroid-placeholder {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--sand);
+  min-height: 180px;
+  display: block;
+}
+
+.coming-soon-section {
+  background: var(--yellow);
+  text-align: center;
+}
+
+.coming-soon-section h2 {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  color: var(--ink);
+  margin-bottom: 20px;
+}
+
+.coming-soon-section p {
+  font-size: 1.05rem;
+  color: var(--ink);
+  line-height: 1.75;
+  max-width: 580px;
+  margin: 0 auto 40px;
+}
+
+.email-form {
+  display: flex;
+  gap: 0;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.email-form input {
+  flex: 1;
+  padding: 14px 18px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  border: 2px solid var(--ink);
+  border-right: none;
+  background: white;
+  outline: none;
+}
+
+.email-form button {
+  padding: 14px 24px;
+  background: var(--ink);
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  border: 2px solid var(--ink);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.email-form button:hover {
+  background: var(--teal-dark);
+  border-color: var(--teal-dark);
+}
+
+.brand-note {
+  font-family: 'Caveat', cursive;
+  font-size: 1.1rem;
+  color: var(--muted);
+  text-align: center;
+  padding: 32px 48px;
+  background: var(--cream);
+}
+
+/* ---- About page ---- */
+.family-section {
+  background: var(--cream);
+  text-align: center;
+}
+
+.family-cards {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.family-card {
+  flex: 1 1 240px;
+  max-width: 300px;
+}
+
+.family-card .polaroid {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.family-card .polaroid img {
+  aspect-ratio: 3/4;
+}
+
+.family-name {
+  font-family: 'Caveat', cursive;
+  font-size: 1.4rem;
+  color: var(--teal);
+  display: block;
+  margin-top: 16px;
+}
+
+.family-role {
+  font-family: 'Caveat', cursive;
+  font-size: 1rem;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.family-bio {
+  font-size: 0.95rem;
+  color: var(--ink);
+  line-height: 1.65;
+}
+
+/* ---- Story section ---- */
+.story-section {
+  background: var(--teal-light);
+  max-width: 100%;
+  padding: 96px 48px;
+}
+
+.story-inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.story-inner h2 {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  color: var(--teal-dark);
+  margin-bottom: 32px;
+}
+
+.story-inner p {
+  font-size: 1.1rem;
+  color: var(--ink);
+  line-height: 1.9;
+}
+
+.pullquote {
+  border-left: 4px solid var(--teal);
+  padding: 16px 32px;
+  margin: 48px 0;
+  text-align: center;
+}
+
+.pullquote p {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: clamp(1.3rem, 2.5vw, 1.9rem);
+  color: var(--teal-dark);
+  line-height: 1.4;
+}
+
+/* ---- Travel section ---- */
+.travel-section {
+  background: var(--cream);
+  overflow: hidden;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.travel-section .section-inner {
+  padding-left: 48px;
+  padding-right: 48px;
+}
+
+.travel-section h2 {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  color: var(--teal-dark);
+  margin-bottom: 16px;
+}
+
+.travel-section p {
+  font-size: 1rem;
+  color: var(--muted);
+  margin-bottom: 48px;
+}
+
+/* Full-width horizontal polaroid strip */
+#travel-photo-container,
+#travel-photo-container-2 {
+  width: 100%;
+}
+
+/* ---- Marquee (auto-scrolling strips) ---- */
+.marquee-outer {
+  overflow: hidden;
+  width: 100%;
+  padding: 20px 0;
+}
+
+.marquee-track {
+  display: flex;
+  gap: 24px;
+  width: max-content;
+  animation: marquee-scroll 40s linear infinite;
+  padding-left: 24px;
+}
+
+/* hover-pause removed intentionally */
+
+@keyframes marquee-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.garden-marquee-outer {
+  margin-bottom: 0;
+}
+
+/* when used inside sections with horizontal padding, break out */
+section .garden-marquee-outer {
+  margin-left: -48px;
+  margin-right: -48px;
+}
+
+.garden-marquee-track {
+  animation-duration: 13s;
+}
+
+.garden-teaser-marquee {
+  margin-left: -48px;
+  margin-right: -48px;
+  width: calc(100% + 96px);
+}
+
+.garden-marquee-track-rtl {
+  animation-name: marquee-scroll;
+  animation-duration: 26s;
+}
+
+.garden-marquee-track .polaroid {
+  flex: 0 0 220px;
+  width: 220px;
+}
+
+.travel-marquee-track {
+  animation-duration: 26s;
+}
+
+.travel-marquee-track-reverse {
+  animation-duration: 26s;
+  animation-name: marquee-scroll-reverse;
+}
+
+@keyframes marquee-scroll-reverse {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.travel-polaroid {
+  flex: 0 0 260px;
+  width: 260px;
+  transform: rotate(-1.5deg);
+}
+
+.travel-polaroid:nth-child(even) {
+  transform: rotate(1deg);
+}
+
+.travel-polaroid:nth-child(3n) {
+  transform: rotate(-0.5deg);
+}
+
+.travel-polaroid img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  background: var(--sand);
+  min-height: 160px;
+}
+
+.travel-caption {
+  display: block;
+  font-family: 'Caveat', cursive;
+  font-size: 1.1rem;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* ---- Dogs / Family Gallery section ---- */
+.gallery-section {
+  background: var(--teal-light);
+}
+
+.gallery-section h2 {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  color: var(--teal-dark);
+  margin-bottom: 16px;
+}
+
+.gallery-section p {
+  color: var(--muted);
+  font-size: 1rem;
+  margin-bottom: 48px;
+}
+
+.family-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 28px;
+}
+
+.family-gallery-grid .polaroid {
+  width: 100%;
+}
+
+.family-gallery-grid .polaroid img {
+  aspect-ratio: 4/3;
+}
+
+/* ---- Contact page ---- */
+.contact-info-section {
+  background: var(--cream);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  max-width: 1140px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+.contact-detail {
+  margin-bottom: 32px;
+}
+
+.contact-label {
+  font-family: 'Caveat', cursive;
+  font-size: 1rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.contact-value {
+  font-size: 1rem;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+.contact-value a {
+  color: var(--teal);
+}
+
+.contact-value a:hover {
+  text-decoration: underline;
+}
+
+.hours-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.hours-table td {
+  padding: 6px 0;
+  color: var(--ink);
+}
+
+.hours-table td:last-child {
+  text-align: right;
+  color: var(--muted);
+}
+
+.map-placeholder {
+  background: var(--teal-light);
+  border: 2px solid var(--teal);
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-placeholder span {
+  font-family: 'Caveat', cursive;
+  font-size: 1.2rem;
+  color: var(--muted);
+}
+
+/* ---- Instagram strip ---- */
+.instagram-strip {
+  background: var(--teal-dark);
+  text-align: center;
+  padding: 80px 48px;
+}
+
+.instagram-strip p {
+  font-size: 1rem;
+  color: rgba(250,246,238,0.75);
+  margin-bottom: 16px;
+}
+
+.instagram-handle {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2rem, 5vw, 4rem);
+  color: var(--cream);
+  font-weight: 700;
+  transition: opacity 0.2s;
+}
+
+.instagram-handle:hover {
+  opacity: 0.75;
+}
+
+/* ---- Fade-in animation ---- */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fade-in-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================================
+   RESPONSIVE — 768px breakpoint
+   ============================================================ */
+@media (max-width: 768px) {
+  nav {
+    padding: 18px 24px;
+  }
+
+  nav.scrolled {
+    padding: 14px 24px;
+  }
+
+  .nav-links,
+  .nav-right .lang-toggle {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .mobile-nav {
+    display: flex;
+  }
+
+  section {
+    padding: 64px 24px;
+  }
+
+  .two-col {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .two-col.reverse {
+    direction: ltr;
+  }
+
+  .footer-inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .footer-social {
+    align-items: center;
+  }
+
+  .footer-address {
+    text-align: center;
+  }
+
+  .size-cards {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .size-card:nth-child(1),
+  .size-card:nth-child(2),
+  .size-card:nth-child(3) {
+    max-width: 100%;
+    padding-bottom: 32px;
+  }
+
+  .how-step {
+    grid-template-columns: 60px 1fr;
+  }
+
+  .family-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .email-form {
+    flex-direction: column;
+  }
+
+  .email-form input {
+    border-right: 2px solid var(--ink);
+    border-bottom: none;
+  }
+
+  .hero-text-only {
+    padding: 120px 24px 60px;
+  }
+
+  .about-polaroid-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .how-with-phone {
+    grid-template-columns: 1fr;
+  }
+
+  .how-phone-col .phone-mockup-large {
+    max-width: 240px;
+  }
+
+  .travel-section .section-inner {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .gallery-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .garden-gallery {
+    padding: 48px 24px;
+  }
+
+  section .garden-marquee-outer {
+    margin-left: -24px;
+    margin-right: -24px;
+  }
+
+  .travel-polaroid {
+    flex: 0 0 220px;
+    width: 220px;
+  }
+
+  .family-gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .story-section {
+    padding: 64px 24px;
+  }
+
+  .cta-section {
+    padding: 64px 24px;
+  }
+
+  .instagram-strip {
+    padding: 60px 24px;
+  }
+}

@@ -25,7 +25,7 @@ export async function userClient() {
 
 export function adminClient(): SupabaseClient {
   const { url } = config()
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!key) throw new Error('Supabase service role key is missing')
+  const key = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!key) throw new Error('Supabase secret key is missing')
   return createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } })
 }

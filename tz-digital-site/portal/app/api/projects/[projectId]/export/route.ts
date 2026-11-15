@@ -4,6 +4,7 @@ import { contentPages, type ContentPageKey } from '@/lib/content'
 import { sectionFields, type IntakeAnswers, type IntakeSection } from '@/lib/intake'
 import { projectAccess } from '@/lib/project-access'
 import { createZip } from '@/lib/zip'
+import { siteProfile } from '@/lib/site-profiles'
 
 const encoder = new TextEncoder()
 const text = (value: string) => encoder.encode(value)
@@ -19,12 +20,13 @@ export async function GET(_request: Request, { params }: { params: Promise<{ pro
   if (!access) return NextResponse.json({ error: 'Project not found or sign-in required' }, { status: 404 })
   if (!access.role.startsWith('agency_')) return NextResponse.json({ error: 'Only TZ Digital can export the project handoff' }, { status: 403 })
   const admin = adminClient()
-  const [intakeResult, pagesResult, filesResult] = await Promise.all([
+  const [intakeResult, pagesResult, siteResult, filesResult] = await Promise.all([
     admin.from('portal_project_intakes').select('answers, status, section_statuses, updated_at').eq('project_id', projectId).maybeSingle(),
     admin.from('portal_content_pages').select('page_key, fields, design, pins, status, version, updated_at').eq('project_id', projectId),
+    admin.from('portal_site_pages').select('page_key, changes, images, colors, pins, status, version, updated_at').eq('project_id', projectId),
     admin.from('portal_file_records').select('id, display_name, category, storage_path, mime_type, byte_size').eq('project_id', projectId).in('category', ['brand', 'legal']).order('uploaded_at'),
   ])
-  for (const result of [intakeResult, pagesResult, filesResult]) if (result.error) return NextResponse.json({ error: 'Unable to prepare project handoff' }, { status: 500 })
+  for (const result of [intakeResult, pagesResult, siteResult, filesResult]) if (result.error) return NextResponse.json({ error: 'Unable to prepare project handoff' }, { status: 500 })
   const files = filesResult.data ?? []
   if (files.length > 100 || files.reduce((sum, file) => sum + (file.byte_size ?? 0), 0) > 100 * 1024 * 1024) return NextResponse.json({ error: 'Project files exceed the 100 MB handoff limit' }, { status: 413 })
   const intake = intakeResult.data
@@ -34,7 +36,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ pro
   const entries: { path: string; data: Uint8Array }[] = []
   const add = (path: string, data: string | Uint8Array) => entries.push({ path: `${folder}/${path}`, data: typeof data === 'string' ? text(data) : data })
   add('README.md', `# TZ Digital project handoff\n\nProject: ${access.project.name}\nExported: ${new Date().toISOString()}\n\nStart with manifest.json and the numbered folders. Answers are customer-provided; legal-page suggestions are planning input and need business-specific review before publishing. CMS pages are drafts until approved and applied to a customer site. Uploaded files are private project assets; check rights and suitability before use.\n`)
-  add('manifest.json', JSON.stringify({ project: { id: projectId, name: access.project.name, service: access.project.service }, exportedAt: new Date().toISOString(), intake: { status: intake?.status ?? 'not_started', sectionStatuses: intake?.section_statuses ?? {}, updatedAt: intake?.updated_at ?? null }, contentPages: (pagesResult.data ?? []).map(page => ({ page: page.page_key, status: page.status, version: page.version, updatedAt: page.updated_at })), files: files.map(file => ({ name: file.display_name, category: file.category, mimeType: file.mime_type, byteSize: file.byte_size })) }, null, 2))
+  add('manifest.json', JSON.stringify({ project: { id: projectId, name: access.project.name, service: access.project.service, siteKey: access.project.site_key }, exportedAt: new Date().toISOString(), intake: { status: intake?.status ?? 'not_started', sectionStatuses: intake?.section_statuses ?? {}, updatedAt: intake?.updated_at ?? null }, contentPages: (pagesResult.data ?? []).map(page => ({ page: page.page_key, status: page.status, version: page.version, updatedAt: page.updated_at })), sitePages: (siteResult.data ?? []).map(page => ({ page: page.page_key, status: page.status, version: page.version, updatedAt: page.updated_at })), files: files.map(file => ({ name: file.display_name, category: file.category, mimeType: file.mime_type, byteSize: file.byte_size })) }, null, 2))
   add('01-legal-footer/answers.md', answerMarkdown('Legal and footer inputs', normalized, sectionFields.legal))
   add('01-legal-footer/footer-links.md', `# Footer link plan\n\n- ${answers.country === 'Netherlands' ? 'Company details' : 'Impressum / company information'}\n- Privacy policy\n${answers.cookiesAnalytics === 'yes' ? '- Cookie settings / declaration\n' : ''}${answers.termsNeeded === 'yes' ? '- Terms and conditions\n' : ''}\nAdditional links requested: ${answers.footerLinks || 'None provided'}\n\nReview all links and page text for the actual business and website features before launch.\n`)
   add('02-business/answers.md', answerMarkdown('Business basics', normalized, sectionFields.business))
@@ -49,6 +51,16 @@ export async function GET(_request: Request, { params }: { params: Promise<{ pro
     const pins = Array.isArray(page.pins) ? page.pins as { x: number; y: number; target: string; comment: string }[] : []
     add(`05-content/${key}.md`, `# ${contentPages[key].title}\n\nStatus: ${page.status}\nVersion: ${page.version}\n\n${contentPages[key].fields.map(field => `## ${field.label}\n\n${fields[field.key] || '_Not provided_'}\n`).join('\n')}\n## Proposed visual design\n\n${JSON.stringify(design, null, 2)}\n\n## Pinned comments\n\n${pins.length ? pins.map((pin, index) => `${index + 1}. ${pin.comment} (at ${pin.x}%, ${pin.y}%; ${pin.target})`).join('\n') : '_None_'}\n`)
     add(`05-content/${key}.json`, JSON.stringify({ fields, design, pins, status: page.status, version: page.version }, null, 2))
+  }
+  const profile = siteProfile(access.project.site_key)
+  if (profile) {
+    const sitePages = siteResult.data ?? []
+    const approved = sitePages.filter(page => page.status === 'approved')
+    add('05-site-review/README.md', `# ${profile.name} site review\n\nThese files are proposals. Only approved page changes should be applied to the customer website. Review pinned comments and uploaded images before updating the source repository. Nothing in this export publishes automatically.\n`)
+    for (const page of sitePages) add(`05-site-review/${page.page_key}.json`, JSON.stringify(page, null, 2))
+    add('05-site-review/approved-copy.json', JSON.stringify({ ...profile.copy, ...Object.assign({}, ...approved.map(page => page.changes)) }, null, 2))
+    add('05-site-review/approved-images.json', JSON.stringify({ ...profile.images, ...Object.assign({}, ...approved.map(page => page.images)) }, null, 2))
+    add('05-site-review/approved-colors.json', JSON.stringify({ ...profile.colors, ...Object.assign({}, ...approved.map(page => page.colors)) }, null, 2))
   }
   let total = 0
   for (const file of files) {

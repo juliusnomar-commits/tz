@@ -2,6 +2,8 @@ import { notFound, redirect } from 'next/navigation'
 import { projectAccess } from '@/lib/project-access'
 import { ContentStudio } from './studio'
 import type { ContentRecord } from '@/lib/content'
+import { siteProfile } from '@/lib/site-profiles'
+import { SiteStudio } from './site-studio'
 import './content.css'
 
 export const dynamic = 'force-dynamic'
@@ -11,6 +13,16 @@ export default async function ContentPage({ params }: { params: Promise<{ projec
   const access = await projectAccess(projectId)
   if (!access) redirect('/login')
   if (access.project.service !== 'website') notFound()
+  const profile = siteProfile(access.project.site_key)
+  if (profile) {
+    const [pages, files] = await Promise.all([
+      access.supabase.from('portal_site_pages').select('page_key, changes, images, colors, pins, status, version, updated_at').eq('project_id', projectId),
+      access.supabase.from('portal_file_records').select('id, display_name').eq('project_id', projectId).eq('category', 'brand').like('mime_type', 'image/%'),
+    ])
+    if (pages.error) throw pages.error
+    if (files.error) throw files.error
+    return <SiteStudio projectId={projectId} profile={profile} initialPages={pages.data ?? []} initialImages={files.data ?? []} canEdit={access.canEdit} isAgency={access.role.startsWith('agency_')} />
+  }
   const [contentResult, imageResult] = await Promise.all([
     access.supabase.from('portal_content_pages').select('page_key, fields, design, pins, status, version, updated_at').eq('project_id', projectId),
     access.supabase.from('portal_file_records').select('id, display_name, mime_type').eq('project_id', projectId).eq('category', 'brand').order('uploaded_at', { ascending: false }),

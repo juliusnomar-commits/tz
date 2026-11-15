@@ -1,19 +1,26 @@
 import { randomBytes, randomInt } from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
 
-const name = process.argv.slice(2).join(' ').trim()
+const args = process.argv.slice(2)
+const siteFlag = args.indexOf('--site')
+const siteKey = siteFlag >= 0 ? args[siteFlag + 1] : null
+if (siteFlag >= 0 && !siteKey) throw new Error('Specify a site profile after --site')
+if (siteFlag >= 0) args.splice(siteFlag, 2)
+if (siteKey && !['cato'].includes(siteKey)) throw new Error('Unknown site profile. Available: cato')
+const name = args.join(' ').trim()
 if (!name || name.length > 160) {
-  process.stderr.write('Usage: npm run create-client -- "Client organization name"\n')
+  process.stderr.write('Usage: npm run create-client -- "Client organization name" [--site cato]\n')
   process.exit(1)
 }
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-if (!url || !key) throw new Error('Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in the shell')
+const key = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY
+if (!url || !key) throw new Error('Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SECRET_KEY in the shell')
 const db = createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } })
 
 let id
 for (let i = 0; i < 20; i++) {
   const candidate = String(randomInt(0, 1_000_000)).padStart(6, '0')
+  if (candidate === '146069' || candidate === '620314') continue
   const { data, error } = await db.from('portal_login_ids').select('login_id').eq('login_id', candidate).maybeSingle()
   if (error) throw error
   if (!data) { id = candidate; break }
@@ -35,7 +42,15 @@ try {
   if (memberError) throw memberError
   const { error: idError } = await db.from('portal_login_ids').insert({ login_id: id, auth_user_id: userId, auth_email: email })
   if (idError) throw idError
-  process.stdout.write(`Client: ${name}\nClient ID: ${id}\nPassword: ${password}\nStore this password securely. It is shown only now.\n`)
+  const { data: project, error: projectError } = await db.from('portal_projects').insert({ tenant_id: tenant.id, name: siteKey === 'cato' ? 'Cato by Cato website' : `${name} website`, service: 'website', site_key: siteKey,
+    status: 'active', summary: siteKey === 'cato' ? 'Review and request edits to the Cato website.' : 'Your website project and review workspace.', next_milestone: 'Review website content' }).select('id').single()
+  if (projectError || !project) throw projectError ?? new Error('Project was not created')
+  const { error: taskError } = await db.from('portal_tasks').insert([
+    { tenant_id: tenant.id, project_id: project.id, title: 'Complete website intake', owner_type: 'client', status: 'todo' },
+    { tenant_id: tenant.id, project_id: project.id, title: 'Review and comment on the website', owner_type: 'client', status: 'todo' },
+  ])
+  if (taskError) throw taskError
+  process.stdout.write(`Client: ${name}\nProject: ${project.id}\nSite profile: ${siteKey ?? 'generic'}\nClient ID: ${id}\nPassword: ${password}\nStore this password securely. It is shown only now.\n`)
 } catch (error) {
   if (tenantId) await db.from('portal_tenants').delete().eq('id', tenantId)
   await db.auth.admin.deleteUser(userId)

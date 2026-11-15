@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant — Cato by Cato</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@400;500&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="main-nav">
+    <a class="nav-logo" href="index.html">Cato by Cato</a>
+    <ul class="nav-links">
+      <li><a href="restaurant.html" data-i18n="nav_restaurant">Cato by Cato</a></li>
+      <li><a href="catering.html" data-i18n="nav_catering">Catering</a></li>
+      <li><a href="garden.html" data-i18n="nav_garden">Tuin</a></li>
+      <li><a href="about.html" data-i18n="nav_about">Over ons</a></li>
+      <li><a href="contact.html" data-i18n="nav_contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="lang-toggle">EN</button>
+      <button class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile nav overlay -->
+  <div class="mobile-nav">
+    <a href="restaurant.html" data-i18n="nav_restaurant">Cato by Cato</a>
+    <a href="catering.html" data-i18n="nav_catering">Catering</a>
+    <a href="garden.html" data-i18n="nav_garden">Tuin</a>
+    <a href="about.html" data-i18n="nav_about">Over ons</a>
+    <a href="contact.html" data-i18n="nav_contact">Contact</a>
+    <button class="lang-toggle">EN</button>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" style="background-image: url('images/restaurant-hero.jpg');">
+    <div class="hero-content">
+      <h1 data-i18n="restaurant_hero_heading">Het restaurant</h1>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS — steps left, Instagram story right -->
+  <section class="how-section fade-in-section">
+    <div class="section-inner">
+      <div class="how-with-phone">
+        <div>
+          <h2 class="caveat" data-i18n="restaurant_how_label">Hoe werkt het?</h2>
+          <div class="how-steps">
+            <div class="how-step">
+              <div class="step-num" data-i18n="restaurant_step1_num">①</div>
+              <div>
+                <div class="step-title" data-i18n="restaurant_step1_title">Kies je basis</div>
+                <p class="step-body" data-i18n="restaurant_step1_body">Elke dag een andere basis. Rijst, graan, groente — vers bereid, nooit van gisteren.</p>
+              </div>
+            </div>
+            <div class="how-step">
+              <div class="step-num" data-i18n="restaurant_step2_num">②</div>
+              <div>
+                <div class="step-title" data-i18n="restaurant_step2_title">Kies je topping</div>
+                <p class="step-body" data-i18n="restaurant_step2_body">De topping van de dag staat op onze Instagram stories. Elke dag iets anders, afhankelijk van wat er vers is.</p>
+              </div>
+            </div>
+            <div class="how-step">
+              <div class="step-num" data-i18n="restaurant_step3_num">③</div>
+              <div>
+                <div class="step-title" data-i18n="restaurant_step3_title">Kies je maat</div>
+                <p class="step-body" data-i18n="restaurant_step3_body">Klein, middel of groot. Eet op z'n gemak of neem mee — wat jij wil.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instagram story mockup — fills the right column -->
+        <div class="how-phone-col">
+          <div class="phone-mockup-large">
+            <div class="phone-mockup-bar">
+              <div class="phone-mockup-dot"></div>
+              <span>@catobycato</span>
+            </div>
+            <div class="phone-mockup-body">
+              <p class="phone-mockup-label" data-i18n="restaurant_stories_label">Bekijk vandaag's topping op onze stories</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUNTING -->
+  <div class="bunting"></div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo">Cato by Cato</div>
+      </div>
+      <div class="footer-address">
+        Stenenbrug 9A<br>
+        6211 HP Maastricht<br>
+        <a href="tel:+310651098619">06 51098619</a>
+      </div>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/catobycato" target="_blank" class="footer-handle">@catobycato</a>
+        <button class="lang-toggle">EN</button>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      Ma–Vr 12:00–20:30 &nbsp;·&nbsp; Za 12:00–18:00 &nbsp;·&nbsp; Zo Gesloten
+    </div>
+  </footer>
+
+  <script src="js/lang.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/portal-bridge.js"></script>
+</body>
+</html>

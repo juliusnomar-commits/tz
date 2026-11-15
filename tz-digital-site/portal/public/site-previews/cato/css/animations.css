@@ -1,0 +1,62 @@
+/* ============================================================
+   CATO BY CATO — Animations
+   ============================================================ */
+
+/* Bunting sway */
+@keyframes sway {
+  0%   { transform: rotate(-1deg); }
+  50%  { transform: rotate(1deg);  }
+  100% { transform: rotate(-1deg); }
+}
+
+.bunting svg {
+  animation: sway 6s ease-in-out infinite;
+  transform-origin: center top;
+}
+
+/* Fade-in for sections (state handled in main.js via .visible class) */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fade-in-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Mobile nav open/close */
+.mobile-nav {
+  pointer-events: none;
+}
+
+.mobile-nav.open {
+  pointer-events: all;
+}
+
+/* Nav background transition */
+nav {
+  transition: background 0.3s ease, padding 0.3s ease;
+}
+
+/* Reduce motion support */
+@media (prefers-reduced-motion: reduce) {
+  .bunting svg {
+    animation: none;
+  }
+
+  .fade-in-section {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .polaroid:hover {
+    transition: none;
+  }
+
+  nav {
+    transition: none;
+  }
+}

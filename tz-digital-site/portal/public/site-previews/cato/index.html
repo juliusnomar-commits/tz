@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cato by Cato — Maastricht</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@400;500&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="main-nav">
+    <a class="nav-logo" href="index.html">Cato by Cato</a>
+    <ul class="nav-links">
+      <li><a href="restaurant.html" data-i18n="nav_restaurant">Cato by Cato</a></li>
+      <li><a href="catering.html" data-i18n="nav_catering">Catering</a></li>
+      <li><a href="garden.html" data-i18n="nav_garden">Tuin</a></li>
+      <li><a href="about.html" data-i18n="nav_about">Over ons</a></li>
+      <li><a href="contact.html" data-i18n="nav_contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="lang-toggle">EN</button>
+      <button class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile nav overlay -->
+  <div class="mobile-nav">
+    <a href="restaurant.html" data-i18n="nav_restaurant">Cato by Cato</a>
+    <a href="catering.html" data-i18n="nav_catering">Catering</a>
+    <a href="garden.html" data-i18n="nav_garden">Tuin</a>
+    <a href="about.html" data-i18n="nav_about">Over ons</a>
+    <a href="contact.html" data-i18n="nav_contact">Contact</a>
+    <button class="lang-toggle">EN</button>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" style="background-image: url('images/hero-interior.jpg');">
+    <div class="hero-content">
+      <span class="hero-location caveat" data-i18n="home_hero_location">Maastricht</span>
+      <h1>Travel around the world,<br>never leave the taste.</h1>
+    </div>
+  </section>
+
+  <!-- BUNTING -->
+  <div class="bunting"></div>
+
+  <!-- ABOUT TEASER — Who are we -->
+  <section class="about-teaser fade-in-section">
+    <div class="section-inner">
+      <div class="two-col">
+        <!-- 4 polaroids: 2 fixed, 2 seasonal (updated automatically each season) -->
+        <div class="about-polaroid-grid">
+          <div class="polaroid">
+            <img src="images/family-teaser.jpg" alt="De familie achter Cato by Cato">
+          </div>
+          <div class="polaroid seasonal-polaroid">
+            <img src="images/seasonal-summer-a.jpg" alt="Seizoensfoto">
+          </div>
+          <div class="polaroid seasonal-polaroid">
+            <img src="images/seasonal-summer-b.jpg" alt="Seizoensfoto">
+          </div>
+          <div class="polaroid">
+            <img src="images/about-cato.jpg" alt="Cato in de keuken">
+          </div>
+        </div>
+        <div>
+          <h2 data-i18n="home_about_heading">Wie zijn wij?</h2>
+          <p data-i18n="home_about_body">Cato by Cato is geen gewoon restaurant. Het is een plek die je niet zoekt — maar vindt. Achter de toonbank staat de vrouw die alles draaiende houdt. In de keuken staat Cato, die de wereld bereisde en de smaken meenam. Hun dochter is er ook. Een familiebedrijf in de ware zin.</p>
+          <a href="about.html" class="text-link" data-i18n="home_about_link">Lees ons verhaal →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUNTING -->
+  <div class="bunting"></div>
+
+  <!-- RESTAURANT TEASER — How does it work + Instagram -->
+  <section class="restaurant-teaser fade-in-section">
+    <div class="section-inner">
+      <div class="two-col">
+        <div>
+          <h2 data-i18n="home_restaurant_heading">Hoe werkt het?</h2>
+          <p data-i18n="home_restaurant_body">Kies je basis. Kies je topping. Kies je maat. Elke dag anders, altijd vers, altijd seizoensgebonden.</p>
+          <a href="restaurant.html" class="text-link" style="margin-top: 24px; display: inline-block;" data-i18n="home_restaurant_link">Meer over het restaurant →</a>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: stretch;">
+          <div class="phone-mockup-fill">
+            <div class="phone-mockup-bar">
+              <div class="phone-mockup-dot"></div>
+              <span>@catobycato</span>
+            </div>
+            <div class="phone-mockup-body">
+              <p class="phone-mockup-label" data-i18n="home_stories_label">Bekijk vandaag's menu op onze stories</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUNTING -->
+  <div class="bunting"></div>
+
+  <!-- CATERING TEASER — Groot gezelschap / bulk orders -->
+  <section class="catering-teaser fade-in-section">
+    <div class="section-inner">
+      <div class="two-col">
+        <div>
+          <h2 data-i18n="home_catering_heading">Groot gezelschap?</h2>
+          <p data-i18n="home_catering_body">Feest, bedrijfslunch of gewoon een grote honger? Bestel in bulk en haal op bij de winkel — geen gedoe, gewoon even appen.</p>
+          <a href="catering.html" class="text-link" style="margin-top: 24px; display: inline-block;" data-i18n="home_catering_link">Meer over catering →</a>
+        </div>
+        <div class="polaroid">
+          <img src="images/catering-gallery-1.jpg" alt="Catering van Cato by Cato">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUNTING -->
+  <div class="bunting"></div>
+
+  <!-- GARDEN TEASER — polaroid marquee full width -->
+  <section class="garden-teaser fade-in-section">
+    <div class="marquee-outer garden-marquee-outer garden-teaser-marquee">
+      <div class="marquee-track garden-marquee-track garden-marquee-track-rtl">
+        <div class="polaroid"><img src="images/garden-teaser-1.jpg" alt="Eigen tuin"></div>
+        <div class="polaroid"><img src="images/garden-teaser-2.jpg" alt="Kruiden uit de moestuin"></div>
+        <div class="polaroid"><img src="images/garden-teaser-3.jpg" alt="Verse tomaten"></div>
+        <div class="polaroid"><img src="images/garden-teaser-4.jpg" alt="Oogst van de dag"></div>
+        <div class="polaroid"><img src="images/garden-teaser-1.jpg" alt="Eigen tuin"></div>
+        <div class="polaroid"><img src="images/garden-teaser-2.jpg" alt="Kruiden uit de moestuin"></div>
+        <div class="polaroid"><img src="images/garden-teaser-3.jpg" alt="Verse tomaten"></div>
+        <div class="polaroid"><img src="images/garden-teaser-4.jpg" alt="Oogst van de dag"></div>
+        <div class="polaroid"><img src="images/garden-teaser-1.jpg" alt="Eigen tuin"></div>
+        <div class="polaroid"><img src="images/garden-teaser-2.jpg" alt="Kruiden uit de moestuin"></div>
+        <div class="polaroid"><img src="images/garden-teaser-3.jpg" alt="Verse tomaten"></div>
+        <div class="polaroid"><img src="images/garden-teaser-4.jpg" alt="Oogst van de dag"></div>
+        <div class="polaroid"><img src="images/garden-teaser-1.jpg" alt="Eigen tuin"></div>
+        <div class="polaroid"><img src="images/garden-teaser-2.jpg" alt="Kruiden uit de moestuin"></div>
+        <div class="polaroid"><img src="images/garden-teaser-3.jpg" alt="Verse tomaten"></div>
+        <div class="polaroid"><img src="images/garden-teaser-4.jpg" alt="Oogst van de dag"></div>
+      </div>
+    </div>
+    <div class="section-inner">
+      <h2 data-i18n="home_garden_heading">GardenbyCato</h2>
+      <p data-i18n="home_garden_body">Bijna alles wat je eet komt uit eigen tuin. Niet als marketingverhaal — gewoon omdat het zo is.</p>
+      <a href="garden.html" class="text-link" data-i18n="home_garden_link">Ontdek de tuin →</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo">Cato by Cato</div>
+      </div>
+      <div class="footer-address">
+        Stenenbrug 9A<br>
+        6211 HP Maastricht<br>
+        <a href="tel:+310651098619">06 51098619</a>
+      </div>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/catobycato" target="_blank" class="footer-handle">@catobycato</a>
+        <button class="lang-toggle">EN</button>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      Ma–Vr 12:00–20:30 &nbsp;·&nbsp; Za 12:00–18:00 &nbsp;·&nbsp; Zo Gesloten
+    </div>
+  </footer>
+
+  <script src="js/lang.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/portal-bridge.js"></script>
+</body>
+</html>

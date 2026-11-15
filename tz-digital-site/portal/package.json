@@ -8,7 +8,9 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "create-client": "node scripts/create-client.mjs"
+    "create-client": "node scripts/create-client.mjs",
+    "create-agency": "node scripts/create-agency.mjs",
+    "grant-agency": "node scripts/grant-agency.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",

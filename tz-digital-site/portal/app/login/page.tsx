@@ -3,7 +3,7 @@ import { login } from './actions'
 
 export default async function Login({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const { error } = await searchParams
-  const accessReady = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY && process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.PORTAL_LOGIN_HASH_SECRET)
+  const accessReady = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY && (process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY) && process.env.PORTAL_LOGIN_HASH_SECRET)
   return <main className="login-layout">
     <section className="login-intro">
       <a className="brand" href="/"><Image src="/tz-mark.png" width={42} height={42} alt="" /><span>TZ <b>Digital</b></span></a>
@@ -26,6 +26,7 @@ export default async function Login({ searchParams }: { searchParams: Promise<{ 
           <button type="submit">Enter client portal <span>↗</span></button>
         </form>
         <div className="login-demo-card"><span className="login-demo-label">TRY THE ROUNDABOUT EXAMPLE</span><p>Use the sample details to explore the client experience.</p><div><span>Client ID <strong>146069</strong></span><span>Password <strong>RoundaboutDemo26!</strong></span></div></div>
+        <div className="login-demo-card"><span className="login-demo-label">TRY THE CATO EDITOR · PREVIEW ONLY</span><p>These public sample details open a browser-session preview. They are not a real customer account.</p><div><span>Client ID <strong>620314</strong></span><span>Password <strong>CatoPreview26!</strong></span></div></div>
         <p className="help">{accessReady ? 'Need access or a new password?' : 'Your real client login will be available once your project is connected.'} {accessReady && <a href="/#kontakt">Contact TZ Digital</a>}</p>
         <p className="help login-back"><a href="/">← Back to TZ Digital</a></p>
       </div>

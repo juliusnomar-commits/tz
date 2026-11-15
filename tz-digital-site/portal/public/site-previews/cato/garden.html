@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GardenbyCato — Cato by Cato</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@400;500&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="main-nav">
+    <a class="nav-logo" href="index.html">Cato by Cato</a>
+    <ul class="nav-links">
+      <li><a href="restaurant.html" data-i18n="nav_restaurant">Cato by Cato</a></li>
+      <li><a href="catering.html" data-i18n="nav_catering">Catering</a></li>
+      <li><a href="garden.html" data-i18n="nav_garden">Tuin</a></li>
+      <li><a href="about.html" data-i18n="nav_about">Over ons</a></li>
+      <li><a href="contact.html" data-i18n="nav_contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="lang-toggle">EN</button>
+      <button class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile nav overlay -->
+  <div class="mobile-nav">
+    <a href="restaurant.html" data-i18n="nav_restaurant">Cato by Cato</a>
+    <a href="catering.html" data-i18n="nav_catering">Catering</a>
+    <a href="garden.html" data-i18n="nav_garden">Tuin</a>
+    <a href="about.html" data-i18n="nav_about">Over ons</a>
+    <a href="contact.html" data-i18n="nav_contact">Contact</a>
+    <button class="lang-toggle">EN</button>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" style="background-image: url('images/garden-hero.jpg');">
+    <div class="hero-content">
+      <h1 data-i18n="garden_hero_heading">GardenbyCato</h1>
+      <span class="hero-location caveat" data-i18n="garden_hero_sub">Alles begon met een tuin.</span>
+    </div>
+  </section>
+
+  <!-- ORIGIN STORY -->
+  <section class="garden-origin fade-in-section">
+    <div class="section-inner">
+      <div class="two-col">
+        <div>
+          <h2 data-i18n="garden_origin_heading">Hoe het begon</h2>
+          <p data-i18n="garden_origin_body">Het begon met paarden en een stal. Daarna kwamen de moestuinen — tomaten, paprika's, courgettes, kruiden. Steeds meer. Steeds groter. Nu komt bijna alles wat op je bord belandt rechtstreeks uit eigen grond. Niet omdat het hip is. Gewoon omdat het zo lekkerder is.</p>
+        </div>
+        <div class="garden-origin-photos">
+          <div class="polaroid">
+            <img src="images/tt-africanwoman.jpg" alt="De oorsprong van de tuin — stal en moestuin">
+            <span class="polaroid-caption caveat">— de stal</span>
+          </div>
+          <div class="polaroid">
+            <img src="images/tt-village.jpg" alt="De eerste moestuin">
+            <span class="polaroid-caption caveat">— de eerste oogst</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUNTING -->
+  <div class="bunting"></div>
+
+  <!-- WHAT WE GROW -->
+  <section class="garden-grows fade-in-section">
+    <div class="section-inner">
+      <h2 data-i18n="garden_grows_heading">Wat we verbouwen</h2>
+      <div class="journal-list">
+        <span class="journal-item" data-i18n="garden_item1">Tomaten</span>
+        <span class="journal-item" data-i18n="garden_item2">Paprika's</span>
+        <span class="journal-item" data-i18n="garden_item3">Courgette</span>
+        <span class="journal-item" data-i18n="garden_item4">Aubergine</span>
+        <span class="journal-item" data-i18n="garden_item5">Basilicum</span>
+        <span class="journal-item" data-i18n="garden_item6">Koriander</span>
+        <span class="journal-item" data-i18n="garden_item7">Chilipepers</span>
+        <span class="journal-item" data-i18n="garden_item8">Seizoenskruiden</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUNTING -->
+  <div class="bunting"></div>
+
+  <!-- COMING SOON — products (jams, sauces, etc.) space, ahead of the photo gallery -->
+  <section class="coming-soon-section fade-in-section">
+    <div class="section-inner">
+      <h2 data-i18n="garden_coming_heading">Binnenkort: vers van eigen grond</h2>
+      <p data-i18n="garden_coming_body">We zijn bezig met de volgende stap — verse producten rechtstreeks uit onze tuin, te koop. Laat je e-mailadres achter en we laten het je weten.</p>
+      <div class="email-form">
+        <input type="email" data-i18n-placeholder="garden_coming_placeholder" placeholder="Jouw e-mailadres" aria-label="E-mailadres">
+        <button type="submit" data-i18n="garden_coming_button">Houd me op de hoogte</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUNTING -->
+  <div class="bunting"></div>
+
+  <!-- GALLERY — 3 static rows of 4 -->
+  <div class="garden-gallery fade-in-section">
+
+    <!-- Row 1 -->
+    <div class="gallery-row">
+      <div class="polaroid">
+        <img src="images/garden-gallery-1.jpg" alt="Moestuin in de zomer">
+        <span class="polaroid-caption caveat">— de tuin</span>
+      </div>
+      <div class="polaroid">
+        <img src="images/garden-gallery-2.jpg" alt="Verse kruiden geplukt">
+        <span class="polaroid-caption caveat">— eigen kruiden</span>
+      </div>
+      <div class="polaroid">
+        <img src="images/garden-gallery-3.jpg" alt="Tomaten aan de plant">
+        <span class="polaroid-caption caveat">— rode tomaten</span>
+      </div>
+      <div class="polaroid">
+        <img src="images/garden-gallery-4.jpg" alt="Oogst van de dag">
+        <span class="polaroid-caption caveat">— oogst van de dag</span>
+      </div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="gallery-row">
+      <div class="polaroid">
+        <img src="images/garden-gallery-5.jpg" alt="Aardbei uit de tuin">
+        <span class="polaroid-caption caveat">— eigen aardbeien</span>
+      </div>
+      <div class="polaroid">
+        <img src="images/garden-gallery-6.jpg" alt="Kleurrijke snijbiet">
+        <span class="polaroid-caption caveat">— snijbiet in kleur</span>
+      </div>
+      <div class="polaroid">
+        <img src="images/garden-gallery-7.jpg" alt="Lieveheersbeestje op een kool">
+        <span class="polaroid-caption caveat">— lieveheersbeestje op bezoek</span>
+      </div>
+      <div class="polaroid">
+        <img src="images/garden-gallery-11.jpg" alt="Pepers aan de plant">
+        <span class="polaroid-caption caveat">— pepers aan de plant</span>
+      </div>
+    </div>
+
+    <!-- Row 3 — placeholder -->
+    <div class="gallery-row">
+      <div class="polaroid">
+        <div class="polaroid-placeholder"></div>
+        <span class="polaroid-caption caveat">— binnenkort</span>
+      </div>
+      <div class="polaroid">
+        <div class="polaroid-placeholder"></div>
+        <span class="polaroid-caption caveat">— binnenkort</span>
+      </div>
+      <div class="polaroid">
+        <div class="polaroid-placeholder"></div>
+        <span class="polaroid-caption caveat">— binnenkort</span>
+      </div>
+      <div class="polaroid">
+        <div class="polaroid-placeholder"></div>
+        <span class="polaroid-caption caveat">— binnenkort</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BUNTING -->
+  <div class="bunting"></div>
+
+  <!-- BRAND NOTE -->
+  <div class="brand-note">
+    <span data-i18n="garden_brand_note">GardenbyCato — binnenkort als eigen merk.</span>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo">Cato by Cato</div>
+      </div>
+      <div class="footer-address">
+        Stenenbrug 9A<br>
+        6211 HP Maastricht<br>
+        <a href="tel:+310651098619">06 51098619</a>
+      </div>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/catobycato" target="_blank" class="footer-handle">@catobycato</a>
+        <button class="lang-toggle">EN</button>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      Ma–Vr 12:00–20:30 &nbsp;·&nbsp; Za 12:00–18:00 &nbsp;·&nbsp; Zo Gesloten
+    </div>
+  </footer>
+
+  <script src="js/lang.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/portal-bridge.js"></script>
+</body>
+</html>

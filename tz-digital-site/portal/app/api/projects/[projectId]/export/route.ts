@@ -38,7 +38,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ pro
   const [intakeResult, pagesResult, siteResult, filesResult] = await Promise.all([
     admin.from('portal_project_intakes').select('answers, status, section_statuses, updated_at').eq('project_id', projectId).maybeSingle(),
     admin.from('portal_content_pages').select('page_key, fields, design, pins, status, version, updated_at').eq('project_id', projectId),
-    admin.from('portal_site_pages').select('page_key, changes, images, colors, pins, status, version, updated_at, snapshot_path, snapshot_device').eq('project_id', projectId),
+    admin.from('portal_site_pages').select('page_key, changes, images, colors, pins, status, version, updated_at, snapshot_path, snapshot_device').eq('project_id', projectId).not('page_key', 'like', 'live-%'),
     admin.from('portal_file_records').select('id, display_name, category, storage_path, mime_type, byte_size').eq('project_id', projectId).in('category', ['brand', 'legal']).order('uploaded_at'),
   ])
   for (const result of [intakeResult, pagesResult, siteResult, filesResult]) if (result.error) return NextResponse.json({ error: 'Unable to prepare project handoff' }, { status: 500 })

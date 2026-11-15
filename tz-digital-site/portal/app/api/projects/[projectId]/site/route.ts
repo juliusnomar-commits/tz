@@ -42,7 +42,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
     if (intent === 'publish') {
       if (projectId !== CATO_PROJECT_ID || profile.key !== 'cato') return NextResponse.json({ error: 'Live publishing is unavailable for this site' }, { status: 403 })
-      await writeLivePage(pageKey, { changes, images, colors })
+      await writeLivePage(pageKey, access.project.tenant_id, { changes, images, colors })
       return NextResponse.json({ published: true, publishedAt: new Date().toISOString() })
     }
     if (!Number.isInteger(body.expectedVersion) || body.expectedVersion < 0) throw new Error('Invalid version')

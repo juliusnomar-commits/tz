@@ -23,7 +23,7 @@ export default async function ContentPage({ params }: { params: Promise<{ projec
     ])
     if (pages.error) throw pages.error
     if (files.error) throw files.error
-    return <SiteStudio projectId={projectId} profile={profile} initialPages={pages.data ?? []} initialPublished={Object.fromEntries(livePages)} initialImages={files.data ?? []} canEdit={access.canEdit} isAgency={access.role.startsWith('agency_')} />
+    return <SiteStudio projectId={projectId} profile={profile} initialPages={(pages.data ?? []).filter(page => profile.pages.some(item => item.key === page.page_key))} initialPublished={Object.fromEntries(livePages)} initialImages={files.data ?? []} canEdit={access.canEdit} isAgency={access.role.startsWith('agency_')} />
   }
   const [contentResult, imageResult] = await Promise.all([
     access.supabase.from('portal_content_pages').select('page_key, fields, design, pins, status, version, updated_at').eq('project_id', projectId),

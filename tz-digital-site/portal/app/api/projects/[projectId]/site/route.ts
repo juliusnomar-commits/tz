@@ -32,8 +32,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       const expectedPath = new RegExp(`^${access.project.tenant_id}/${projectId}/site-reviews/${pageKey}/[0-9a-f-]{36}\\.jpg$`, 'i')
       if (!expectedPath.test(snapshotPath!)) throw new Error('Capture this page before submitting')
     }
-    if (intent === 'submit' && !Object.keys(changes).length && !Object.keys(images).length && !Object.keys(colors).length && !pins.length) throw new Error('Make a change or add a comment before submitting')
-    if (!Number.isInteger(body.expectedVersion) || body.expectedVersion < 0) throw new Error('Invalid version')
+    if (intent === 'submit' && !pins.length) throw new Error('Add a comment pin before sending for review')
     const db = adminClient()
     for (const value of Object.values(images)) {
       const fileId = value.match(/\/files\/([0-9a-f-]{36})$/i)?.[1]
@@ -46,6 +45,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       await writeLivePage(pageKey, { changes, images, colors })
       return NextResponse.json({ published: true, publishedAt: new Date().toISOString() })
     }
+    if (!Number.isInteger(body.expectedVersion) || body.expectedVersion < 0) throw new Error('Invalid version')
     if (snapshotPath) {
       const { data: capture, error: captureError } = await db.storage.from('portal-intake').info(snapshotPath)
       const captureSize = Number(capture?.size)

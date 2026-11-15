@@ -5,6 +5,29 @@ import { projectAccess } from '@/lib/project-access'
 import { siteProfile, sitePage, validateSiteChanges, validateSiteColors, validateSiteImages } from '@/lib/site-profiles'
 import { CATO_PROJECT_ID, writeLivePage } from '@/lib/cato-live'
 
+export async function POST(request: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
+  const { projectId } = await params
+  const access = await projectAccess(projectId)
+  if (!access) return NextResponse.json({ error: 'Sign in to this project first' }, { status: 404 })
+  if (!access.canEdit) return NextResponse.json({ error: 'Editing access required' }, { status: 403 })
+  try {
+    const body = await request.json()
+    const profile = siteProfile(access.project.site_key)
+    const page = profile && sitePage(profile, String(body.pageKey ?? ''))
+    const comment = typeof body.comment === 'string' ? body.comment.trim() : ''
+    if (!page) throw new Error('Choose a valid page')
+    if (!comment || comment.length > 1000) throw new Error('Write a comment of 1,000 characters or fewer')
+    const db = adminClient()
+    const result = await db.from('portal_activity').insert({ tenant_id: access.project.tenant_id, project_id: projectId,
+      title: `Site review comment · ${page.title}`, detail: comment, actor_type: access.role.startsWith('agency_') ? 'agency' : 'client', visibility: 'client' })
+      .select('id, title, detail, actor_type, created_at').single()
+    if (result.error) throw result.error
+    return NextResponse.json({ comment: result.data })
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unable to send comment' }, { status: 400 })
+  }
+}
+
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params
   const access = await projectAccess(projectId)

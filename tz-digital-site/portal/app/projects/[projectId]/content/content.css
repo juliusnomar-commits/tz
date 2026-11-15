@@ -140,3 +140,28 @@
 .cms-compare-viewport{position:relative;height:min(55vh,580px);overflow:hidden;border-radius:8px;background:#faf6ee}
 .cms-compare-viewport iframe{position:absolute;top:0;left:0;width:1440px;height:calc(100% / var(--compare-scale));border:0;transform:scale(var(--compare-scale));transform-origin:top left;background:#faf6ee}
 @media(max-width:760px){.cms-compare-grid{grid-template-columns:1fr}.cms-compare-viewport{height:350px}.cms-confirm-dialog{padding:24px}}
+
+/* Site review refresh: compact heading, clear help tile, and direct comments. */
+.site-editor .cms-intro{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:0 0 24px}
+.site-editor .cms-intro h1{font-size:clamp(38px,4vw,58px);margin:12px 0 0}
+.site-editor .cms-howto{display:flex;align-items:center;gap:13px;min-width:260px;max-width:320px;padding:12px 16px;border:1px solid #645285;border-radius:14px;background:linear-gradient(135deg,#2b2040,#141118);color:#f5efff;text-align:left;cursor:pointer}
+.site-editor .cms-howto:hover{border-color:#c4a7ff;background:linear-gradient(135deg,#382653,#19131f)}
+.site-editor .cms-howto-play{display:grid;place-items:center;flex:0 0 42px;height:42px;border-radius:50%;background:#dbc9ff;color:#21152d;font-size:14px;padding-left:2px}
+.site-editor .cms-howto b,.site-editor .cms-howto small{display:block}
+.site-editor .cms-howto b{font-size:14px}
+.site-editor .cms-howto small{margin-top:4px;color:#bbb1c9;font-size:11px;line-height:1.35}
+.site-editor .cms-status-copy{min-height:1em;color:#b7a0ef;font-size:12px;font-weight:700}
+.site-editor .cms-general-comment{display:grid;gap:9px}
+.site-editor .cms-general-comment textarea{margin:0}
+.site-editor .cms-general-comment>button{justify-self:start;background:#dbc9ff;color:#21152d;border:0;border-radius:999px;padding:10px 16px;font-weight:800;cursor:pointer}
+.site-editor .cms-general-comment>button:disabled{opacity:.5;cursor:not-allowed}
+.site-editor .cms-subheading{font-size:14px;margin:22px 0 8px;color:#e5d9ff}
+.site-editor .cms-general-comment-list{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.site-editor .cms-general-comment-list li{padding:11px 12px;border:1px solid #42394e;border-radius:9px;background:#17141c}
+.site-editor .cms-general-comment-list b{font-size:11px;color:#c7b7ee}
+.site-editor .cms-general-comment-list p{margin:6px 0 0;color:#e6e1eb;font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.site-editor .cms-howto-dialog ol{padding-left:20px;display:grid;gap:15px;margin:22px 0}
+.site-editor .cms-howto-dialog li b,.site-editor .cms-howto-dialog li span{display:block}
+.site-editor .cms-howto-dialog li b{margin-bottom:4px;color:#f1eaff}
+.site-editor .cms-howto-dialog li span{color:#b9b3c3;line-height:1.5}
+@media(max-width:800px){.site-editor .cms-intro{align-items:stretch;flex-direction:column;gap:16px}.site-editor .cms-howto{max-width:none;width:100%}.site-editor .cms-intro h1{font-size:clamp(38px,9vw,54px)}}

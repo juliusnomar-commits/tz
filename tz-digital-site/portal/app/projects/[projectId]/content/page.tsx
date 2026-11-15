@@ -16,14 +16,16 @@ export default async function ContentPage({ params }: { params: Promise<{ projec
   if (access.project.service !== 'website') notFound()
   const profile = siteProfile(access.project.site_key)
   if (profile) {
-    const [pages, files, livePages] = await Promise.all([
+    const [pages, files, livePages, activity] = await Promise.all([
       access.supabase.from('portal_site_pages').select('page_key, changes, images, colors, pins, status, version, updated_at, snapshot_path, snapshot_device').eq('project_id', projectId),
       access.supabase.from('portal_file_records').select('id, display_name').eq('project_id', projectId).eq('category', 'brand').like('mime_type', 'image/%'),
       Promise.all(profile.pages.map(async page => [page.key, await readLivePage(page.key)] as const)),
+      access.supabase.from('portal_activity').select('id, title, detail, actor_type, created_at').eq('project_id', projectId).like('title', 'Site review comment ·%').order('created_at', { ascending: false }).limit(30),
     ])
     if (pages.error) throw pages.error
     if (files.error) throw files.error
-    return <SiteStudio projectId={projectId} profile={profile} initialPages={(pages.data ?? []).filter(page => profile.pages.some(item => item.key === page.page_key))} initialPublished={Object.fromEntries(livePages)} initialImages={files.data ?? []} canEdit={access.canEdit} isAgency={access.role.startsWith('agency_')} />
+    if (activity.error) throw activity.error
+    return <SiteStudio projectId={projectId} profile={profile} initialPages={(pages.data ?? []).filter(page => profile.pages.some(item => item.key === page.page_key))} initialPublished={Object.fromEntries(livePages)} initialImages={files.data ?? []} initialComments={activity.data ?? []} canEdit={access.canEdit} isAgency={access.role.startsWith('agency_')} />
   }
   const [contentResult, imageResult] = await Promise.all([
     access.supabase.from('portal_content_pages').select('page_key, fields, design, pins, status, version, updated_at').eq('project_id', projectId),

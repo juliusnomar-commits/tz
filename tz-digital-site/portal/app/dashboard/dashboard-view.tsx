@@ -1,12 +1,32 @@
 import Image from 'next/image'
+import type { CSSProperties } from 'react'
 import { logout } from '@/app/login/actions'
 import { type DashboardData, formatDate, statusLabel } from '@/lib/dashboard'
 
 function TaskItem({ task, timezone }: { task: DashboardData['tasks'][number], timezone: string }) {
-  return <li className="dash-task">
-    <span className={`dash-task-icon ${task.status === 'done' ? 'is-done' : ''}`} aria-hidden="true">{task.status === 'done' ? '✓' : ''}</span>
-    <div className="dash-task-copy"><strong>{task.href ? <a href={task.href}>{task.title} ↗</a> : task.title}</strong><span>{statusLabel(task.status)}{task.progressPercent !== undefined ? ` · ${task.progressPercent}% ready` : ''}{task.due_at && task.status !== 'done' ? ` · Requested by ${formatDate(task.due_at, timezone)}` : ''}</span>{task.progressPercent !== undefined && <div className="dash-task-progress" role="progressbar" aria-label="Intake required answers completed" aria-valuemin={0} aria-valuemax={100} aria-valuenow={task.progressPercent}><i style={{ width: `${task.progressPercent}%` }} /></div>}</div>
+  const complete = task.status === 'done'
+
+  return <li className={`dash-task ${complete ? 'is-complete' : ''}`}>
+    <span className="dash-task-icon" aria-hidden="true">{complete ? '✓' : ''}</span>
+    <div className="dash-task-copy">
+      <strong>{task.title}</strong>
+      <span>{statusLabel(task.status)}{task.progressPercent !== undefined ? ` · ${task.progressPercent}% complete` : ''}{task.due_at && !complete ? ` · Due ${formatDate(task.due_at, timezone)}` : ''}</span>
+      {task.progressPercent !== undefined && <div className="dash-task-progress" role="progressbar" aria-label="Website intake progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={task.progressPercent}><i style={{ width: `${task.progressPercent}%` }} /></div>}
+    </div>
+    {!complete && task.href && <a className="dash-task-action" href={task.href}>To do <span aria-hidden="true">→</span></a>}
   </li>
+}
+
+function TaskList({ title, tasks, timezone }: { title: string, tasks: DashboardData['tasks'], timezone: string }) {
+  const uniqueTasks = tasks.filter((task, index, all) => all.findIndex(item => item.title.trim().toLowerCase() === task.title.trim().toLowerCase()) === index)
+  const todoTasks = uniqueTasks.filter(task => task.status !== 'done')
+  const completedTasks = uniqueTasks.filter(task => task.status === 'done')
+
+  return <div className="dash-task-list">
+    <h3>{title}</h3>
+    {todoTasks.length ? <ul>{todoTasks.map(task => <TaskItem key={task.id} task={task} timezone={timezone} />)}</ul> : <p className="dash-empty-inline">Nothing to do right now.</p>}
+    {completedTasks.length > 0 && <details className="dash-completed-tasks"><summary>{completedTasks.length} completed</summary><ul>{completedTasks.map(task => <TaskItem key={task.id} task={task} timezone={timezone} />)}</ul></details>}
+  </div>
 }
 
 export function DashboardView({ data }: { data: DashboardData }) {
@@ -14,50 +34,54 @@ export function DashboardView({ data }: { data: DashboardData }) {
   const timezone = project?.project_timezone ?? 'Europe/Berlin'
   const clientTasks = tasks.filter(task => task.owner_type === 'client' || task.owner_type === 'shared')
   const agencyTasks = tasks.filter(task => task.owner_type === 'agency')
-  const pendingClient = clientTasks.filter(task => task.status !== 'done').sort((a, b) => Number(b.status === 'waiting_client') - Number(a.status === 'waiting_client'))
   const activeReview = reviews.find(review => review.status === 'awaiting_client')
-  const nextAction = pendingClient[0]
-  const needsYou = Boolean(nextAction || activeReview)
-  const currentMilestone = milestones.find(item => item.status === 'current') ?? milestones.find(item => item.status === 'upcoming')
+  const pendingAgencyTasks = agencyTasks.filter(task => task.status !== 'done')
+  const currentMilestoneIndex = milestones.findIndex(item => item.status === 'current')
+  const upcomingMilestoneIndex = currentMilestoneIndex >= 0 ? currentMilestoneIndex : milestones.findIndex(item => item.status === 'upcoming')
   const completedMilestones = milestones.filter(item => item.status === 'complete').length
   const progress = milestones.length ? Math.round(completedMilestones / milestones.length * 100) : 0
+  const visibleActivity = activity.filter((item, index, all) => all.findIndex(other => `${other.title}|${other.detail ?? ''}|${other.created_at.slice(0, 10)}` === `${item.title}|${item.detail ?? ''}|${item.created_at.slice(0, 10)}`) === index).slice(0, 3)
 
   return <main className="dash-app" id="overview">
     <header className="dash-header portal-pill-header">
       <a className="portal-pill-logo" href="/dashboard" aria-label="TZ Digital client portal home"><span>TZ</span> Digital</a>
-      <nav aria-label="Portal navigation" className="dash-nav portal-pill-links"><a href="#overview" aria-current="page">Overview</a><a href="#milestones">Timeline</a><a href="#tasks">Tasks</a><a href="#activity">Updates</a><a href="/">Website ↗</a></nav>
-      <div className="portal-pill-side">{data.demo ? <a className="dash-signout portal-pill-action" href="/login">Exit preview <span aria-hidden="true">↗</span></a> : <form action={logout}><button className="dash-signout portal-pill-action" type="submit">Sign out <span aria-hidden="true">↗</span></button></form>}</div>
+      <nav aria-label="Portal navigation" className="dash-nav portal-pill-links"><a href="#overview" aria-current="page">Overview</a><a href="#milestones">Timeline</a><a href="#tasks">To do</a><a href="#activity">Updates</a></nav>
+      <div className="portal-pill-side"><a className="dash-signout portal-pill-action" href="/">Home <span aria-hidden="true">↗</span></a></div>
     </header>
 
     {data.demo && <div className="dash-demo-banner" role="note">Preview with synthetic data · No customer information is shown · <a href="/demo/cato">Try the Cato site editor ↗</a></div>}
 
     <div className="dash-body">
-      <div className="dash-topline"><span className="eyebrow accent">CLIENT WORKSPACE / {organization.toUpperCase()}</span><span className="eyebrow">YOUR PROJECT, ALL IN ONE PLACE</span></div>
-      <div className="dash-intro"><div><h1>Your project,<br /><span className="dash-intro-em">in motion.</span></h1><p>Everything you need to move the website forward.</p></div><div className="dash-overview-note"><span className="eyebrow accent">CURRENT PHASE</span><strong>{currentMilestone?.title ?? 'Getting started'}</strong><div className="dash-overview-progress"><i style={{ width: `${progress}%` }} /></div><small>{completedMilestones} of {milestones.length} milestones complete</small></div></div>
-
-      {!project ? <section className="dash-no-project"><span className="eyebrow accent">WORKSPACE READY</span><h2>Your first project will appear here.</h2><p>Your TZ Digital team is setting things up. When they add your project, this page will show its next action, timeline, tasks, and updates.</p><a href="/#kontakt">Contact your team <span aria-hidden="true">↗</span></a></section> : <>
-        <section className={`dash-action ${needsYou ? 'needs-you' : ''}`} aria-labelledby="next-action-title">
-          <div className="dash-action-icon" aria-hidden="true">↗</div><div className="dash-action-main"><span className="eyebrow">{needsYou ? 'NEXT ACTION FOR YOU' : 'CURRENT STATUS'}</span><h2 id="next-action-title">{nextAction ? nextAction.title : activeReview ? `Review ${activeReview.title}` : 'You’re all caught up.'}</h2><p>{nextAction ? `Your input helps us move to ${project.next_milestone ?? 'the next milestone'}.` : activeReview ? 'Your feedback is needed before we continue with the next revision.' : 'Your TZ Digital team is working on the next step. We’ll update this space when we need you.'}</p></div><a className="dash-action-link" href={nextAction?.href ?? (nextAction ? '#your-tasks' : activeReview ? '#review' : '#activity')}>{nextAction?.href ? 'Open task' : needsYou ? 'See details' : 'See updates'} <span aria-hidden="true">↗</span></a>
-        </section>
-
-        <section className={`dash-project-summary ${data.demo ? 'is-demo' : ''}`} aria-labelledby="project-title">{data.demo && <div className="dash-project-art" aria-hidden="true"><Image src="/roundabout-demo-terrace.jpg" width={800} height={620} alt="" /><span>THE ROUNDABOUT / MAASTRICHT</span></div>}
-          <div className="dash-project-head"><div><span className="eyebrow">CURRENT PROJECT</span><h2 id="project-title">{project.name}</h2><p>{project.summary ?? 'Follow each step with your TZ Digital team.'}</p></div><span className="dash-status"><span className="dash-status-dot" aria-hidden="true" />{statusLabel(project.status)}</span></div>
+      {!project ? <section className="dash-no-project"><span className="eyebrow accent">WORKSPACE READY</span><h1>Your first project will appear here.</h1><p>Your TZ Digital team is setting things up. When they add your project, this page will show its timeline, next steps, and updates.</p><a href="/#kontakt">Contact your team <span aria-hidden="true">↗</span></a></section> : <>
+        <section className="dash-project-summary" aria-labelledby="project-title">
+          {data.demo && <div className="dash-project-art" aria-hidden="true"><Image src="/roundabout-demo-terrace.jpg" width={800} height={620} alt="" /><span>THE ROUNDABOUT / MAASTRICHT</span></div>}
+          <div className="dash-project-heading"><div><span className="eyebrow accent">YOUR PROJECT</span><h1 id="project-title">{project.name}</h1>{project.summary && <p>{project.summary}</p>}</div><span className="dash-status"><span className="dash-status-dot" aria-hidden="true" />{statusLabel(project.status)}</span></div>
           {projects.length > 1 && <form method="get" action="/dashboard" className="dash-project-switch"><label htmlFor="project-picker">Switch project</label><select id="project-picker" name="project" defaultValue={project.id}>{projects.map(item => <option value={item.id} key={item.id}>{item.name}</option>)}</select><button type="submit">View</button></form>}
-          <div className="dash-project-meta"><span>{project.service.toUpperCase()} PROJECT</span><span>{organization}</span><span>Updated {formatDate(project.updated_at, timezone)}</span></div>
+          <div className="dash-project-meta"><span>{project.service.toUpperCase()} PROJECT</span><span>{organization}</span><span>Updated {formatDate(project.updated_at, timezone)}</span><span>{progress}% complete</span></div>
           {project.service === 'website' && <div className="dash-project-tools"><a href={data.demo ? '/demo/intake' : `/projects/${project.id}/intake`}>Website intake ↗</a><a href={data.demo ? '/demo/content' : `/projects/${project.id}/content`}>Edit website content ↗</a></div>}
         </section>
 
-        <div className="dash-section-grid"><section className="dash-timeline" id="milestones" aria-labelledby="timeline-title"><div className="dash-section-heading"><div><span className="eyebrow accent">THE ROAD AHEAD</span><h2 id="timeline-title">Project timeline</h2></div><span>{milestones.length.toString().padStart(2, '0')} STEPS</span></div>
-          {milestones.length ? <ol className="dash-milestones">{milestones.map((item, index) => <li className={`dash-milestone is-${item.status}`} key={item.id}><span className="dash-milestone-index">{item.status === 'complete' ? '✓' : String(index + 1).padStart(2, '0')}</span><div><strong>{item.title}</strong><small>{item.window_label ?? statusLabel(item.status)}</small></div><span className="dash-milestone-state">{item.status}</span></li>)}</ol> : <p className="dash-empty-inline">Your team will share the milestone plan here.</p>}
-          <div className="dash-timeline-foot"><div><span>UP NEXT</span><strong>{currentMilestone?.title ?? project.next_milestone ?? 'To be confirmed'}</strong></div><div><span>ESTIMATED LAUNCH</span><strong>{project.target_window ?? 'Pending project plan'}</strong></div></div><p className="dash-estimate-note">Timing is an estimate and may change when tasks or approvals change.</p>
+        <section className="dash-timeline" id="milestones" aria-labelledby="timeline-title">
+          <div className="dash-section-heading"><div><span className="eyebrow accent">WHERE WE ARE</span><h2 id="timeline-title">Project timeline</h2></div><span>{completedMilestones} of {milestones.length} complete</span></div>
+          {milestones.length ? <ol className="dash-milestones" style={{ '--milestone-count': milestones.length } as CSSProperties}>{milestones.map((item, index) => <li className={`dash-milestone is-${item.status} ${index === upcomingMilestoneIndex ? 'is-next' : ''}`} key={item.id}><span className="dash-milestone-index" aria-hidden="true">{item.status === 'complete' ? '✓' : String(index + 1).padStart(2, '0')}</span><div><strong>{item.title}</strong><small>{item.window_label ?? statusLabel(item.status)}</small></div></li>)}</ol> : <p className="dash-empty-inline">Your team will share the milestone plan here.</p>}
+          <div className="dash-timeline-foot"><div><span>UP NEXT</span><strong>{milestones[upcomingMilestoneIndex]?.title ?? project.next_milestone ?? 'To be confirmed'}</strong></div><div><span>ESTIMATED LAUNCH</span><strong>{project.target_window ?? 'Pending project plan'}</strong></div><div className="dash-team-next"><span>TZ DIGITAL’S NEXT STEP</span>{pendingAgencyTasks.length ? <><strong>{pendingAgencyTasks[0].title}</strong>{pendingAgencyTasks[0].status !== 'todo' && <small>{statusLabel(pendingAgencyTasks[0].status)}</small>}{pendingAgencyTasks.length > 1 && <details><summary>See {pendingAgencyTasks.length - 1} more team steps</summary><ul>{pendingAgencyTasks.slice(1).map(task => <li key={task.id}>{task.title} · {statusLabel(task.status)}</li>)}</ul></details>}</> : <strong>Your team will add its next step here.</strong>}</div></div>
+          <p className="dash-estimate-note">Timing is an estimate and may change when tasks or approvals change.</p>
         </section>
-        <aside className="dash-side"><section className="dash-mini" id="review"><div className="dash-mini-top"><span className="eyebrow accent">REVIEW</span><span className="dash-mini-glyph" aria-hidden="true">○</span></div><h3>{activeReview ? activeReview.title : reviews[0] ? reviews[0].title : 'No review requested yet'}</h3><p>{activeReview ? `Your feedback is requested${activeReview.due_at ? ` by ${formatDate(activeReview.due_at, timezone)}` : ''}.` : reviews[0] ? `Status: ${statusLabel(reviews[0].status)}.` : 'We’ll let you know when a draft is ready for you.'}</p></section><section className="dash-mini"><div className="dash-mini-top"><span className="eyebrow accent">FILES</span><span className="dash-mini-glyph" aria-hidden="true">○</span></div><h3>{fileCount} {fileCount === 1 ? 'file' : 'files'} in your project</h3><p>{fileCount ? 'Shared files are recorded for this project.' : 'Files shared with your team will appear here.'}</p></section></aside></div>
 
-        <section className="dash-responsibilities" id="tasks" aria-labelledby="tasks-title"><div className="dash-section-heading"><div><span className="eyebrow accent">WHO DOES WHAT</span><h2 id="tasks-title">Moving forward, together.</h2></div><span>{tasks.filter(task => task.status !== 'done').length.toString().padStart(2, '0')} OPEN TASKS</span></div><div className="dash-responsibility-grid"><div id="your-tasks"><div className="dash-column-heading"><h3>Your side</h3><span>{clientTasks.length.toString().padStart(2, '0')}</span></div>{clientTasks.length ? <ul>{clientTasks.map(task => <TaskItem key={task.id} task={task} timezone={timezone} />)}</ul> : <p className="dash-empty-inline">No client tasks right now.</p>}</div><div><div className="dash-column-heading"><h3>Our side</h3><span>{agencyTasks.length.toString().padStart(2, '0')}</span></div>{agencyTasks.length ? <ul>{agencyTasks.map(task => <TaskItem key={task.id} task={task} timezone={timezone} />)}</ul> : <p className="dash-empty-inline">Your TZ Digital team will add its next tasks here.</p>}</div></div></section>
+        <div className="dash-work-grid">
+          <section className="dash-responsibilities" id="tasks" aria-labelledby="tasks-title"><div className="dash-section-heading"><div><span className="eyebrow accent">WHAT YOU NEED TO DO</span><h2 id="tasks-title">To do</h2></div></div><div className="dash-responsibility-grid"><TaskList title="Your part" tasks={clientTasks} timezone={timezone} /></div></section>
 
-        <section className="dash-activity" id="activity" aria-labelledby="activity-title"><div className="dash-section-heading"><div><span className="eyebrow accent">STAY IN THE LOOP</span><h2 id="activity-title">Latest updates</h2></div><span>PROJECT ACTIVITY</span></div>{activity.length ? <ol className="dash-activity-list">{activity.map(item => <li key={item.id}><span className="dash-activity-marker" aria-hidden="true"/><div><span className="eyebrow">{item.actor_type.toUpperCase()} · {formatDate(item.created_at, timezone)}</span><h3>{item.title}</h3>{item.detail && <p>{item.detail}</p>}</div></li>)}</ol> : <p className="dash-empty-inline">Project updates will appear here as work progresses.</p>}</section>
+          <section className="dash-howto" aria-labelledby="howto-title"><div className="dash-section-heading"><div><span className="eyebrow accent">NEW TO THE PORTAL?</span><h2 id="howto-title">How it works</h2></div></div><p>A short guide to your project portal.</p><div className="dash-video-placeholder" role="img" aria-label="Space reserved for a project portal walkthrough video"><span className="dash-play-icon" aria-hidden="true">▶</span><span className="dash-video-caption">Walkthrough video coming soon</span></div></section>
+        </div>
+
+        <section className="dash-project-details" aria-label="Project details">
+          <div id="review"><span className="eyebrow accent">REVIEW</span><strong>{activeReview ? activeReview.title : reviews[0] ? reviews[0].title : 'No review requested yet'}</strong><p>{activeReview ? `Your feedback is requested${activeReview.due_at ? ` by ${formatDate(activeReview.due_at, timezone)}` : ''}.` : reviews[0] ? `Status: ${statusLabel(reviews[0].status)}.` : 'We’ll let you know when a draft is ready for you.'}</p></div>
+          <div><span className="eyebrow accent">FILES</span><strong>{fileCount} {fileCount === 1 ? 'file' : 'files'} in your project</strong><p>{fileCount ? 'Shared files are recorded for this project.' : 'Files shared with your team will appear here.'}</p></div>
+        </section>
+
+        <section className="dash-activity" id="activity" aria-labelledby="activity-title"><div className="dash-section-heading"><div><span className="eyebrow accent">RECENT ACTIVITY</span><h2 id="activity-title">Updates</h2></div></div>{visibleActivity.length ? <ol className="dash-activity-list">{visibleActivity.map(item => <li key={item.id}><time dateTime={item.created_at}>{formatDate(item.created_at, timezone)}</time><div><strong>{item.title}</strong>{item.detail && <p>{item.detail}</p>}</div></li>)}</ol> : <p className="dash-empty-inline">Project updates will appear here as work progresses.</p>}</section>
       </>}
-      <footer className="dash-footer"><span>TZ DIGITAL · CLIENT PORTAL</span><a href="/#kontakt">Need help? Contact your team ↗</a></footer>
+      <footer className="dash-footer"><span>TZ DIGITAL · CLIENT PORTAL</span><a href="/#kontakt">Need help? Contact your team ↗</a>{data.demo ? <a href="/login">Exit preview ↗</a> : <form action={logout}><button type="submit">Sign out</button></form>}</footer>
     </div>
   </main>
 }

@@ -28,6 +28,7 @@ export function SiteStudio({ projectId, profile, initialPages, initialImages, ca
   const [error, setError] = useState('')
   const frame = useRef<HTMLIFrameElement>(null)
   const viewport = useRef<HTMLDivElement>(null)
+  const frameConfigured = useRef(false)
   const page = reviews[pageKey] ?? empty(pageKey)
   const original = saved[pageKey] ?? empty(pageKey)
   const dirty = JSON.stringify([page.changes,page.images,page.colors,page.pins]) !== JSON.stringify([original.changes,original.images,original.colors,original.pins])
@@ -38,6 +39,12 @@ export function SiteStudio({ projectId, profile, initialPages, initialImages, ca
   useEffect(() => { if (demo) { try { const items = JSON.parse(sessionStorage.getItem('tz-cato-demo') ?? '{}') as Record<string,Review>; setReviews(items); setSaved(items) } catch { /* Ignore stale preview data. */ } } }, [demo])
   function post(type: 'configure'|'update') { frame.current?.contentWindow?.postMessage({ source: 'tz-portal-editor', type, state, imageKeys: profile.images, mode }, window.location.origin) }
   useEffect(() => { post('update') }) // Keep the real page in sync with edits and mode changes.
+  useEffect(() => {
+    frameConfigured.current = false
+    const timer = setInterval(() => { if (!frameConfigured.current) post('configure') }, 1000)
+    post('configure')
+    return () => clearInterval(timer)
+  }, [pageKey, device])
   useEffect(() => {
     const element = viewport.current
     if (!element) return
@@ -52,6 +59,7 @@ export function SiteStudio({ projectId, profile, initialPages, initialImages, ca
       if (event.origin !== window.location.origin || event.source !== frame.current?.contentWindow || event.data?.source !== 'tz-site-preview') return
       const data = event.data
       if (data.type === 'ready') post('configure')
+      if (data.type === 'configured') { frameConfigured.current = true; post('update') }
       if (data.type === 'select' && canEdit) { setExpanded(false); setMode(data.kind); setSelected(data.key); setError('') }
       if (data.type === 'pin-place' && canEdit) { setExpanded(false); setMode('pins'); setPending({ x: data.x, y: data.y, target: data.target }); setComment('') }
       if (data.type === 'pin-selected') { setMode('pins'); setSelected(data.id); setPending(null) }
@@ -99,14 +107,38 @@ export function SiteStudio({ projectId, profile, initialPages, initialImages, ca
     const document = frame.current?.contentDocument
     const body = document?.body
     if (!document || !body) throw new Error('Wait for the site preview to finish loading before submitting')
+    const ready = await new Promise<boolean>(resolve => {
+      const until = Date.now() + 15000
+      const check = () => {
+        if (frameConfigured.current && body.querySelectorAll('.tz-preview-pin').length === page.pins.length) resolve(true)
+        else if (Date.now() >= until) resolve(false)
+        else setTimeout(check, 200)
+      }
+      check()
+    })
+    if (!ready) throw new Error('Wait for the site preview and comment pins to finish loading before submitting')
     const width = Math.max(document.documentElement.scrollWidth, body.scrollWidth)
     const height = Math.max(document.documentElement.scrollHeight, body.scrollHeight)
-    const { default: html2canvas } = await import('html2canvas')
-    const canvas = await html2canvas(body, { useCORS: true, allowTaint: false, logging: false,
-      backgroundColor: document.defaultView?.getComputedStyle(body).backgroundColor ?? '#ffffff',
-      width, height, windowWidth: width, windowHeight: height, scrollX: 0, scrollY: 0,
-      scale: Math.min(1, 12000 / height, 1800 / width) })
-    const image = await new Promise<Blob>((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Unable to capture this page')), 'image/jpeg', 0.82))
+    const view = document.defaultView as (Window & { htmlToImage?: { toJpeg: (node: HTMLElement, options: Record<string, unknown>) => Promise<string> } }) | null
+    if (!view) throw new Error('The site preview is unavailable')
+    if (!view.htmlToImage) await new Promise<void>((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = '/site-previews/cato/js/html-to-image.js'
+      script.onload = () => resolve()
+      script.onerror = () => reject(new Error('Unable to load the page capture tool'))
+      document.head.appendChild(script)
+    })
+    if (!view.htmlToImage) throw new Error('Unable to load the page capture tool')
+    const reveal = Array.from(body.querySelectorAll<HTMLElement>('.fade-in-section')).map(element => ({ element, style: element.getAttribute('style'), visible: element.classList.contains('visible') }))
+    reveal.forEach(({ element }) => { element.classList.add('visible'); element.style.opacity = '1'; element.style.transform = 'none'; element.style.transition = 'none' })
+    let image: Blob
+    try {
+      const scale = Math.min(1, 12000 / height, 1800 / width)
+      const dataUrl = await view.htmlToImage.toJpeg(body, { quality: 0.82, skipFonts: true, onImageErrorHandler: () => {},
+        backgroundColor: document.defaultView?.getComputedStyle(body).backgroundColor ?? '#ffffff',
+        width, height, canvasWidth: Math.round(width * scale), canvasHeight: Math.round(height * scale) })
+      image = await (await fetch(dataUrl)).blob()
+    } finally { reveal.forEach(({ element, style, visible }) => { if (style === null) element.removeAttribute('style'); else element.setAttribute('style', style); if (!visible) element.classList.remove('visible') }) }
     if (image.size > 10 * 1024 * 1024) throw new Error('The page capture is too large; try the mobile view')
     const prepare = await fetch(`/api/projects/${projectId}/site-snapshot`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pageKey, size: image.size }) })
     const signed = await prepare.json()
@@ -141,7 +173,7 @@ export function SiteStudio({ projectId, profile, initialPages, initialImages, ca
         <section className={'cms-main' + (expanded ? ' is-expanded' : '')}><div className="cms-toolbar"><div><span className="eyebrow accent">{current.title.toUpperCase()} / EXACT SITE PREVIEW</span><h2>{current.title} page</h2></div><span className={`cms-state is-${page.status}`}>{dirty ? 'Unsaved changes' : page.status}</span></div>
           <div className="cms-tools" role="toolbar" aria-label="Editor tools">{([['text','✎ Text'],['images','▧ Images'],['colors','◉ Colors'],['pins','◎ Comments']] as const).map(([key,label]) => <button type="button" key={key} className={mode === key ? 'active' : ''} onClick={() => { setMode(key); setSelected('') }}>{label}{key === 'pins' && page.pins.length ? ` ${page.pins.length}` : ''}</button>)}</div>
           <div className="cms-review-controls"><div className="cms-device-switch" aria-label="Preview size"><button type="button" className={device === 'desktop' ? 'active' : ''} onClick={() => setDevice('desktop')}>▣ Desktop</button><button type="button" className={device === 'mobile' ? 'active' : ''} onClick={() => setDevice('mobile')}>▯ Mobile</button></div><button type="button" className="cms-expand-preview" onClick={() => setExpanded(value => !value)}>{expanded ? '↙ Close full preview' : '⛶ Full preview'}</button><button type="button" className={'cms-add-pin ' + (mode === 'pins' ? 'active' : '')} onClick={() => setMode('pins')}>⊕ Drop a comment pin</button></div>
-          <div className={'cms-preview-stage is-' + device}><div className="cms-browser"><div className="cms-browser-bar"><i/><i/><i/><span>{profile.domain}/{current.path === 'index.html' ? '' : current.path}</span><b>{device.toUpperCase()} VIEW</b></div><div className="site-editor-viewport" ref={viewport}><iframe key={pageKey + device} ref={frame} className="site-editor-frame" title={`${profile.name} ${current.title} preview`} src={`${profile.previewRoot}/${current.path}`} onLoad={() => post('configure')} /></div></div></div><p className="cms-preview-note">{mode === 'pins' ? 'Click anywhere on the page to place a comment pin.' : 'Scroll the complete page and click an item to edit it.'}</p></section>
+          <div className={'cms-preview-stage is-' + device}><div className="cms-browser"><div className="cms-browser-bar"><i/><i/><i/><span>{profile.domain}/{current.path === 'index.html' ? '' : current.path}</span><b>{device.toUpperCase()} VIEW</b></div><div className="site-editor-viewport" ref={viewport}><iframe key={pageKey + device} ref={frame} className="site-editor-frame" title={`${profile.name} ${current.title} preview`} src={`${profile.previewRoot}/${current.path}`} onLoad={() => { frameConfigured.current = false; post('configure') }} /></div></div></div><p className="cms-preview-note">{mode === 'pins' ? 'Click anywhere on the page to place a comment pin.' : 'Scroll the complete page and click an item to edit it.'}</p></section>
         <aside className="cms-inspector"><span className="eyebrow accent">INSPECTOR / {mode.toUpperCase()}</span>
           {mode === 'text' && <><h3>Page text</h3><p>Click text inside the preview or select a field.</p><div className="cms-field-choices">{copyKeys.map(key => <button type="button" key={key} className={selected === key ? 'active' : ''} onClick={() => setSelected(key)}>{key.replaceAll('_',' ')}</button>)}</div>{selected && selected in profile.copy && <label className="cms-input-label">{selected.replaceAll('_',' ')}<textarea rows={5} value={page.changes[selected] ?? profile.copy[selected]} onChange={event => update({ changes: { ...page.changes, [selected]: event.target.value } })} disabled={!canEdit} /></label>}</>}
           {mode === 'images' && <><h3>Site images</h3><p>Click an image in the preview, then choose a replacement or drop a new image here.</p><div className="site-editor-drop" onDragOver={event => event.preventDefault()} onDrop={event => { event.preventDefault(); void upload(event.dataTransfer.files) }}><label>{uploading ? 'Uploading…' : 'Drop images here or choose files'}<input type="file" accept="image/jpeg,image/png,image/webp" multiple disabled={!canEdit || uploading} onChange={event => { if (event.target.files) void upload(event.target.files); event.target.value = '' }} /></label></div>{selected && selected in profile.images && <><strong className="site-editor-selected">{selected.replaceAll('_',' ')}</strong><div className="site-editor-images">{uploadedImages.map(file => { const path = `/api/projects/${projectId}/files/${file.id}`; return <button type="button" key={file.id} className={page.images[selected] === path ? 'active' : ''} onClick={() => update({ images: { ...page.images, [selected]: path } })} disabled={!canEdit}><img src={path} alt="" /><span>{file.display_name}</span></button> })}{Object.entries(profile.images).map(([key,path]) => <button type="button" key={key} className={(page.images[selected] ?? profile.images[selected]) === path ? 'active' : ''} onClick={() => update({ images: { ...page.images, [selected]: path } })} disabled={!canEdit}><img src={path.startsWith('images/') ? `https://${profile.domain}/${path}` : path} alt="" /><span>{key.replaceAll('_',' ')}</span></button>)}</div></>}{!selected && <div className="cms-field-choices">{imageKeys.map(key => <button type="button" key={key} onClick={() => setSelected(key)}>{key.replaceAll('_',' ')}</button>)}</div>}</>}

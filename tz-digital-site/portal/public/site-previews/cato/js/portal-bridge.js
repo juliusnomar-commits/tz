@@ -6,6 +6,7 @@
   let state = { changes: {}, images: {}, colors: {}, pins: [] };
   let originals = {};
   let imageKeys = {};
+  let configured = false;
   const style = document.createElement('style');
   style.textContent = 'body{position:relative}[data-i18n].tz-selectable:hover,.tz-image-selectable:hover{outline:3px solid #a88af5!important;outline-offset:3px;cursor:pointer!important}.tz-pin-mode,.tz-pin-mode *{cursor:crosshair!important}.tz-preview-pin{position:absolute;z-index:9999;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;border:2px solid white;background:#7454c7;color:white;font:700 13px Arial;box-shadow:0 3px 12px #0008;transform:translate(-50%,-50%);cursor:pointer!important}';
   document.head.appendChild(style);
@@ -18,7 +19,7 @@
       const key = el.getAttribute('data-tz-image-key');
       const path = state.images[key] || imageKeys[key];
       if (!path) return;
-      const resolved = path.startsWith('images/') ? 'https://cato-brown.vercel.app/' + path : path;
+      const resolved = path.startsWith('images/') ? '/api/cato-image/' + path.slice('images/'.length) : path;
       if (el.tagName === 'IMG') el.src = resolved;
       else el.style.backgroundImage = 'url("' + resolved.replaceAll('"', '') + '")';
     });
@@ -41,11 +42,11 @@
       document.querySelectorAll('img').forEach(el => { if (normalize(el.getAttribute('src')) === normalize(path)) { el.setAttribute('data-tz-image-key', key); el.classList.add('tz-image-selectable'); } });
       document.querySelectorAll('[style*="background-image"]').forEach(el => { if (el.style.backgroundImage.includes(normalize(path))) { el.setAttribute('data-tz-image-key', key); el.classList.add('tz-image-selectable'); } });
     });
-    apply(); send('ready');
+    apply();
   }
   window.addEventListener('message', event => {
     if (event.origin !== allowedOrigin || event.source !== window.parent || event.data?.source !== 'tz-portal-editor') return;
-    if (event.data.type === 'configure') { imageKeys = event.data.imageKeys || {}; state = event.data.state || state; mode = event.data.mode || 'text'; root.classList.toggle('tz-pin-mode', mode === 'pins'); prepare(); }
+    if (event.data.type === 'configure') { configured = true; imageKeys = event.data.imageKeys || {}; state = event.data.state || state; mode = event.data.mode || 'text'; root.classList.toggle('tz-pin-mode', mode === 'pins'); prepare(); send('configured'); }
     if (event.data.type === 'update') { state = event.data.state || state; mode = event.data.mode || mode; root.classList.toggle('tz-pin-mode', mode === 'pins'); apply(); }
   });
   document.addEventListener('click', event => {
@@ -61,5 +62,8 @@
       if (key) { event.preventDefault(); event.stopPropagation(); send('select', { kind: mode, key }); }
     }
   }, true);
-  window.addEventListener('load', () => { send('ready'); setTimeout(() => send('ready'), 900); });
+  window.addEventListener('load', () => {
+    send('ready');
+    const timer = setInterval(() => { if (configured) clearInterval(timer); else send('ready'); }, 1000);
+  });
 })();

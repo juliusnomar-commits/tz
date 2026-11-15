@@ -1,12 +1,12 @@
 {
   "notes": [
-    { "src": "images/currency-euro.jpg" },
-    { "src": "images/currency-dollar.png" },
-    { "src": "images/currency-franc.png" },
-    { "src": "images/currency-yen.jpg" },
-    { "src": "images/currency-rand.jpg" },
-    { "src": "images/currency-baht.jpg" },
-    { "src": "images/currency-kronor.jpg" },
-    { "src": "images/currency-riyal.jpg" }
+    { "src": "/api/cato-image/currency-euro.jpg" },
+    { "src": "/api/cato-image/currency-dollar.png" },
+    { "src": "/api/cato-image/currency-franc.png" },
+    { "src": "/api/cato-image/currency-yen.jpg" },
+    { "src": "/api/cato-image/currency-rand.jpg" },
+    { "src": "/api/cato-image/currency-baht.jpg" },
+    { "src": "/api/cato-image/currency-kronor.jpg" },
+    { "src": "/api/cato-image/currency-riyal.jpg" }
   ]
 }

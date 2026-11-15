@@ -4,7 +4,7 @@ import { contentPages, type ContentPageKey } from '@/lib/content'
 import { sectionFields, type IntakeAnswers, type IntakeSection } from '@/lib/intake'
 import { projectAccess } from '@/lib/project-access'
 import { createZip } from '@/lib/zip'
-import { siteProfile } from '@/lib/site-profiles'
+import { sitePage, siteProfile, type SiteProfile } from '@/lib/site-profiles'
 
 const encoder = new TextEncoder()
 const text = (value: string) => encoder.encode(value)
@@ -12,6 +12,21 @@ const safeName = (value: string) => value.normalize('NFKC').replace(/[\\/\x00-\x
 
 function answerMarkdown(title: string, answers: Record<string, string>, keys: readonly string[]) {
   return `# ${title}\n\n${keys.map(key => `## ${key.replace(/([A-Z])/g, ' $1').replace(/^./, letter => letter.toUpperCase())}\n\n${answers[key] || '_Not provided_'}\n`).join('\n')}`
+}
+
+function indented(value: unknown) { return String(value ?? '').split('\n').map(line => `    ${line}`).join('\n') }
+
+function siteReviewMarkdown(profile: SiteProfile, page: { page_key: string; changes: unknown; images: unknown; colors: unknown; pins: unknown; status: string; version: number; snapshot_path: string|null; snapshot_device: string|null }) {
+  const info = sitePage(profile, page.page_key)
+  const changes = (page.changes ?? {}) as Record<string,string>
+  const images = (page.images ?? {}) as Record<string,string>
+  const colors = (page.colors ?? {}) as Record<string,string>
+  const pins = Array.isArray(page.pins) ? page.pins as { x: number; y: number; target: string; comment: string }[] : []
+  const textChanges = Object.entries(changes).map(([key,value]) => `### ${key}\n\nCurrent:\n\n${indented(profile.copy[key])}\n\nRequested:\n\n${indented(value)}\n`).join('\n')
+  const imageChanges = Object.entries(images).map(([key,value]) => `- **${key}:** ${profile.images[key]} → ${value}`).join('\n')
+  const colorChanges = Object.entries(colors).map(([key,value]) => `- **${key}:** ${profile.colors[key]} → ${value}`).join('\n')
+  const comments = pins.map((pin,index) => `${index + 1}. **${pin.target}** at ${pin.x.toFixed(1)}% across, ${pin.y.toFixed(1)}% down: ${pin.comment}`).join('\n')
+  return `# ${profile.name}: ${info?.title ?? page.page_key}\n\nStatus: **${page.status}** · Version: ${page.version}\nLive reference: https://${profile.domain}/${info?.path === 'index.html' ? '' : info?.path ?? ''}\n\n## Text edits\n\n${textChanges || '_No text edits._'}\n## Image replacements\n\n${imageChanges || '_No image replacements._'}\n\n## Color edits\n\n${colorChanges || '_No color edits._'}\n\n## Pinned comments\n\n${comments || '_No pinned comments._'}\n\n## Page capture\n\n${page.snapshot_path ? `Captured in ${page.snapshot_device ?? 'desktop'} view with the pins visible.\n\n![Annotated page capture](./${page.page_key}-pins.jpg)` : '_No submitted page capture yet. Save a review from the editor to add one._'}\n`
 }
 
 export async function GET(_request: Request, { params }: { params: Promise<{ projectId: string }> }) {
@@ -23,7 +38,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ pro
   const [intakeResult, pagesResult, siteResult, filesResult] = await Promise.all([
     admin.from('portal_project_intakes').select('answers, status, section_statuses, updated_at').eq('project_id', projectId).maybeSingle(),
     admin.from('portal_content_pages').select('page_key, fields, design, pins, status, version, updated_at').eq('project_id', projectId),
-    admin.from('portal_site_pages').select('page_key, changes, images, colors, pins, status, version, updated_at').eq('project_id', projectId),
+    admin.from('portal_site_pages').select('page_key, changes, images, colors, pins, status, version, updated_at, snapshot_path, snapshot_device').eq('project_id', projectId),
     admin.from('portal_file_records').select('id, display_name, category, storage_path, mime_type, byte_size').eq('project_id', projectId).in('category', ['brand', 'legal']).order('uploaded_at'),
   ])
   for (const result of [intakeResult, pagesResult, siteResult, filesResult]) if (result.error) return NextResponse.json({ error: 'Unable to prepare project handoff' }, { status: 500 })
@@ -56,8 +71,21 @@ export async function GET(_request: Request, { params }: { params: Promise<{ pro
   if (profile) {
     const sitePages = siteResult.data ?? []
     const approved = sitePages.filter(page => page.status === 'approved')
-    add('05-site-review/README.md', `# ${profile.name} site review\n\nThese files are proposals. Only approved page changes should be applied to the customer website. Review pinned comments and uploaded images before updating the source repository. Nothing in this export publishes automatically.\n`)
-    for (const page of sitePages) add(`05-site-review/${page.page_key}.json`, JSON.stringify(page, null, 2))
+    add('05-site-review/README.md', `# ${profile.name} site review\n\nEach page has a Markdown brief, structured JSON, and (after submission) a full page JPEG capture with numbered pins. The Markdown briefs are ready to pass to an AI assistant or to implement manually. Only approved page changes should be applied to the customer website. Nothing in this export publishes automatically.\n`)
+    for (const page of sitePages) {
+      if (!sitePage(profile, page.page_key)) continue
+      add(`05-site-review/${page.page_key}.md`, siteReviewMarkdown(profile, page))
+      add(`05-site-review/${page.page_key}.json`, JSON.stringify(page, null, 2))
+      if (page.snapshot_path) {
+        const expected = new RegExp(`^${access.project.tenant_id}/${projectId}/site-reviews/${page.page_key}/[0-9a-f-]{36}\\.jpg$`, 'i')
+        if (!expected.test(page.snapshot_path)) return NextResponse.json({ error: 'A page capture has an invalid path' }, { status: 500 })
+        const { data, error } = await admin.storage.from('portal-intake').download(page.snapshot_path)
+        if (error || !data) return NextResponse.json({ error: `Unable to retrieve ${page.page_key} page capture` }, { status: 500 })
+        const bytes = new Uint8Array(await data.arrayBuffer())
+        if (bytes.byteLength > 10 * 1024 * 1024) return NextResponse.json({ error: 'A page capture exceeds the 10 MB limit' }, { status: 413 })
+        add(`05-site-review/${page.page_key}-pins.jpg`, bytes)
+      }
+    }
     add('05-site-review/approved-copy.json', JSON.stringify({ ...profile.copy, ...Object.assign({}, ...approved.map(page => page.changes)) }, null, 2))
     add('05-site-review/approved-images.json', JSON.stringify({ ...profile.images, ...Object.assign({}, ...approved.map(page => page.images)) }, null, 2))
     add('05-site-review/approved-colors.json', JSON.stringify({ ...profile.colors, ...Object.assign({}, ...approved.map(page => page.colors)) }, null, 2))

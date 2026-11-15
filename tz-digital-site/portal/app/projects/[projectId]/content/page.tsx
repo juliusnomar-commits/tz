@@ -16,7 +16,7 @@ export default async function ContentPage({ params }: { params: Promise<{ projec
   const profile = siteProfile(access.project.site_key)
   if (profile) {
     const [pages, files] = await Promise.all([
-      access.supabase.from('portal_site_pages').select('page_key, changes, images, colors, pins, status, version, updated_at').eq('project_id', projectId),
+      access.supabase.from('portal_site_pages').select('page_key, changes, images, colors, pins, status, version, updated_at, snapshot_path, snapshot_device').eq('project_id', projectId),
       access.supabase.from('portal_file_records').select('id, display_name').eq('project_id', projectId).eq('category', 'brand').like('mime_type', 'image/%'),
     ])
     if (pages.error) throw pages.error

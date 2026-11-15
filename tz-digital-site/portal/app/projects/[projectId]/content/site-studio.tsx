@@ -5,7 +5,7 @@ import { createClient } from '@supabase/supabase-js'
 import type { SiteProfile } from '@/lib/site-profiles'
 import type { VisualPin } from '@/lib/content'
 
-type Review = { page_key: string; changes: Record<string,string>; images: Record<string,string>; colors: Record<string,string>; pins: VisualPin[]; status: 'draft'|'submitted'|'approved'; version: number; updated_at: string }
+type Review = { page_key: string; changes: Record<string,string>; images: Record<string,string>; colors: Record<string,string>; pins: VisualPin[]; status: 'draft'|'submitted'|'approved'; version: number; updated_at: string; snapshot_path?: string|null; snapshot_device?: Device|null }
 type Props = { projectId: string; profile: SiteProfile; initialPages: Review[]; initialImages: { id: string; display_name: string }[]; canEdit: boolean; isAgency: boolean; demo?: boolean }
 type Mode = 'text'|'images'|'colors'|'pins'
 type Device = 'desktop'|'mobile'
@@ -84,6 +84,27 @@ export function SiteStudio({ projectId, profile, initialPages, initialImages, ca
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'Upload failed') }
     finally { setUploading(false) }
   }
+  async function capturePage() {
+    const document = frame.current?.contentDocument
+    const body = document?.body
+    if (!document || !body) throw new Error('Wait for the site preview to finish loading before submitting')
+    const width = Math.max(document.documentElement.scrollWidth, body.scrollWidth)
+    const height = Math.max(document.documentElement.scrollHeight, body.scrollHeight)
+    const { default: html2canvas } = await import('html2canvas')
+    const canvas = await html2canvas(body, { useCORS: true, allowTaint: false, logging: false,
+      backgroundColor: document.defaultView?.getComputedStyle(body).backgroundColor ?? '#ffffff',
+      width, height, windowWidth: width, windowHeight: height, scrollX: 0, scrollY: 0,
+      scale: Math.min(1, 12000 / height, 1800 / width) })
+    const image = await new Promise<Blob>((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Unable to capture this page')), 'image/jpeg', 0.82))
+    if (image.size > 10 * 1024 * 1024) throw new Error('The page capture is too large; try the mobile view')
+    const prepare = await fetch(`/api/projects/${projectId}/site-snapshot`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pageKey, size: image.size }) })
+    const signed = await prepare.json()
+    if (!prepare.ok) throw new Error(signed.error ?? 'Unable to prepare page capture')
+    const storage = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!).storage.from('portal-intake')
+    const uploaded = await storage.uploadToSignedUrl(signed.path, signed.token, image, { contentType: 'image/jpeg' })
+    if (uploaded.error) throw uploaded.error
+    return signed.path as string
+  }
   async function save(intent: 'save'|'submit'|'approve') {
     setBusy(true); setError(''); setNotice('')
     try {
@@ -94,11 +115,12 @@ export function SiteStudio({ projectId, profile, initialPages, initialImages, ca
         setNotice('Demo only: saved in this browser session. Connect storage for a real client account.')
         return
       }
-      const response = await fetch(`/api/projects/${projectId}/site`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pageKey, ...state, intent, expectedVersion: page.version }) })
+      const snapshotPath = intent === 'submit' ? await capturePage() : null
+      const response = await fetch(`/api/projects/${projectId}/site`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pageKey, ...state, intent, expectedVersion: page.version, snapshotPath, snapshotDevice: intent === 'submit' ? device : null }) })
       const data = await response.json()
       if (!response.ok) throw new Error(data.error ?? 'Unable to save')
       setReviews(old => ({ ...old, [pageKey]: data.page })); setSaved(old => ({ ...old, [pageKey]: data.page }))
-      setNotice(intent === 'save' ? 'Draft saved.' : intent === 'submit' ? 'Sent to TZ Digital for review.' : 'Changes approved. TZ Digital can apply them to the live site.')
+      setNotice(intent === 'save' ? 'Draft saved.' : intent === 'submit' ? 'Sent to TZ Digital with a page capture and pinned comments.' : 'Changes approved. TZ Digital can apply them to the live site.')
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'Unable to save') }
     finally { setBusy(false) }
   }

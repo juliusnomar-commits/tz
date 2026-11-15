@@ -18,8 +18,9 @@
       const key = el.getAttribute('data-tz-image-key');
       const path = state.images[key] || imageKeys[key];
       if (!path) return;
-      if (el.tagName === 'IMG') el.src = path;
-      else el.style.backgroundImage = 'url("' + path.replaceAll('"', '') + '")';
+      const resolved = path.startsWith('images/') ? 'https://cato-brown.vercel.app/' + path : path;
+      if (el.tagName === 'IMG') el.src = resolved;
+      else el.style.backgroundImage = 'url("' + resolved.replaceAll('"', '') + '")';
     });
     document.querySelectorAll('.tz-preview-pin').forEach(el => el.remove());
     state.pins.forEach((pin, index) => {

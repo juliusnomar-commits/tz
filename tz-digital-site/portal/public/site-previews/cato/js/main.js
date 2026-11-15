@@ -52,14 +52,14 @@ if (fadeSections.length) {
 // flat-icon set. Falls back to these 8 real files if content/currency.json
 // hasn't been customized yet.
 const defaultCurrencyNotes = [
-  { img: 'images/currency-euro.jpg' },
-  { img: 'images/currency-dollar.png' },
-  { img: 'images/currency-franc.png' },
-  { img: 'images/currency-yen.jpg' },
-  { img: 'images/currency-rand.jpg' },
-  { img: 'images/currency-baht.jpg' },
-  { img: 'images/currency-kronor.jpg' },
-  { img: 'images/currency-riyal.jpg' },
+  { img: 'https://cato-brown.vercel.app/images/currency-euro.jpg' },
+  { img: 'https://cato-brown.vercel.app/images/currency-dollar.png' },
+  { img: 'https://cato-brown.vercel.app/images/currency-franc.png' },
+  { img: 'https://cato-brown.vercel.app/images/currency-yen.jpg' },
+  { img: 'https://cato-brown.vercel.app/images/currency-rand.jpg' },
+  { img: 'https://cato-brown.vercel.app/images/currency-baht.jpg' },
+  { img: 'https://cato-brown.vercel.app/images/currency-kronor.jpg' },
+  { img: 'https://cato-brown.vercel.app/images/currency-riyal.jpg' },
 ];
 let currencyNotes = defaultCurrencyNotes;
 
@@ -141,15 +141,15 @@ function applyImages() {
 
   // HOME — fixed polaroids
   const familyImg = document.querySelector('.about-polaroid-grid .polaroid:first-child img');
-  if (familyImg) familyImg.src = img('home_familie', 'images/family-teaser.jpg');
+  if (familyImg) familyImg.src = img('home_familie', 'https://cato-brown.vercel.app/images/family-teaser.jpg');
 
   const catoImg = document.querySelector('.about-polaroid-grid .polaroid:last-child img');
-  if (catoImg) catoImg.src = img('home_cato', 'images/about-cato.jpg');
+  if (catoImg) catoImg.src = img('home_cato', 'https://cato-brown.vercel.app/images/about-cato.jpg');
 
   // HOME — garden teaser marquee
   const gardenImgs = document.querySelectorAll('.garden-teaser-marquee .polaroid img');
   const gardenKeys = ['home_tuin_1', 'home_tuin_2', 'home_tuin_3', 'home_tuin_4'];
-  const gardenDefaults = ['images/garden-teaser-1.jpg', 'images/garden-teaser-2.jpg', 'images/garden-teaser-3.jpg', 'images/garden-teaser-4.jpg'];
+  const gardenDefaults = ['https://cato-brown.vercel.app/images/garden-teaser-1.jpg', 'https://cato-brown.vercel.app/images/garden-teaser-2.jpg', 'https://cato-brown.vercel.app/images/garden-teaser-3.jpg', 'https://cato-brown.vercel.app/images/garden-teaser-4.jpg'];
   gardenImgs.forEach((el, i) => {
     const key = gardenKeys[i % 4];
     el.src = img(key, gardenDefaults[i % 4]);
@@ -164,8 +164,8 @@ function applyImages() {
   // CATERING — polaroids
   const cateringPolaroids = document.querySelectorAll('.catering-what-polaroid img');
   if (cateringPolaroids.length) {
-    if (cateringPolaroids[0]) cateringPolaroids[0].src = img('catering_1', 'images/catering-gallery-1.jpg');
-    if (cateringPolaroids[1]) cateringPolaroids[1].src = img('catering_2', 'images/catering-gallery-2.jpg');
+    if (cateringPolaroids[0]) cateringPolaroids[0].src = img('catering_1', 'https://cato-brown.vercel.app/images/catering-gallery-1.jpg');
+    if (cateringPolaroids[1]) cateringPolaroids[1].src = img('catering_2', 'https://cato-brown.vercel.app/images/catering-gallery-2.jpg');
   }
 
   // GARDEN — hero
@@ -176,13 +176,13 @@ function applyImages() {
 
   // GARDEN — origin polaroids
   const originImgs = document.querySelectorAll('.garden-origin .polaroid img');
-  if (originImgs[0]) originImgs[0].src = img('garden_origin_1', 'images/tt-africanwoman.jpg');
-  if (originImgs[1]) originImgs[1].src = img('garden_origin_2', 'images/tt-village.jpg');
+  if (originImgs[0]) originImgs[0].src = img('garden_origin_1', 'https://cato-brown.vercel.app/images/tt-africanwoman.jpg');
+  if (originImgs[1]) originImgs[1].src = img('garden_origin_2', 'https://cato-brown.vercel.app/images/tt-village.jpg');
 
   // GARDEN — gallery (row 1 + row 2; row 3 is still "coming soon" placeholders)
   const galleryImgs = document.querySelectorAll('.garden-gallery .polaroid img');
   const galleryKeys = ['garden_gallery_1','garden_gallery_2','garden_gallery_3','garden_gallery_4','garden_gallery_5','garden_gallery_6','garden_gallery_7','garden_gallery_11'];
-  const galleryDefaults = ['images/garden-gallery-1.jpg','images/garden-gallery-2.jpg','images/garden-gallery-3.jpg','images/garden-gallery-4.jpg','images/garden-gallery-5.jpg','images/garden-gallery-6.jpg','images/garden-gallery-7.jpg','images/garden-gallery-11.jpg'];
+  const galleryDefaults = ['https://cato-brown.vercel.app/images/garden-gallery-1.jpg','https://cato-brown.vercel.app/images/garden-gallery-2.jpg','https://cato-brown.vercel.app/images/garden-gallery-3.jpg','https://cato-brown.vercel.app/images/garden-gallery-4.jpg','https://cato-brown.vercel.app/images/garden-gallery-5.jpg','https://cato-brown.vercel.app/images/garden-gallery-6.jpg','https://cato-brown.vercel.app/images/garden-gallery-7.jpg','https://cato-brown.vercel.app/images/garden-gallery-11.jpg'];
   galleryKeys.forEach((key, i) => {
     if (galleryImgs[i]) galleryImgs[i].src = img(key, galleryDefaults[i]);
   });
@@ -196,13 +196,13 @@ function applyImages() {
   // ABOUT — family gallery
   const familyGallery = document.querySelectorAll('.family-gallery .polaroid img');
   ['about_familie_1','about_familie_2','about_familie_3','about_familie_4','about_familie_5'].forEach((key, i) => {
-    if (familyGallery[i]) familyGallery[i].src = img(key, `images/family-gallery-${i+1}.jpg`);
+    if (familyGallery[i]) familyGallery[i].src = img(key, `https://cato-brown.vercel.app/images/family-gallery-${i+1}.jpg`);
   });
 
   // ABOUT — dogs
   const dogImgs = document.querySelectorAll('.about-dogs .polaroid img');
-  if (dogImgs[0]) dogImgs[0].src = img('about_hond_1', 'images/about-dog-1.jpg');
-  if (dogImgs[1]) dogImgs[1].src = img('about_hond_2', 'images/about-dog-2.jpg');
+  if (dogImgs[0]) dogImgs[0].src = img('about_hond_1', 'https://cato-brown.vercel.app/images/about-dog-1.jpg');
+  if (dogImgs[1]) dogImgs[1].src = img('about_hond_2', 'https://cato-brown.vercel.app/images/about-dog-2.jpg');
 
   // RESTAURANT — hero
   const restaurantHero = document.querySelector('.hero');
@@ -216,29 +216,29 @@ const seasonalPhotos = [
   {
     months: [12, 1, 2],
     slots: [
-      { src: 'images/seasonal-winter-a.jpg', alt_nl: 'Winter in de tuin', alt_en: 'Winter in the garden' },
-      { src: 'images/seasonal-winter-b.jpg', alt_nl: 'Wintermarkt Maastricht', alt_en: 'Winter market Maastricht' },
+      { src: 'https://cato-brown.vercel.app/images/seasonal-winter-a.jpg', alt_nl: 'Winter in de tuin', alt_en: 'Winter in the garden' },
+      { src: 'https://cato-brown.vercel.app/images/seasonal-winter-b.jpg', alt_nl: 'Wintermarkt Maastricht', alt_en: 'Winter market Maastricht' },
     ]
   },
   {
     months: [3, 4, 5],
     slots: [
-      { src: 'images/seasonal-spring-a.jpg', alt_nl: 'Lente in de moestuin', alt_en: 'Spring in the garden' },
-      { src: 'images/seasonal-spring-b.jpg', alt_nl: 'Eerste oogst', alt_en: 'First harvest' },
+      { src: 'https://cato-brown.vercel.app/images/seasonal-spring-a.jpg', alt_nl: 'Lente in de moestuin', alt_en: 'Spring in the garden' },
+      { src: 'https://cato-brown.vercel.app/images/seasonal-spring-b.jpg', alt_nl: 'Eerste oogst', alt_en: 'First harvest' },
     ]
   },
   {
     months: [6, 7, 8],
     slots: [
-      { src: img('home_seizoen_a', 'images/seasonal-summer-a.jpg'), alt_nl: 'Zomertuin in bloei', alt_en: 'Summer garden in bloom' },
-      { src: img('home_seizoen_b', 'images/seasonal-summer-b.jpg'), alt_nl: 'Verse zomeroogst', alt_en: 'Fresh summer harvest' },
+      { src: img('home_seizoen_a', 'https://cato-brown.vercel.app/images/seasonal-summer-a.jpg'), alt_nl: 'Zomertuin in bloei', alt_en: 'Summer garden in bloom' },
+      { src: img('home_seizoen_b', 'https://cato-brown.vercel.app/images/seasonal-summer-b.jpg'), alt_nl: 'Verse zomeroogst', alt_en: 'Fresh summer harvest' },
     ]
   },
   {
     months: [9, 10, 11],
     slots: [
-      { src: 'images/seasonal-autumn-a.jpg', alt_nl: 'Herfstoogst', alt_en: 'Autumn harvest' },
-      { src: 'images/seasonal-autumn-b.jpg', alt_nl: 'Najaarskleuren', alt_en: 'Autumn colours' },
+      { src: 'https://cato-brown.vercel.app/images/seasonal-autumn-a.jpg', alt_nl: 'Herfstoogst', alt_en: 'Autumn harvest' },
+      { src: 'https://cato-brown.vercel.app/images/seasonal-autumn-b.jpg', alt_nl: 'Najaarskleuren', alt_en: 'Autumn colours' },
     ]
   },
 ];
@@ -266,13 +266,13 @@ function renderSeasonalPolaroids() {
 // ---- Travel photos — image editable via CMS (content/images.json), the
 // month/year/caption grid itself stays fixed in code. ----
 const travelPhotos = [
-  { key: 'travel_may_2026', month: 5, year: 2026, defaultSrc: 'images/travel-may-2026.jpg',  caption_nl: 'Mei 2026',      caption_en: 'May 2026' },
-  { key: 'travel_apr_2026', month: 4, year: 2026, defaultSrc: 'images/travel-apr-2026.jpg',  caption_nl: 'April 2026',    caption_en: 'April 2026' },
-  { key: 'travel_mar_2026', month: 3, year: 2026, defaultSrc: 'images/travel-mar-2026.jpg',  caption_nl: 'Maart 2026',    caption_en: 'March 2026' },
-  { key: 'travel_feb_2026', month: 2, year: 2026, defaultSrc: 'images/travel-feb-2026.jpg',  caption_nl: 'Februari 2026', caption_en: 'February 2026' },
-  { key: 'travel_jan_2026', month: 1, year: 2026, defaultSrc: 'images/travel-jan-2026.jpg',  caption_nl: 'Januari 2026',  caption_en: 'January 2026' },
-  { key: 'travel_dec_2025', month: 12, year: 2025, defaultSrc: 'images/travel-dec-2025.jpg', caption_nl: 'December 2025', caption_en: 'December 2025' },
-  { key: 'travel_nov_2025', month: 11, year: 2025, defaultSrc: 'images/travel-nov-2025.jpg', caption_nl: 'November 2025', caption_en: 'November 2025' },
+  { key: 'travel_may_2026', month: 5, year: 2026, defaultSrc: 'https://cato-brown.vercel.app/images/travel-may-2026.jpg',  caption_nl: 'Mei 2026',      caption_en: 'May 2026' },
+  { key: 'travel_apr_2026', month: 4, year: 2026, defaultSrc: 'https://cato-brown.vercel.app/images/travel-apr-2026.jpg',  caption_nl: 'April 2026',    caption_en: 'April 2026' },
+  { key: 'travel_mar_2026', month: 3, year: 2026, defaultSrc: 'https://cato-brown.vercel.app/images/travel-mar-2026.jpg',  caption_nl: 'Maart 2026',    caption_en: 'March 2026' },
+  { key: 'travel_feb_2026', month: 2, year: 2026, defaultSrc: 'https://cato-brown.vercel.app/images/travel-feb-2026.jpg',  caption_nl: 'Februari 2026', caption_en: 'February 2026' },
+  { key: 'travel_jan_2026', month: 1, year: 2026, defaultSrc: 'https://cato-brown.vercel.app/images/travel-jan-2026.jpg',  caption_nl: 'Januari 2026',  caption_en: 'January 2026' },
+  { key: 'travel_dec_2025', month: 12, year: 2025, defaultSrc: 'https://cato-brown.vercel.app/images/travel-dec-2025.jpg', caption_nl: 'December 2025', caption_en: 'December 2025' },
+  { key: 'travel_nov_2025', month: 11, year: 2025, defaultSrc: 'https://cato-brown.vercel.app/images/travel-nov-2025.jpg', caption_nl: 'November 2025', caption_en: 'November 2025' },
 ];
 
 function loadTravelPhotos() {

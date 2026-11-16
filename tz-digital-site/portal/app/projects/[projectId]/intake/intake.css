@@ -1,4 +1,5 @@
 .intake-app{min-height:100svh;background:#050506;color:var(--ink)}
+.intake-app-embedded{min-height:0;background:transparent}.intake-embedded-main{padding-top:12px}.intake-app-embedded .intake-body{max-width:1180px;padding:10px 0 28px}.intake-app-embedded .intake-heading{padding-top:4px}
 .intake-header{height:80px;border-bottom:1px solid var(--line);padding:0 clamp(20px,4vw,70px);display:flex;align-items:center;justify-content:space-between;gap:20px}
 .intake-header>a:last-child{color:var(--muted);font-size:13px;font-weight:600;text-decoration:none}.intake-header>a:last-child:hover{color:#fff}
 .intake-progress-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:27px;font-size:13px}.intake-progress-head strong{color:#e8ddff;font-size:17px}.intake-progress-head span{color:var(--muted)}.intake-progress-track{height:10px;border-radius:999px;background:#2b2834;overflow:hidden;margin-top:10px}.intake-progress-track>span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#795ef5,#d0b5ff);transition:width .25s ease}.intake-jump a.is-sent{border-color:#438763;background:#143021;color:#b9f0d0}

@@ -1,17 +1,6 @@
-import { logout } from '@/app/login/actions'
-import type { ReactNode } from 'react'
 import { type DashboardData, formatDate, statusLabel } from '@/lib/dashboard'
 import { ProjectFiles } from './project-files'
-
-function NavIcon({ kind }: { kind: 'overview' | 'todo' | 'files' | 'updates' }) {
-  const paths = {
-    overview: <><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9M9 20v-6h6v6"/></>,
-    todo: <><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12 2.5 2.5L16 9"/></>,
-    files: <><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H10l2 2h6.5A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/></>,
-    updates: <><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></>,
-  } satisfies Record<string, ReactNode>
-  return <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">{paths[kind]}</svg>
-}
+import { PortalSidebar } from './portal-sidebar'
 
 function TaskItem({ task, timezone }: { task: DashboardData['tasks'][number], timezone: string }) {
   const complete = task.status === 'done'
@@ -47,7 +36,7 @@ function WalkthroughCard() {
 }
 
 export function DashboardView({ data }: { data: DashboardData }) {
-  const { organization, projects, activeProject: project, tasks, activity, files, fileCount } = data
+  const { projects, activeProject: project, tasks, activity, files, fileCount } = data
   const timezone = project?.project_timezone ?? 'Europe/Berlin'
   const clientTasks = tasks.filter(task => task.owner_type === 'client' || task.owner_type === 'shared')
   const completedMilestones = data.milestones.filter(item => item.status === 'complete').length
@@ -55,22 +44,13 @@ export function DashboardView({ data }: { data: DashboardData }) {
   const visibleActivity = activity.filter((item, index, all) => all.findIndex(other => `${other.title}|${other.created_at.slice(0, 10)}` === `${item.title}|${item.created_at.slice(0, 10)}`) === index).slice(0, 1)
 
   return <main className="dash-shell" id="overview">
-    <aside className="dash-sidebar">
-      <a className="dash-sidebar-brand" href="/dashboard" aria-label="TZ Digital client portal home"><span>TZ</span> Digital</a>
-      <nav aria-label="Portal navigation" className="dash-sidebar-nav">
-        <a href="#overview" aria-current="page"><NavIcon kind="overview" />Overview</a>
-        <a href="#tasks"><NavIcon kind="todo" />To do{clientTasks.filter(task => task.status !== 'done').length > 0 && <span className="dash-nav-count">{clientTasks.filter(task => task.status !== 'done').length}</span>}</a>
-        <a href="#files"><NavIcon kind="files" />Files</a>
-        <a href="#activity"><NavIcon kind="updates" />Updates</a>
-      </nav>
-      <div className="dash-sidebar-bottom"><span>{organization}</span>{data.demo ? <a href="/login">Exit preview ↗</a> : <form action={logout}><button type="submit">Sign out</button></form>}</div>
-    </aside>
+    {project && <PortalSidebar projectId={project.id} projectName={project.name} active="overview" openTasks={clientTasks.filter(task => task.status !== 'done').length} demo={Boolean(data.demo)} />}
 
     <div className="dash-main">
       {data.demo && <div className="dash-demo-banner" role="note">Preview with synthetic data · No customer information is shown · <a href="/demo/cato">Try the Cato site editor ↗</a></div>}
       {!project ? <section className="dash-no-project"><span className="eyebrow accent">WORKSPACE READY</span><h1>Your first project will appear here.</h1><p>Your TZ Digital team is setting things up. When they add your project, this page will show its next steps and updates.</p><a href="/#kontakt">Contact your team <span aria-hidden="true">↗</span></a></section> : <>
         <header className="dash-project-summary" aria-labelledby="project-title">
-          <div className="dash-project-heading"><h1 id="project-title">{project.name}</h1><span className="dash-status"><span className="dash-status-dot" aria-hidden="true" />{statusLabel(project.status)}</span></div>
+          <div className="dash-project-heading"><h1 id="project-title">{project.name}</h1></div>
           <div className="dash-project-facts"><span>Updated {formatDate(project.updated_at, timezone)}</span><span><b>{progress}%</b> complete</span><span className="dash-header-progress" role="progressbar" aria-label="Project progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}><i style={{ width: `${progress}%` }} /></span></div>
           {projects.length > 1 && <form method="get" action="/dashboard" className="dash-project-switch"><label htmlFor="project-picker">Switch project</label><select id="project-picker" name="project" defaultValue={project.id}>{projects.map(item => <option value={item.id} key={item.id}>{item.name}</option>)}</select><button type="submit">View</button></form>}
         </header>
@@ -82,7 +62,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
 
         <section className="dash-detail-grid" aria-label="Project resources and updates">
           <ProjectFiles projectId={project.id} files={files} fileCount={fileCount} canUpload={Boolean(data.canEdit) && !data.demo} demo={Boolean(data.demo)} />
-          <section className="dash-info-card" id="activity" aria-labelledby="activity-heading"><div className="dash-card-heading"><div><span className="eyebrow accent">RECENT ACTIVITY</span><h2 id="activity-heading">Latest activity</h2></div><span className="dash-card-icon" aria-hidden="true">↗</span></div>{visibleActivity.length ? visibleActivity.map(item => <div className="dash-activity-item" key={item.id}><span className="dash-activity-dot" aria-hidden="true"/><div><strong>{item.title}</strong><time dateTime={item.created_at}>{formatDate(item.created_at, timezone)}</time></div></div>) : <p className="dash-empty-inline">Project updates will appear here as work progresses.</p>}</section>
+          <section className="dash-info-card" aria-labelledby="activity-heading"><div className="dash-card-heading"><div><span className="eyebrow accent">RECENT ACTIVITY</span><h2 id="activity-heading">Latest activity</h2></div><a className="dash-card-icon" href={`/projects/${project.id}/updates`} aria-label="Open all updates">↗</a></div>{visibleActivity.length ? visibleActivity.map(item => <div className="dash-activity-item" key={item.id}><span className="dash-activity-dot" aria-hidden="true"/><div><strong>{item.title}</strong><time dateTime={item.created_at}>{formatDate(item.created_at, timezone)}</time></div></div>) : <p className="dash-empty-inline">Project updates will appear here as work progresses.</p>}<a className="dash-card-link" href={`/projects/${project.id}/content`}>Open website preview &amp; comments <span aria-hidden="true">↗</span></a></section>
           <section className="dash-info-card dash-help-card"><div className="dash-card-heading"><div><span className="eyebrow accent">HERE TO HELP</span><h2>Need a hand?</h2></div><span className="dash-card-icon" aria-hidden="true">?</span></div><p>Questions or need support? Get in touch with your TZ Digital team.</p><a href="/#kontakt">Contact your team <span aria-hidden="true">↗</span></a></section>
         </section>
       </>}

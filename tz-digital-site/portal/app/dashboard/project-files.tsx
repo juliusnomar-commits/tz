@@ -4,9 +4,9 @@ import { useRef, useState, type ChangeEvent } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import type { DashboardFile } from '@/lib/dashboard'
 
-type Props = { projectId: string; files: DashboardFile[]; fileCount: number; canUpload: boolean; demo: boolean }
+type Props = { projectId: string; files: DashboardFile[]; fileCount: number; canUpload: boolean; demo: boolean; showAll?: boolean }
 
-export function ProjectFiles({ projectId, files: initialFiles, fileCount: initialCount, canUpload, demo }: Props) {
+export function ProjectFiles({ projectId, files: initialFiles, fileCount: initialCount, canUpload, demo, showAll = false }: Props) {
   const [files, setFiles] = useState(initialFiles)
   const [fileCount, setFileCount] = useState(initialCount)
   const [uploading, setUploading] = useState(false)
@@ -50,13 +50,13 @@ export function ProjectFiles({ projectId, files: initialFiles, fileCount: initia
     }
   }
 
-  const shownFiles = files.slice(0, 3)
-  const moreFiles = Math.max(0, fileCount - shownFiles.length)
+  const shownFiles = showAll ? files : files.slice(0, 3)
+  const moreFiles = showAll ? 0 : Math.max(0, fileCount - shownFiles.length)
 
-  return <section className="dash-info-card dash-files-card" id="files" aria-labelledby="files-heading">
+  return <section className={`dash-info-card dash-files-card${showAll ? ' dash-page-card' : ''}`} id="files" aria-labelledby="files-heading">
     <div className="dash-card-heading"><div><span className="eyebrow accent">PROJECT RESOURCES</span><h2 id="files-heading">Files <span className="dash-file-count">{fileCount}</span></h2></div></div>
     {shownFiles.length ? <ul className="dash-file-list">{shownFiles.map(file => <li key={file.id}><span className="dash-file-type" aria-hidden="true">{file.display_name.split('.').pop()?.slice(0, 3).toUpperCase() || 'FILE'}</span><div><a href={`/api/projects/${projectId}/files/${file.id}`} target="_blank" rel="noopener noreferrer">{file.display_name}</a><small>{formatFileDate(file.uploaded_at)}</small></div><span className="dash-file-arrow" aria-hidden="true">↗</span></li>)}</ul> : <p className="dash-empty-inline">Files shared with your team will appear here.</p>}
-    {moreFiles > 0 && <p className="dash-more-files">+ {moreFiles} more {moreFiles === 1 ? 'file' : 'files'}</p>}
+    {moreFiles > 0 && <a className="dash-more-files" href={`/projects/${projectId}/files`}>+ {moreFiles} more {moreFiles === 1 ? 'file' : 'files'} · View all</a>}
     {(canUpload || demo) && <><input ref={input} className="dash-file-input" type="file" multiple accept="image/jpeg,image/png,image/webp,application/pdf" onChange={event => void upload(event)} aria-label="Choose files to upload" disabled={uploading} /><button type="button" className="dash-upload-button" onClick={() => input.current?.click()} disabled={uploading}>{uploading ? 'Uploading…' : '+ Upload files'}</button><p className="dash-upload-hint">JPG, PNG, WebP or PDF · up to 10 MB each</p></>}
     {message && <p className="dash-upload-message" role="status">{message}</p>}
   </section>

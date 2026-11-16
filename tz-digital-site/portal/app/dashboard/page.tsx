@@ -50,8 +50,9 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
     for (const result of [taskResult, milestoneResult, activityResult, fileResult, intakeResult]) if (result.error) throw result.error
     data.tasks = (taskResult.data ?? []) as DashboardTask[]
     if (activeProject.service === 'website') {
+      data.tasks = data.tasks.filter(task => !/intake/i.test(task.title))
       const intakeProgress = progress({ ...emptyAnswers(), ...(intakeResult.data?.answers as Partial<IntakeAnswers> ?? {}) })
-      data.tasks.unshift({ id: `intake-${projectId}`, title: 'Complete your website intake', owner_type: 'client', status: ['submitted', 'accepted'].includes(intakeResult.data?.status ?? '') ? 'done' : 'waiting_client', due_at: null, href: `/projects/${projectId}/intake`, progressPercent: Math.round(intakeProgress.complete / intakeProgress.total * 100) })
+      data.tasks.unshift({ id: `intake-${projectId}`, title: 'Share project details', owner_type: 'client', status: ['submitted', 'accepted'].includes(intakeResult.data?.status ?? '') ? 'done' : 'waiting_client', due_at: null, href: `/projects/${projectId}/intake`, progressPercent: Math.round(intakeProgress.complete / intakeProgress.total * 100) })
     }
     data.milestones = (milestoneResult.data ?? []) as DashboardMilestone[]
     data.activity = (activityResult.data ?? []) as DashboardActivity[]

@@ -15,9 +15,9 @@ export default async function FilesPage({ params }: { params: Promise<{ projectI
   return <main className="dash-shell">
     <PortalSidebar projectId={projectId} projectName={access.project.name} active="files" />
     <div className="dash-main">
-      <header className="dash-page-heading"><span className="eyebrow accent">PROJECT RESOURCES</span><h1>Files</h1><p>Shared files for {access.project.name}. Add images, documents, or other project materials for your team.</p></header>
+      <header className="dash-page-heading"><h1>Files</h1></header>
       <ProjectFiles projectId={projectId} files={(data ?? []) as DashboardFile[]} fileCount={count ?? data?.length ?? 0} canUpload={access.canEdit} demo={false} showAll />
-      <footer className="dash-footer"><span>TZ DIGITAL · CLIENT PORTAL</span><a href="/#kontakt">Need help? Contact your team ↗</a></footer>
+      <footer className="dash-footer"><span>TZ DIGITAL · CLIENT PORTAL</span><a href="/#kontakt">Need help? Contact your team</a></footer>
     </div>
   </main>
 }

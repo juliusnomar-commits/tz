@@ -23,3 +23,6 @@
 .intake-save{border-color:#a78bc9}
 .intake-jump a{border-radius:999px}
 .intake-choice label{border-radius:13px}
+
+.intake-app-embedded .intake-heading{padding:0 0 20px}.intake-app-embedded .intake-heading h1{font-size:32px;line-height:1.15;letter-spacing:-.05em;margin:0;color:#f6f3f9}.intake-app-embedded .intake-heading>p{display:none}.intake-app-embedded .intake-meta{margin-top:12px}.intake-app-embedded .intake-progress-head{margin-top:14px}.intake-app-embedded .intake-jump{margin:14px 0 20px}.intake-app-embedded .intake-section-title h2{font-size:30px;line-height:1.15;letter-spacing:-.04em}.intake-app-embedded .intake-section-title p{display:none}
+@media(max-width:600px){.intake-app-embedded .intake-heading h1{font-size:26px}}

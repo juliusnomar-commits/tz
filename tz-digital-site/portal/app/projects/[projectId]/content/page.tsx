@@ -5,6 +5,7 @@ import type { ContentRecord } from '@/lib/content'
 import { siteProfile } from '@/lib/site-profiles'
 import { SiteStudio } from './site-studio'
 import { readLivePage } from '@/lib/cato-live'
+import { PortalSidebar } from '@/app/dashboard/portal-sidebar'
 import './content.css'
 
 export const dynamic = 'force-dynamic'
@@ -25,7 +26,7 @@ export default async function ContentPage({ params }: { params: Promise<{ projec
     if (pages.error) throw pages.error
     if (files.error) throw files.error
     if (activity.error) throw activity.error
-    return <SiteStudio projectId={projectId} profile={profile} initialPages={(pages.data ?? []).filter(page => profile.pages.some(item => item.key === page.page_key))} initialPublished={Object.fromEntries(livePages)} initialImages={files.data ?? []} initialComments={activity.data ?? []} canEdit={access.canEdit} isAgency={access.role.startsWith('agency_')} />
+    return <main className="dash-shell"><PortalSidebar projectId={projectId} projectName={access.project.name} active="preview"/><div className="dash-main cms-editor-outer"><SiteStudio projectId={projectId} profile={profile} initialPages={(pages.data ?? []).filter(page => profile.pages.some(item => item.key === page.page_key))} initialPublished={Object.fromEntries(livePages)} initialImages={files.data ?? []} initialComments={activity.data ?? []} canEdit={access.canEdit} isAgency={access.role.startsWith('agency_')} /></div></main>
   }
   const [contentResult, imageResult] = await Promise.all([
     access.supabase.from('portal_content_pages').select('page_key, fields, design, pins, status, version, updated_at').eq('project_id', projectId),

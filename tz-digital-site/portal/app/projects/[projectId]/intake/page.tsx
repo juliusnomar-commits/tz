@@ -1,5 +1,5 @@
 import { redirect, notFound } from 'next/navigation'
-import { emptyAnswers, type IntakeAnswers, type IntakeFile, type IntakeStatus, type SectionStatuses } from '@/lib/intake'
+import { emptyAnswers } from '@/lib/intake'
 import { projectAccess } from '@/lib/project-access'
 import { IntakeView } from './intake-view'
 import { PortalSidebar } from '@/app/dashboard/portal-sidebar'
@@ -19,5 +19,5 @@ export default async function IntakePage({ params }: { params: Promise<{ project
   ])
   if (intakeResult.error) throw intakeResult.error
   if (filesResult.error) throw filesResult.error
-  return <main className="dash-shell"><PortalSidebar projectId={projectId} projectName={access.project.name} active="tasks"/><div className="dash-main intake-embedded-main"><IntakeView projectId={projectId} projectName={access.project.name} initialAnswers={{ ...emptyAnswers(), ...(intakeResult.data?.answers as Partial<AnswersType> ?? {}) }} initialStatus={(intakeResult.data?.status ?? 'draft') as StatusType} initialSectionStatuses={(intakeResult.data?.section_statuses ?? {}) as SectionStatusType} initialVersion={intakeResult.data?.version ?? 0} initialFiles={(filesResult.data ?? []) as FileType[]} canEdit={access.canEdit && intakeResult.data?.status !== 'accepted'} embedded /></div></main>
+  return <main className="dash-shell"><PortalSidebar projectId={projectId} projectName={access.project.name} active="details"/><div className="dash-main intake-embedded-main"><IntakeView projectId={projectId} projectName={access.project.name} initialAnswers={{ ...emptyAnswers(), ...(intakeResult.data?.answers as Partial<AnswersType> ?? {}) }} initialStatus={(intakeResult.data?.status ?? 'draft') as StatusType} initialSectionStatuses={(intakeResult.data?.section_statuses ?? {}) as SectionStatusType} initialVersion={intakeResult.data?.version ?? 0} initialFiles={(filesResult.data ?? []) as FileType[]} canEdit={access.canEdit && intakeResult.data?.status !== 'accepted'} embedded /></div></main>
 }

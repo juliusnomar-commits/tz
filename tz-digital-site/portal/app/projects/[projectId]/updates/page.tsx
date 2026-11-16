@@ -16,16 +16,16 @@ export default async function UpdatesPage({ params }: { params: Promise<{ projec
   return <main className="dash-shell">
     <PortalSidebar projectId={projectId} projectName={access.project.name} active="updates" />
     <div className="dash-main">
-      <header className="dash-page-heading"><span className="eyebrow accent">RECENT ACTIVITY</span><h1>Updates</h1><p>Recent work and notes for {access.project.name}.</p></header>
+      <header className="dash-page-heading"><h1>Updates</h1></header>
       <section className="dash-page-card dash-updates-card" aria-label="Project activity">
         {activity.length ? <ol className="dash-updates-list">{activity.map(item => <li key={item.id}>
           <span className="dash-activity-dot" aria-hidden="true" />
           <div><strong>{item.title}</strong>{item.detail && <p>{item.detail}</p>}<time dateTime={item.created_at}>{formatDate(item.created_at, 'Europe/Berlin')}</time></div>
-          {/(comment|preview|review|site editor|home changes)/i.test(`${item.title} ${item.detail ?? ''}`) && <a className="dash-task-action" href={`/projects/${projectId}/content`}>Open preview &amp; comments <span aria-hidden="true">↗</span></a>}
+          {/(comment|preview|review|site editor|home changes)/i.test(`${item.title} ${item.detail ?? ''}`) && <a className="dash-task-action" href={`/projects/${projectId}/content`}>Review &amp; comment</a>}
         </li>)}</ol> : <p className="dash-empty-inline">Project updates will appear here as work progresses.</p>}
-        <a className="dash-card-link" href={`/projects/${projectId}/content`}>Open website preview &amp; comments <span aria-hidden="true">↗</span></a>
+        <a className="dash-preview-button" href={`/projects/${projectId}/content`}>Review &amp; comment</a>
       </section>
-      <footer className="dash-footer"><span>TZ DIGITAL · CLIENT PORTAL</span><a href="/#kontakt">Need help? Contact your team ↗</a></footer>
+      <footer className="dash-footer"><span>TZ DIGITAL · CLIENT PORTAL</span><a href="/#kontakt">Need help? Contact your team</a></footer>
     </div>
   </main>
 }

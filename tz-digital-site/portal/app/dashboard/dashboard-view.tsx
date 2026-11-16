@@ -43,6 +43,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
   const completedMilestones = data.milestones.filter(item => item.status === 'complete').length
   const progress = data.milestones.length ? Math.round(completedMilestones / data.milestones.length * 100) : 0
   const visibleActivity = activity.filter((item, index, all) => all.findIndex(other => `${other.title}|${other.created_at.slice(0, 10)}` === `${item.title}|${item.created_at.slice(0, 10)}`) === index).slice(0, 1)
+  const projectTitle = project?.name.replace(/\bwebsite\b/i, 'Website')
 
   return <main className="dash-shell" id="overview">
     {project && <PortalSidebar projectId={project.id} projectName={project.name} active="overview" openTasks={clientTasks.filter(task => task.status !== 'done').length} demo={Boolean(data.demo)} />}
@@ -51,8 +52,8 @@ export function DashboardView({ data }: { data: DashboardData }) {
       {data.demo && <div className="dash-demo-banner" role="note">Preview with synthetic data · No customer information is shown · <a href="/demo/cato">Try the Cato site editor</a></div>}
       {!project ? <section className="dash-no-project"><span className="eyebrow accent">WORKSPACE READY</span><h1>Your first project will appear here.</h1><p>Your TZ Digital team is setting things up. When they add your project, this page will show its next steps and updates.</p><a href="/#kontakt">Contact your team</a></section> : <>
         <header className="dash-project-summary" aria-labelledby="project-title">
-          <div className="dash-project-heading"><h1 id="project-title">{project.name}</h1></div>
-          <div className="dash-project-facts"><span>Updated {formatDate(project.updated_at, timezone)}</span><span><b>{progress}%</b> complete</span><span className="dash-header-progress" role="progressbar" aria-label="Project progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}><i style={{ width: `${progress}%` }} /></span></div>
+          <div className="dash-project-summary-row"><div className="dash-project-heading"><h1 id="project-title">{projectTitle?.toLowerCase().endsWith(' website') ? <>{projectTitle.slice(0, -8)} <em>Website</em></> : projectTitle}</h1></div>
+          <div className="dash-project-facts"><span className="dash-updated-fact">Updated {formatDate(project.updated_at, timezone)}</span><span className="dash-completion-fact"><b>{progress}%</b> complete</span><span className="dash-header-progress" role="progressbar" aria-label="Project progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}><i style={{ width: `${progress}%` }} /></span></div></div>
           {projects.length > 1 && <form method="get" action="/dashboard" className="dash-project-switch"><label htmlFor="project-picker">Switch project</label><select id="project-picker" name="project" defaultValue={project.id}>{projects.map(item => <option value={item.id} key={item.id}>{item.name}</option>)}</select><button type="submit">View</button></form>}
         </header>
 

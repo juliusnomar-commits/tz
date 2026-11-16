@@ -9,7 +9,7 @@
   let imageKeys = {};
   let configured = false;
   const style = document.createElement('style');
-  style.textContent = 'body{position:relative}[data-i18n].tz-selectable:hover,.tz-image-selectable:hover{outline:3px solid #a88af5!important;outline-offset:3px;cursor:pointer!important}.tz-pin-mode,.tz-pin-mode *{cursor:crosshair!important}.tz-preview-pin{position:absolute;z-index:9999;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;border:2px solid white;background:#7454c7;color:white;font:700 13px Arial;box-shadow:0 3px 12px #0008;transform:translate(-50%,-50%);cursor:pointer!important}';
+  style.textContent = 'body{position:relative}[data-i18n].tz-selectable:hover,.tz-image-selectable:hover{outline:3px solid #a88af5!important;outline-offset:3px;cursor:pointer!important}.tz-pin-mode,.tz-pin-mode *{cursor:crosshair!important}.tz-preview-pin{position:absolute;z-index:9999;width:30px;height:30px;display:grid;place-items:center;border-radius:50% 50% 50% 4px;border:2px solid white;background:#7454c7;color:white;font:700 13px Arial;box-shadow:0 3px 12px #0008;transform:translate(-50%,-100%) rotate(-45deg);cursor:pointer!important;font-size:0!important}.tz-preview-pin:after{content:attr(data-number);font:700 13px Arial;transform:rotate(45deg)}';
   document.head.appendChild(style);
   function send(type, detail = {}) { window.parent.postMessage({ source: 'tz-site-preview', type, ...detail }, allowedOrigin); }
   function normalize(path) { try { return new URL(path, location.href).pathname.split('/').pop(); } catch { return path; } }
@@ -27,14 +27,14 @@
     document.querySelectorAll('.tz-preview-pin').forEach(el => el.remove());
     state.pins.forEach((pin, index) => {
       const el = document.createElement('button'); el.type = 'button'; el.className = 'tz-preview-pin';
-      el.style.left = pin.x + '%'; el.style.top = pin.y + '%'; el.textContent = String(index + 1);
+      el.style.left = pin.x + '%'; el.style.top = pin.y + '%'; el.dataset.number = String(index + 1);
       el.title = pin.comment; el.setAttribute('aria-label', 'Comment ' + (index + 1));
       el.addEventListener('click', event => { event.stopPropagation(); send('pin-selected', { id: pin.id }); });
       document.body.appendChild(el);
     });
     if (pendingPin) {
       const el = document.createElement('span'); el.className = 'tz-preview-pin tz-preview-pin-draft';
-      el.style.left = pendingPin.x + '%'; el.style.top = pendingPin.y + '%'; el.textContent = String(state.pins.length + 1);
+      el.style.left = pendingPin.x + '%'; el.style.top = pendingPin.y + '%'; el.dataset.number = String(state.pins.length + 1);
       el.title = 'Draft pin — add a comment to save'; el.setAttribute('aria-label', 'Draft comment pin ' + (state.pins.length + 1));
       document.body.appendChild(el);
     }

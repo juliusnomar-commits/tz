@@ -1482,6 +1482,10 @@ section .garden-marquee-outer {
     margin-right: -24px;
   }
 
+  .garden-teaser-marquee {
+    width: calc(100% + 48px);
+  }
+
   .travel-polaroid {
     flex: 0 0 220px;
     width: 220px;

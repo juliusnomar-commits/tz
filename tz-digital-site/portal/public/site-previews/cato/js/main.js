@@ -216,15 +216,15 @@ const seasonalPhotos = [
   {
     months: [12, 1, 2],
     slots: [
-      { src: '/api/cato-image/seasonal-winter-a.jpg', alt_nl: 'Winter in de tuin', alt_en: 'Winter in the garden' },
-      { src: '/api/cato-image/seasonal-winter-b.jpg', alt_nl: 'Wintermarkt Maastricht', alt_en: 'Winter market Maastricht' },
+      { src: '/api/cato-image/garden-origin.jpg', alt_nl: 'Cato’s moestuin', alt_en: 'Cato’s garden' },
+      { src: '/api/cato-image/garden-origin-2.jpg', alt_nl: 'Uit eigen tuin', alt_en: 'From our garden' },
     ]
   },
   {
     months: [3, 4, 5],
     slots: [
-      { src: '/api/cato-image/seasonal-spring-a.jpg', alt_nl: 'Lente in de moestuin', alt_en: 'Spring in the garden' },
-      { src: '/api/cato-image/seasonal-spring-b.jpg', alt_nl: 'Eerste oogst', alt_en: 'First harvest' },
+      { src: '/api/cato-image/garden-teaser-1.jpg', alt_nl: 'Uit eigen tuin', alt_en: 'From our garden' },
+      { src: '/api/cato-image/garden-teaser-2.jpg', alt_nl: 'Verse ingrediënten', alt_en: 'Fresh ingredients' },
     ]
   },
   {
@@ -237,8 +237,8 @@ const seasonalPhotos = [
   {
     months: [9, 10, 11],
     slots: [
-      { src: '/api/cato-image/seasonal-autumn-a.jpg', alt_nl: 'Herfstoogst', alt_en: 'Autumn harvest' },
-      { src: '/api/cato-image/seasonal-autumn-b.jpg', alt_nl: 'Najaarskleuren', alt_en: 'Autumn colours' },
+      { src: '/api/cato-image/garden-teaser-3.jpg', alt_nl: 'Uit eigen tuin', alt_en: 'From our garden' },
+      { src: '/api/cato-image/garden-teaser-4.jpg', alt_nl: 'Verse ingrediënten', alt_en: 'Fresh ingredients' },
     ]
   },
 ];

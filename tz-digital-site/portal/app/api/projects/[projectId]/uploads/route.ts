@@ -16,7 +16,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const { name, mimeType, size, category } = body
     if (typeof name !== 'string' || !name.trim() || name.length > 200 || /[\r\n]/.test(name)) throw new Error('Invalid filename')
     if (!allowed.has(mimeType) || !Number.isInteger(size) || size < 1 || size > 10 * 1024 * 1024) throw new Error('Use a JPG, PNG, WebP or PDF under 10 MB')
-    if (!['brand', 'legal'].includes(category) || (category === 'brand' && mimeType === 'application/pdf')) throw new Error('Invalid file category')
+    if (!['project', 'brand', 'legal'].includes(category) || (category === 'brand' && mimeType === 'application/pdf')) throw new Error('Invalid file category')
     const path = `${access.project.tenant_id}/${projectId}/${randomUUID()}.${allowed.get(mimeType)}`
     const admin = adminClient()
     const { data, error } = await admin.storage.from(bucket).createSignedUploadUrl(path)
@@ -37,7 +37,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const { path, name, category } = body
     if (typeof path !== 'string' || !new RegExp(`^${access.project.tenant_id}/${projectId}/[0-9a-f-]{36}\\.(jpg|png|webp|pdf)$`).test(path)) throw new Error('Invalid file path')
     if (typeof name !== 'string' || !name.trim() || name.length > 200 || /[\r\n]/.test(name)) throw new Error('Invalid filename')
-    if (!['brand', 'legal'].includes(category) || (category === 'brand' && path.endsWith('.pdf'))) throw new Error('Invalid file category')
+    if (!['project', 'brand', 'legal'].includes(category) || (category === 'brand' && path.endsWith('.pdf'))) throw new Error('Invalid file category')
     const admin = adminClient()
     const { data: object, error: objectError } = await admin.storage.from(bucket).info(path)
     if (objectError || !object) throw new Error('Upload has not completed')

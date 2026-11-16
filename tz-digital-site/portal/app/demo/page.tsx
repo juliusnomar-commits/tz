@@ -25,8 +25,12 @@ const previewData: DashboardData = {
     { id: 't5', title: 'Design first draft', owner_type: 'agency', status: 'in_progress', due_at: null },
     { id: 't6', title: 'Responsive quality check', owner_type: 'agency', status: 'todo', due_at: null },
   ],
-  reviews: [{ id: 'r1', title: 'First design draft', status: 'preparing', due_at: null }],
   fileCount: 3,
+  files: [
+    { id: 'f1', display_name: 'Brand images.webp', category: 'brand', mime_type: 'image/webp', byte_size: 840000, uploaded_at: '2026-11-13T10:00:00Z' },
+    { id: 'f2', display_name: 'Content brief.pdf', category: 'project', mime_type: 'application/pdf', byte_size: 210000, uploaded_at: '2026-11-12T10:00:00Z' },
+    { id: 'f3', display_name: 'Logo.png', category: 'project', mime_type: 'image/png', byte_size: 95000, uploaded_at: '2026-11-11T10:00:00Z' },
+  ],
   activity: [
     { id: 'a1', title: 'Design work is underway', detail: 'We are shaping the first draft around the approved page structure.', actor_type: 'agency', created_at: '2026-11-13T10:00:00Z' },
     { id: 'a2', title: 'Business details confirmed', detail: 'Contact information and opening hours have been checked.', actor_type: 'client', created_at: '2026-11-11T14:00:00Z' },

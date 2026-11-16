@@ -37,11 +37,13 @@ export type DashboardActivity = {
   created_at: string
 }
 
-export type DashboardReview = {
+export type DashboardFile = {
   id: string
-  title: string
-  status: 'preparing' | 'awaiting_client' | 'in_revision' | 'approved'
-  due_at: string | null
+  display_name: string
+  category: string
+  mime_type: string | null
+  byte_size: number | null
+  uploaded_at: string
 }
 
 export type DashboardData = {
@@ -51,8 +53,9 @@ export type DashboardData = {
   tasks: DashboardTask[]
   milestones: DashboardMilestone[]
   activity: DashboardActivity[]
-  reviews: DashboardReview[]
   fileCount: number
+  files: DashboardFile[]
+  canEdit?: boolean
   demo?: boolean
 }
 

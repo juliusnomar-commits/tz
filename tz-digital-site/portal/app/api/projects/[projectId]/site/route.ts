@@ -48,12 +48,12 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const images = validateSiteImages(profile, body.images, projectId)
     const colors = validateSiteColors(profile, body.colors)
     const pins = parseVisualPins(body.pins)
-    const snapshotDevice = intent === 'submit' ? String(body.snapshotDevice ?? '') : null
-    const snapshotPath = intent === 'submit' ? String(body.snapshotPath ?? '') : null
-    if (intent === 'submit') {
-      if (!['desktop', 'mobile'].includes(snapshotDevice!)) throw new Error('Choose a valid capture size')
+    const snapshotDevice = intent === 'submit' && typeof body.snapshotDevice === 'string' ? body.snapshotDevice : null
+    const snapshotPath = intent === 'submit' && typeof body.snapshotPath === 'string' ? body.snapshotPath : null
+    if (snapshotPath || snapshotDevice) {
+      if (!['desktop', 'mobile'].includes(snapshotDevice ?? '')) throw new Error('Choose a valid capture size')
       const expectedPath = new RegExp(`^${access.project.tenant_id}/${projectId}/site-reviews/${pageKey}/[0-9a-f-]{36}\\.jpg$`, 'i')
-      if (!expectedPath.test(snapshotPath!)) throw new Error('Capture this page before submitting')
+      if (!snapshotPath || !expectedPath.test(snapshotPath)) throw new Error('Review capture path is invalid')
     }
     if (intent === 'submit' && !pins.length) throw new Error('Add a comment pin before sending for review')
     const db = adminClient()
@@ -97,7 +97,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     if (intent !== 'save') {
       const { error: activityError } = await db.from('portal_activity').insert({ tenant_id: access.project.tenant_id, project_id: projectId,
         title: `${page.title} changes ${status}`, detail: `${pins.length} pinned comment${pins.length === 1 ? '' : 's'} in the Cato site editor.`, actor_type: isAgency ? 'agency' : 'client' })
-      if (activityError) throw activityError
+      if (activityError) console.error('Unable to record site review activity')
     }
     return NextResponse.json({ page: result.data })
   } catch (error) {

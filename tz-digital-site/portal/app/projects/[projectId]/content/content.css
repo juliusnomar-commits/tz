@@ -165,3 +165,15 @@
 .site-editor .cms-howto-dialog li b{margin-bottom:4px;color:#f1eaff}
 .site-editor .cms-howto-dialog li span{color:#b9b3c3;line-height:1.5}
 @media(max-width:800px){.site-editor .cms-intro{align-items:stretch;flex-direction:column;gap:16px}.site-editor .cms-howto{max-width:none;width:100%}.site-editor .cms-intro h1{font-size:clamp(38px,9vw,54px)}}
+
+/* Clear review actions and a temporary numbered marker while a pin is being written. */
+.site-editor .cms-compare-action{min-height:42px;padding:10px 15px;border:1px solid #a98ce1;border-radius:999px;background:#281d39;color:#eadfff;font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+.site-editor .cms-compare-action:hover{background:#3b2855;border-color:#d1baff}
+.site-editor .cms-inspector-compare{width:100%;min-height:46px;margin:14px 0 20px;background:#dbc9ff;border-color:#dbc9ff;color:#21152d}
+.site-editor .cms-inspector-compare:hover{background:#eee4ff;border-color:#eee4ff}
+.site-editor .cms-add-pin{min-height:42px;padding:10px 15px}
+.site-editor .cms-general-comment>.cms-comment-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:0;border:0;border-radius:0;background:transparent;color:#f2ecfa;text-align:left;cursor:pointer}
+.site-editor .cms-general-comment>.cms-comment-toggle span{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#2a2038;color:#e3d3ff;font-size:18px}
+.site-editor .cms-general-comment>.cms-comment-toggle:hover{background:transparent;color:#d9c4ff}
+.site-editor .cms-compare-action:focus-visible,.site-editor .cms-general-comment>.cms-comment-toggle:focus-visible{outline:2px solid #c9a9ff;outline-offset:3px}
+@media(max-width:800px){.site-editor .cms-inspector-compare{min-height:48px}}

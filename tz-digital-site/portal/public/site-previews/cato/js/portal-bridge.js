@@ -4,6 +4,7 @@
   const root = document.documentElement;
   let mode = 'text';
   let state = { changes: {}, images: {}, colors: {}, pins: [] };
+  let pendingPin = null;
   let originals = {};
   let imageKeys = {};
   let configured = false;
@@ -31,6 +32,12 @@
       el.addEventListener('click', event => { event.stopPropagation(); send('pin-selected', { id: pin.id }); });
       document.body.appendChild(el);
     });
+    if (pendingPin) {
+      const el = document.createElement('span'); el.className = 'tz-preview-pin tz-preview-pin-draft';
+      el.style.left = pendingPin.x + '%'; el.style.top = pendingPin.y + '%'; el.textContent = String(state.pins.length + 1);
+      el.title = 'Draft pin — add a comment to save'; el.setAttribute('aria-label', 'Draft comment pin ' + (state.pins.length + 1));
+      document.body.appendChild(el);
+    }
   }
   function prepare() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -46,8 +53,8 @@
   }
   window.addEventListener('message', event => {
     if (event.origin !== allowedOrigin || event.source !== window.parent || event.data?.source !== 'tz-portal-editor') return;
-    if (event.data.type === 'configure') { configured = true; imageKeys = event.data.imageKeys || {}; state = event.data.state || state; mode = event.data.mode || 'text'; root.classList.toggle('tz-pin-mode', mode === 'pins'); prepare(); send('configured'); }
-    if (event.data.type === 'update') { state = event.data.state || state; mode = event.data.mode || mode; root.classList.toggle('tz-pin-mode', mode === 'pins'); apply(); }
+    if (event.data.type === 'configure') { configured = true; imageKeys = event.data.imageKeys || {}; state = event.data.state || state; pendingPin = event.data.pendingPin || null; mode = event.data.mode || 'text'; root.classList.toggle('tz-pin-mode', mode === 'pins'); prepare(); send('configured'); }
+    if (event.data.type === 'update') { state = event.data.state || state; pendingPin = event.data.pendingPin || null; mode = event.data.mode || mode; root.classList.toggle('tz-pin-mode', mode === 'pins'); apply(); }
   });
   document.addEventListener('click', event => {
     if (event.target.closest('.tz-preview-pin')) return;

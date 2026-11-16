@@ -22,16 +22,16 @@ export const sectionFields: Record<IntakeSection, readonly IntakeField[]> = {
 }
 
 export const requiredFields: { section: IntakeSection; key: IntakeField; label: string }[] = [
-  { section: 'legal', key: 'country', label: 'business country' },
-  { section: 'legal', key: 'legalName', label: 'legal business name' },
-  { section: 'legal', key: 'streetAddress', label: 'business address' },
-  { section: 'legal', key: 'postalCode', label: 'postal code' },
-  { section: 'legal', key: 'city', label: 'city' },
-  { section: 'legal', key: 'publicEmail', label: 'public email' },
-  { section: 'business', key: 'businessDescription', label: 'business description' },
-  { section: 'business', key: 'services', label: 'services or products' },
-  { section: 'design', key: 'designFeel', label: 'site feeling' },
-  { section: 'design', key: 'designPriorities', label: 'visitor priority' },
+  { section: 'legal', key: 'country', label: 'Business Country' },
+  { section: 'legal', key: 'legalName', label: 'Legal Business Name' },
+  { section: 'legal', key: 'streetAddress', label: 'Business Address' },
+  { section: 'legal', key: 'postalCode', label: 'Postal Code' },
+  { section: 'legal', key: 'city', label: 'City' },
+  { section: 'legal', key: 'publicEmail', label: 'Public Email' },
+  { section: 'business', key: 'businessDescription', label: 'Business Description' },
+  { section: 'business', key: 'services', label: 'Services or Products' },
+  { section: 'design', key: 'designFeel', label: 'Site Feeling' },
+  { section: 'design', key: 'designPriorities', label: 'Visitor Priority' },
 ]
 
 export function progress(answers: IntakeAnswers) {

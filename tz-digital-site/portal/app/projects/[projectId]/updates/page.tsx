@@ -16,7 +16,7 @@ export default async function UpdatesPage({ params }: { params: Promise<{ projec
   return <main className="dash-shell">
     <PortalSidebar projectId={projectId} projectName={access.project.name} active="updates" />
     <div className="dash-main">
-      <header className="dash-page-heading"><h1>Updates</h1></header>
+      <header className="dash-page-heading"><h1><em>Updates</em></h1></header>
       <section className="dash-page-card dash-updates-card" aria-label="Project activity">
         {activity.length ? <ol className="dash-updates-list">{activity.map(item => <li key={item.id}>
           <span className="dash-activity-dot" aria-hidden="true" />

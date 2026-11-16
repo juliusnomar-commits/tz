@@ -15,11 +15,11 @@ function NavIcon({ kind }: { kind: Section }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">{paths[kind]}</svg>
 }
 
-export function PortalSidebar({ projectId, projectName, active, openTasks = 0, demo = false }: { projectId: string; projectName: string; active: Section; openTasks?: number; demo?: boolean }) {
-  const links: Array<{ key: Section; label: string; href: string; count?: number }> = [
+export function PortalSidebar({ projectId, projectName, active, demo = false }: { projectId: string; projectName: string; active: Section; demo?: boolean }) {
+  const links: Array<{ key: Section; label: string; href: string }> = [
     { key: 'overview', label: 'Overview', href: `/dashboard?project=${encodeURIComponent(projectId)}` },
     { key: 'details', label: 'Details', href: demo ? '/demo/intake' : `/projects/${projectId}/intake` },
-    { key: 'tasks', label: 'To do', href: `/projects/${projectId}/tasks`, count: openTasks },
+    { key: 'tasks', label: 'To do', href: `/projects/${projectId}/tasks` },
     { key: 'preview', label: 'Website preview', href: `/projects/${projectId}/content` },
     { key: 'files', label: 'Files', href: `/projects/${projectId}/files` },
     { key: 'updates', label: 'Updates', href: `/projects/${projectId}/updates` },
@@ -27,7 +27,7 @@ export function PortalSidebar({ projectId, projectName, active, openTasks = 0, d
 
   return <aside className="dash-sidebar">
     <a className="dash-sidebar-brand" href={`/dashboard?project=${encodeURIComponent(projectId)}`} aria-label="TZ Digital client portal home"><span>TZ</span> Digital</a>
-    <nav aria-label="Portal navigation" className="dash-sidebar-nav">{links.map(link => <a href={link.href} key={link.key} aria-current={active === link.key ? 'page' : undefined}><NavIcon kind={link.key}/>{link.label}{link.count ? <span className="dash-nav-count">{link.count}</span> : null}</a>)}</nav>
+    <nav aria-label="Portal navigation" className="dash-sidebar-nav">{links.map(link => <a href={link.href} key={link.key} aria-current={active === link.key ? 'page' : undefined}><NavIcon kind={link.key}/>{link.label}</a>)}</nav>
     <div className="dash-sidebar-bottom"><span>{projectName}</span>{demo ? <a href="/login">Exit preview </a> : <form action={logout}><button type="submit">Sign out</button></form>}</div>
   </aside>
 }

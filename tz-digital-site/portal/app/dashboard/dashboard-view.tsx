@@ -22,7 +22,7 @@ function TaskList({ tasks, timezone, projectId }: { tasks: DashboardData['tasks'
   const todoTasks = uniqueTasks.filter(task => task.status !== 'done')
   const completedTasks = uniqueTasks.filter(task => task.status === 'done')
   return <div className="dash-task-list">
-    <div className="dash-card-heading"><div><span className="eyebrow accent">YOUR NEXT STEPS</span><h2>Your part</h2></div><span className="dash-task-count">{todoTasks.length} open</span></div>
+    <div className="dash-card-heading"><div><span className="eyebrow accent">YOUR NEXT STEPS</span><h2>Your part</h2></div></div>
     {todoTasks.length ? <ul>{todoTasks.map(task => <TaskItem key={task.id} task={task} timezone={timezone} projectId={projectId} />)}</ul> : <p className="dash-empty-inline">Nothing to do right now.</p>}
     {completedTasks.length > 0 && <details className="dash-completed-tasks"><summary>{completedTasks.length} completed</summary><ul>{completedTasks.map(task => <TaskItem key={task.id} task={task} timezone={timezone} projectId={projectId} />)}</ul></details>}
   </div>
@@ -46,7 +46,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
   const projectTitle = project?.name.replace(/\bwebsite\b/i, 'Website')
 
   return <main className="dash-shell" id="overview">
-    {project && <PortalSidebar projectId={project.id} projectName={project.name} active="overview" openTasks={clientTasks.filter(task => task.status !== 'done').length} demo={Boolean(data.demo)} />}
+    {project && <PortalSidebar projectId={project.id} projectName={project.name} active="overview" demo={Boolean(data.demo)} />}
 
     <div className="dash-main">
       {data.demo && <div className="dash-demo-banner" role="note">Preview with synthetic data · No customer information is shown · <a href="/demo/cato">Try the Cato site editor</a></div>}

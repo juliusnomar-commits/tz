@@ -3,7 +3,7 @@ import type { DashboardData } from '@/lib/dashboard'
 
 export const dynamic = 'force-dynamic'
 
-const project: DashboardData['activeProject'] = { id: 'preview-project', tenant_id: 'preview-tenant', name: 'The Roundabout website', service: 'website', status: 'waiting_on_client', summary: 'A visual review example for the Maastricht website.', next_milestone: 'First design draft', target_window: 'Example only', project_timezone: 'Europe/Amsterdam', updated_at: '2026-11-13T10:00:00Z' }
+const project: DashboardData['activeProject'] = { id: 'preview-project', tenant_id: 'preview-tenant', name: 'The Roundabout website', service: 'website', site_key: null, status: 'waiting_on_client', summary: 'A visual review example for the Maastricht website.', next_milestone: 'First design draft', target_window: 'Example only', project_timezone: 'Europe/Amsterdam', updated_at: '2026-11-13T10:00:00Z' }
 
 const previewData: DashboardData = {
   demo: true,

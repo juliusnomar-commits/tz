@@ -14,24 +14,27 @@ function loginKey(value: string) {
 export async function login(form: FormData) {
   const clientId = String(form.get('clientId') ?? '').trim()
   const password = String(form.get('password') ?? '')
-  if (!/^\d{6}$/.test(clientId) || !password || password.length > 256) redirect('/login?error=1')
-  // Public sample access only opens the interactive example, never a customer project.
-  if (clientId === '146069' && password === 'RoundaboutDemo26!') redirect('/demo')
-  if (clientId === '620314' && password === 'CatoPreview26!') redirect('/demo/cato')
-
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || !(process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY) || !process.env.PORTAL_LOGIN_HASH_SECRET) redirect('/login?error=1')
+  const normalizedId = clientId.toLowerCase()
+  if (!/^(?:\d{6}|[A-Za-z][A-Za-z0-9]{2,31})$/.test(clientId) || !password || password.length > 256) redirect('/login?error=1')
+  const accessReady = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY && (process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY) && process.env.PORTAL_LOGIN_HASH_SECRET)
+  if (!accessReady) {
+    // Public sample access only opens the interactive example, never a customer project.
+    if (clientId === '146069' && password === 'RoundaboutDemo26!') redirect('/demo')
+    if (clientId === '620314' && password === 'CatoPreview26!') redirect('/demo/cato')
+    redirect('/login?error=1')
+  }
 
   const headerStore = await headers()
   const ip = headerStore.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
   const admin = adminClient()
   const checks = await Promise.all([
-    admin.rpc('portal_allow_login_attempt', { p_key: loginKey(`pair:${clientId}:${ip}`), p_limit: 5 }),
-    admin.rpc('portal_allow_login_attempt', { p_key: loginKey(`id:${clientId}`), p_limit: 20 }),
+    admin.rpc('portal_allow_login_attempt', { p_key: loginKey(`pair:${normalizedId}:${ip}`), p_limit: 5 }),
+    admin.rpc('portal_allow_login_attempt', { p_key: loginKey(`id:${normalizedId}`), p_limit: 20 }),
     admin.rpc('portal_allow_login_attempt', { p_key: loginKey(`ip:${ip}`), p_limit: 50 }),
   ])
   if (checks.some(({ data, error }) => error || !data)) redirect('/login?error=1')
 
-  const { data: loginId } = await admin.from('portal_login_ids').select('auth_user_id, auth_email').eq('login_id', clientId).maybeSingle()
+  const { data: loginId } = await admin.from('portal_login_ids').select('auth_user_id, auth_email').ilike('login_id', clientId).maybeSingle()
   const email = loginId?.auth_email ?? `missing-${createHash('sha256').update(clientId).digest('hex').slice(0, 16)}@tz-digital.de`
   const supabase = await userClient()
   const { data, error } = await supabase.auth.signInWithPassword({ email, password })

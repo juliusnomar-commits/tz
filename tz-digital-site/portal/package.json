@@ -9,6 +9,8 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "create-client": "node scripts/create-client.mjs",
+    "prepare-cato": "node scripts/prepare-cato.mjs",
+    "activate-cato-login": "node scripts/activate-cato-login.mjs",
     "create-agency": "node scripts/create-agency.mjs",
     "grant-agency": "node scripts/grant-agency.mjs"
   },

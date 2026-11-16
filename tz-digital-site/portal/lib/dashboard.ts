@@ -3,6 +3,7 @@ export type DashboardProject = {
   tenant_id: string
   name: string
   service: string
+  site_key: string | null
   status: string
   summary: string | null
   next_milestone: string | null

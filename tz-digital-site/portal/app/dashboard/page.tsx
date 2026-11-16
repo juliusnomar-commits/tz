@@ -7,6 +7,7 @@ import {
   type DashboardMilestone,
   type DashboardProject,
   type DashboardTask,
+  catoClientTasks,
 } from '@/lib/dashboard'
 import { userClient } from '@/lib/supabase'
 import { emptyAnswers, progress, type IntakeAnswers } from '@/lib/intake'
@@ -54,6 +55,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
       const intakeProgress = progress({ ...emptyAnswers(), ...(intakeResult.data?.answers as Partial<IntakeAnswers> ?? {}) })
       data.tasks.unshift({ id: `intake-${projectId}`, title: 'Share project details', owner_type: 'client', status: ['submitted', 'accepted'].includes(intakeResult.data?.status ?? '') ? 'done' : 'waiting_client', due_at: null, href: `/projects/${projectId}/intake`, progressPercent: Math.round(intakeProgress.complete / intakeProgress.total * 100) })
     }
+    if (activeProject.site_key === 'cato') data.tasks = catoClientTasks(data.tasks, projectId, activeProject.status)
     data.milestones = (milestoneResult.data ?? []) as DashboardMilestone[]
     data.activity = (activityResult.data ?? []) as DashboardActivity[]
     data.files = (fileResult.data ?? []) as DashboardFile[]

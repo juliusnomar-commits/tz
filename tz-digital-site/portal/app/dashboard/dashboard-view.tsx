@@ -13,17 +13,17 @@ function TaskItem({ task, timezone, projectId }: { task: DashboardData['tasks'][
       <span>{statusLabel(task.status)}{task.progressPercent !== undefined ? ` · ${task.progressPercent}% complete` : ''}{task.due_at && !complete ? ` · Due ${formatDate(task.due_at, timezone)}` : ''}</span>
       {task.progressPercent !== undefined && <div className="dash-task-progress" role="progressbar" aria-label="Website intake progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={task.progressPercent}><i style={{ width: `${task.progressPercent}%` }} /></div>}
     </div>
-    {!complete && href && <a className="dash-task-action" href={href}>{href.endsWith('/content') ? 'Review & comment' : 'Add details'}</a>}
+    {!complete && href && <a className="dash-task-action" href={href}>{task.id.startsWith('cato-review-') ? 'Review your website' : href.endsWith('/content') ? 'Review & comment' : 'Add details'}</a>}
   </li>
 }
 
-function TaskList({ tasks, timezone, projectId, isCato }: { tasks: DashboardData['tasks'], timezone: string, projectId: string, isCato: boolean }) {
+function TaskList({ tasks, timezone, projectId }: { tasks: DashboardData['tasks'], timezone: string, projectId: string }) {
   const uniqueTasks = tasks.filter((task, index, all) => all.findIndex(item => item.title.trim().toLowerCase() === task.title.trim().toLowerCase()) === index)
   const todoTasks = uniqueTasks.filter(task => task.status !== 'done')
   const completedTasks = uniqueTasks.filter(task => task.status === 'done')
   return <div className="dash-task-list">
     <div className="dash-card-heading"><div><span className="eyebrow accent">YOUR NEXT STEPS</span><h2>Your part</h2></div></div>
-    {todoTasks.length ? <ul>{todoTasks.map(task => <TaskItem key={task.id} task={task} timezone={timezone} projectId={projectId} />)}</ul> : <><p className="dash-empty-inline">Nothing to do right now.</p>{isCato && <a className="dash-preview-button" href={`/projects/${projectId}/content`}>Review your website</a>}</>}
+    {todoTasks.length ? <ul>{todoTasks.map(task => <TaskItem key={task.id} task={task} timezone={timezone} projectId={projectId} />)}</ul> : <p className="dash-empty-inline">Nothing to do right now.</p>}
     {completedTasks.length > 0 && <details className="dash-completed-tasks"><summary>{completedTasks.length} completed</summary><ul>{completedTasks.map(task => <TaskItem key={task.id} task={task} timezone={timezone} projectId={projectId} />)}</ul></details>}
   </div>
 }
@@ -60,7 +60,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
 
         {data.milestones.length > 0 && <section className="dash-timeline" aria-label="Project timeline"><h2>Project progress</h2><ol>{data.milestones.map((item, index) => <li key={item.id} className={item.status === 'complete' ? 'is-complete' : item.status === 'current' ? 'is-current' : ''}><span className="dash-timeline-mark" aria-hidden="true">{item.status === 'complete' ? '✓' : index + 1}</span><span>{item.title}</span></li>)}</ol></section>}
         <div className="dash-primary-grid">
-          <section className="dash-responsibilities" id="tasks" aria-labelledby="tasks-title"><TaskList tasks={clientTasks} timezone={timezone} projectId={project.id} isCato={project.site_key === 'cato'} /></section>
+          <section className="dash-responsibilities" id="tasks" aria-labelledby="tasks-title"><TaskList tasks={clientTasks} timezone={timezone} projectId={project.id} /></section>
           <WalkthroughCard />
         </div>
 
@@ -70,7 +70,6 @@ export function DashboardView({ data }: { data: DashboardData }) {
           <section className="dash-info-card dash-help-card"><div className="dash-card-heading"><div><span className="eyebrow accent">HERE TO HELP</span><h2>Need a hand?</h2></div><span className="dash-card-icon" aria-hidden="true">?</span></div><p>Questions or need support? Get in touch with your TZ Digital team.</p><a href="/#kontakt">Contact your team</a></section>
         </section>
       </>}
-      <footer className="dash-footer"><span>TZ DIGITAL · CLIENT PORTAL</span><a href="/#kontakt">Need help? Contact your team</a></footer>
     </div>
   </main>
 }

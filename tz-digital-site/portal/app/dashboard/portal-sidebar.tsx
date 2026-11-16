@@ -28,6 +28,6 @@ export function PortalSidebar({ projectId, projectName, active, demo = false }: 
   return <aside className="dash-sidebar">
     <a className="dash-sidebar-brand" href={`/dashboard?project=${encodeURIComponent(projectId)}`} aria-label="TZ Digital client portal home"><span>TZ</span> Digital</a>
     <nav aria-label="Portal navigation" className="dash-sidebar-nav">{links.map(link => <a href={link.href} key={link.key} aria-current={active === link.key ? 'page' : undefined}><NavIcon kind={link.key}/>{link.label}</a>)}</nav>
-    <div className="dash-sidebar-bottom"><span>{projectName}</span>{demo ? <a href="/login">Exit preview </a> : <form action={logout}><button type="submit">Sign out</button></form>}</div>
+    <div className="dash-sidebar-bottom">{demo ? <a href="/login">Exit preview </a> : <form action={logout}><button type="submit">Sign out</button></form>}</div>
   </aside>
 }

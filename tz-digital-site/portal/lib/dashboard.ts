@@ -22,6 +22,15 @@ export type DashboardTask = {
   progressPercent?: number
 }
 
+// Cato's intake is no longer a client action. Show the review action only while
+// the project is waiting for client feedback, regardless of archived setup tasks.
+export function catoClientTasks(tasks: DashboardTask[], projectId: string, projectStatus: string): DashboardTask[] {
+  const relevant = tasks.filter(task => !/intake/i.test(task.title) && task.status !== 'archived')
+  if (!['awaiting_client', 'in_revision'].includes(projectStatus)) return relevant
+  if (relevant.some(task => task.status !== 'done' && /review|preview|comment/i.test(task.title))) return relevant
+  return [...relevant, { id: `cato-review-${projectId}`, title: 'Review your website', owner_type: 'client', status: 'waiting_client', due_at: null, href: `/projects/${projectId}/content` }]
+}
+
 export type DashboardMilestone = {
   id: string
   title: string

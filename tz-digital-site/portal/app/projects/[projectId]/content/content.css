@@ -686,7 +686,7 @@
 /* Right editor refinements: align top to preview border, bottom remains at slides. */
 @media(min-width:1000px) {
   .site-editor .cms-workspace>.cato-editor-inspector {
-    top:-4px;
+    top:-1px;
     height:calc(100% + 19px)!important;
   }
 }

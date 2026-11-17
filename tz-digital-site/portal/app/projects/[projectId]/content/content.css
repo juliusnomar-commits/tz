@@ -450,3 +450,23 @@
   border-color:#80629b;
   color:#fff;
 }
+
+/* Fine tune the current approved layout — only sizing and placement. */
+@media (min-width:1000px) {
+  /* 7px flex gap + 3px panel spacing = 10px tighter. */
+  .site-editor .cato-preview-stack { gap:0!important; }
+  .site-editor .cato-preview-stack>.cms-pages {
+    margin-top:-3px!important;
+  }
+  /* Enlarge the preview and matching strip together, preserving 16:9. */
+  .site-editor .cms-main:not(.is-expanded) .cms-preview-stage.is-desktop,
+  .site-editor .cato-preview-stack>.cms-pages {
+    width:min(100%, calc((100dvh - 311px) * 16 / 9));
+    max-width:100%;
+  }
+  /* Shift the complete inspector group left without altering its contents. */
+  .site-editor .cms-workspace>.cms-inspector {
+    position:relative;
+    left:-10px;
+  }
+}

@@ -786,3 +786,30 @@
 @media(min-width:1000px) and (max-width:1350px) {
   .site-editor .cato-toolbar-history button {padding:8px 11px}
 }
+
+/* The image browser scrolls inside a fixed-height inspector.
+   Height is measured from the preview + page thumbnails, never from image count. */
+@media (min-width:1000px) {
+  .site-editor .cms-workspace > .cato-editor-inspector {
+    top:-1px;
+    height:calc(var(--cato-stack-height, 675px) + 1px)!important;
+    max-height:calc(var(--cato-stack-height, 675px) + 1px)!important;
+    min-height:0!important;
+    overflow:hidden!important;
+  }
+}
+.site-editor .cato-editor-inspector .cato-inspector-main:has(.cato-photo-panel) {
+  min-height:0!important;
+  overflow:hidden!important;
+}
+.site-editor .cato-photo-panel {
+  min-height:0!important;
+  overflow:hidden!important;
+}
+.site-editor .cato-site-photo-grid {
+  min-height:0!important;
+  height:0;
+  flex:1 1 0%;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+}

@@ -50,6 +50,7 @@ export function SiteStudio({ projectId, profile, initialPages, initialPublished 
   const [error, setError] = useState('')
   const frame = useRef<HTMLIFrameElement>(null)
   const viewport = useRef<HTMLDivElement>(null)
+  const previewStack = useRef<HTMLDivElement>(null)
   const compareViewport = useRef<HTMLDivElement>(null)
   const compareBefore = useRef<HTMLIFrameElement>(null)
   const compareAfter = useRef<HTMLIFrameElement>(null)
@@ -95,6 +96,21 @@ export function SiteStudio({ projectId, profile, initialPages, initialPublished 
     post('configure')
     return () => clearInterval(timer)
   }, [pageKey, device])
+  useEffect(() => {
+    const element = previewStack.current
+    const workspace = element?.parentElement
+    if (!element || !workspace) return
+    const synchronizeHeight = () => {
+      workspace.style.setProperty('--cato-stack-height', element.getBoundingClientRect().height + 'px')
+    }
+    const observer = new ResizeObserver(synchronizeHeight)
+    observer.observe(element)
+    synchronizeHeight()
+    return () => {
+      observer.disconnect()
+      workspace.style.removeProperty('--cato-stack-height')
+    }
+  }, [])
   useEffect(() => {
     const element = viewport.current
     if (!element) return
@@ -240,7 +256,7 @@ export function SiteStudio({ projectId, profile, initialPages, initialPublished 
   return <div className="cms-app site-editor"><div className="site-editor-main">{demo && <div className="dash-demo-banner">Cato editor preview · Changes stay in this browser session</div>}
     <div className="cms-body"><div className="cms-intro"><div className="cms-intro-copy"><h1>{current.title} page</h1><span className="cato-submission-status" aria-live="polite">{page.status === "submitted" ? "● Submitted" : "● Draft"}</span></div></div>
       <div className="site-editor-control-row"><div className="cms-tools" role="toolbar" aria-label="Editor tools">{([['text','✎ Text'],['images','▧ Images'],['colors','◉ Colors'],['pins','⊕ Add a pin']] as const).map(([key,label]) => <button type="button" key={key} className={mode === key ? 'active' : ''} onClick={() => { setMode(key); setSelected('') }}>{label}</button>)}</div><div className="cato-toolbar-history"><button type="button" onClick={() => travelHistory("undo")} disabled={!canUndo} aria-label="Undo last edit" title="Undo"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg><span>Undo</span></button><button type="button" onClick={() => travelHistory("redo")} disabled={!canRedo} aria-label="Redo last edit" title="Redo"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg><span>Redo</span></button></div><div className="cms-device-switch" aria-label="Preview size"><button type="button" className={device === 'desktop' ? 'active' : ''} onClick={() => setDevice('desktop')}>▣ Desktop</button><button type="button" className={device === 'mobile' ? 'active' : ''} onClick={() => setDevice('mobile')}>▯ Mobile</button></div></div>
-      <div className="cms-workspace"><div className="cato-preview-stack">
+      <div className="cms-workspace"><div className="cato-preview-stack" ref={previewStack}>
         <section className={'cms-main' + (expanded ? ' is-expanded' : '')}><div className="cms-toolbar"><span className="cms-status-copy" aria-live="polite">{liveDirty ? "Publishing live…" : ""}</span></div>
           <div className={'cms-preview-stage is-' + device}><div className="cms-browser"><div className="cms-browser-bar"><i/><i/><i/><button type="button" className="cato-preview-expand" title={expanded ? "Exit full preview" : "Expand preview"} aria-label={expanded ? "Exit full preview" : "Expand preview"} aria-pressed={expanded} onClick={() => setExpanded(value => !value)}><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{expanded ? <><path d="M9 3v6H3M15 3v6h6M9 21v-6H3M15 21v-6h6"/></> : <><path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5"/></>}</svg></button></div><div className="site-editor-viewport" ref={viewport}><iframe key={pageKey + device} ref={frame} className="site-editor-frame" title={`${profile.name} ${current.title} preview`} src={`${profile.previewRoot}/${current.path}`} onLoad={() => { frameConfigured.current = false; post('configure') }} /></div></div></div>{mode === 'pins' && <p className="cms-preview-note">Choose a spot on the page, then add your comment.</p>}</section><aside className="cms-pages"><span className="eyebrow">PAGES</span><nav aria-label="Site pages">{profile.pages.map((item,index) => <button type="button" key={item.key} className={pageKey === item.key ? 'active' : ''} onClick={() => pickPage(item.key)}><span className="cms-page-index">{String(index+1).padStart(2,'0')}</span><span className="cato-slide-copy"><span className="cato-slide-art" aria-hidden="true"><span className="cato-slide-brand">Cato</span><span className="cato-slide-lines"/><span className="cato-slide-lines short"/></span><strong>{item.title}</strong></span></button>)}</nav>{isAgency && <a className="cms-export" href={`/api/projects/${projectId}/export`}>↓ Download review handoff</a>}</aside></div>
 

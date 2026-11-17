@@ -349,3 +349,15 @@
  .site-editor .cms-workspace>.cms-inspector{grid-column:2;grid-row:1;align-self:stretch;height:calc(100dvh - 226px);max-height:calc(100dvh - 226px)}
 }
 @media(max-width:999px){.site-editor .cato-preview-stack{display:flex;flex-direction:column;gap:12px;min-width:0}.site-editor .cato-preview-stack>.cms-pages{position:relative;order:2}}
+
+/* Review v4: one-line title and status, no top eyebrow, compact header */
+@media(min-width:1000px){
+ .site-editor .cms-body{padding-top:13px!important;padding-bottom:10px!important}
+ .site-editor .cms-intro{min-height:64px!important;height:64px!important;padding:0 2px 9px!important;margin:0!important;align-items:center!important;display:flex!important}
+ .site-editor .cms-intro-copy{display:flex!important;flex-direction:row!important;align-items:center!important;gap:16px!important;min-width:0}
+ .site-editor .cms-intro h1{margin:0!important;font-size:clamp(31px,2.6vw,40px)!important;line-height:1.12!important;white-space:nowrap}
+ .site-editor .cato-submission-status{flex:none;align-self:center;margin:0;font-size:11px;padding:7px 11px}
+ .site-editor .site-editor-control-row{margin-bottom:10px!important}
+ .site-editor .cms-workspace>.cms-inspector{height:calc(100dvh - 173px)!important;max-height:calc(100dvh - 173px)!important}
+}
+@media(max-width:999px){.site-editor .cms-intro-copy{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.site-editor .cms-intro h1{margin:0}.site-editor .cms-intro{padding-bottom:12px!important}}

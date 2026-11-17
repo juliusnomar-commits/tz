@@ -26,7 +26,7 @@ export function PortalSidebar({ projectId, projectName, active, demo = false }: 
   ]
 
   return <aside className="dash-sidebar">
-    <a className={"dash-sidebar-brand" + (active === "preview" ? " cato-sidebar-brand" : "")} href={`/dashboard?project=${encodeURIComponent(projectId)}`} aria-label="Client portal home">{active === "preview" ? <>{projectName}<small>CLIENT PORTAL</small></> : <><span>TZ</span> Digital</>}</a>
+    <a className={"dash-sidebar-brand" + (active === "preview" ? " cato-sidebar-brand" : "")} href={`/dashboard?project=${encodeURIComponent(projectId)}`} aria-label="Client portal home">{active === "preview" ? <>{projectName.replace(/\s+website\s*$/i, "")}<small>CLIENT PORTAL</small></> : <><span>TZ</span> Digital</>}</a>
     <nav aria-label="Portal navigation" className="dash-sidebar-nav">{links.map(link => <a href={link.href} key={link.key} aria-current={active === link.key ? 'page' : undefined}><NavIcon kind={link.key}/>{link.label}</a>)}</nav>
     {active === "preview" && <button type="button" className="cato-sidebar-howto" onClick={() => window.dispatchEvent(new Event("tz-open-howto"))}><span aria-hidden="true">▷</span> How It Works</button>}
     <div className="dash-sidebar-bottom"><a href="/">Home</a><a href="/#kontakt">Contact us</a></div>

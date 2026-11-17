@@ -424,3 +424,29 @@
   .site-editor .cms-workspace,
   .site-editor .cato-preview-stack { overflow:visible; }
 }
+
+/* Preview chrome cleanup: no domain label; unobtrusive fullscreen action at far right. */
+.site-editor .cms-browser-bar::after { content:none!important;display:none!important }
+.site-editor .cms-browser-bar .cato-preview-expand {
+  margin-left:auto!important;
+  margin-right:0;
+  width:30px;
+  height:27px;
+  padding:0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid transparent;
+  border-radius:6px;
+  background:transparent;
+  color:#d9cee7;
+  cursor:pointer;
+  transition:background-color .16s ease,border-color .16s ease,color .16s ease;
+}
+.site-editor .cms-browser-bar .cato-preview-expand svg { display:block;flex:none }
+.site-editor .cms-browser-bar .cato-preview-expand:hover,
+.site-editor .cms-browser-bar .cato-preview-expand:focus-visible {
+  background:#443455;
+  border-color:#80629b;
+  color:#fff;
+}

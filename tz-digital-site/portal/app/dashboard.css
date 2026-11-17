@@ -23,3 +23,9 @@
 @media(max-width:600px){.dash-page-heading h1{font-size:38px}.dash-page-task{flex-wrap:wrap}.dash-page-task .dash-task-copy{min-width:0}.dash-page-task .dash-task-action{margin-left:34px}}
 
 .dash-project-intro{max-width:720px;margin:13px 0 0;color:#c9bfd3;font-size:14px;line-height:1.5}.dash-timeline{margin:18px 0 4px;padding:18px 20px;border:1px solid var(--dash-line);border-radius:12px;background:#15121b}.dash-timeline h2{margin:0 0 14px;font-size:17px}.dash-timeline ol{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:0;padding:0;list-style:none}.dash-timeline li{display:flex;align-items:center;gap:8px;min-width:0;color:#a9a0b2;font-size:12px;line-height:1.35}.dash-timeline li.is-complete,.dash-timeline li.is-current{color:#f2eafa}.dash-timeline-mark{display:grid;place-items:center;flex:none;width:25px;height:25px;border:1px solid #69527f;border-radius:50%;color:#d3b7f5;font-size:11px}.dash-timeline li.is-complete .dash-timeline-mark{background:#a98ad6;color:#21172f}.dash-timeline li.is-current .dash-timeline-mark{border:2px solid #c5a4fb;color:#fff}@media(max-width:600px){.dash-timeline{padding:15px}.dash-timeline ol{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.dash-project-intro{font-size:13px}}
+/* Simple site links in the sidebar footer. */
+.dash-sidebar-bottom{display:flex;align-items:center;gap:10px}
+.dash-sidebar-bottom a{min-height:36px;display:inline-flex;align-items:center;justify-content:center;padding:0 10px;border:1px solid #50445f;border-radius:8px;color:#e2d3f6;font-size:11px;font-weight:650;white-space:nowrap}
+.dash-sidebar-bottom a:hover{background:#292137;border-color:#8a6cb4}
+.dash-sidebar-bottom a:focus-visible{outline:2px solid #c3a7f4;outline-offset:2px}
+@media(max-width:820px){.dash-sidebar-bottom{display:none}}

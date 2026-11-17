@@ -682,3 +682,107 @@
   .site-editor .cato-toolbar-history {justify-content:flex-start}
   .site-editor .cato-editor-inspector {max-height:650px;overflow:hidden}
 }
+
+/* Right editor refinements: align top to preview border, bottom remains at slides. */
+@media(min-width:1000px) {
+  .site-editor .cms-workspace>.cato-editor-inspector {
+    top:-19px;
+    height:calc(100% + 19px)!important;
+  }
+}
+.site-editor .cato-toolbar-history {gap:8px}
+.site-editor .cato-toolbar-history button {
+  min-height:42px;
+  padding:9px 15px;
+  border-radius:999px;
+  border:1px solid #5c4b6b;
+  background:transparent;
+  color:#ddd0ec;
+  font-size:12px;
+  font-weight:700;
+  font-family:inherit;
+  justify-content:center;
+  gap:7px;
+  white-space:nowrap;
+  transition:background .15s,border-color .15s;
+}
+.site-editor .cato-toolbar-history button svg {flex:none;display:block}
+.site-editor .cato-toolbar-history button:hover:not(:disabled) {border-color:#b59ae2;background:#2b203e}
+.site-editor .cato-toolbar-history button:disabled {opacity:.4;background:transparent}
+.site-editor .cato-editor-inspector .cato-inspector-main:has(.cato-photo-panel) {
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.site-editor .cato-photo-panel {
+  display:flex;
+  flex-direction:column;
+  flex:1 1 auto;
+  min-height:0;
+  overflow:hidden;
+}
+.site-editor .cato-photo-panel h3 {flex:none}
+.site-editor .cato-photo-panel .cato-inspector-hint {flex:none}
+.site-editor .cato-photo-panel .cato-selected-image {
+  flex:none;
+  margin:8px 0 9px;
+}
+.site-editor .cato-photo-panel .cato-selected-image img {
+  height:104px;
+}
+.site-editor .cato-photo-panel .cato-image-upload {
+  flex:none;
+  margin:7px 0;
+}
+.site-editor .cato-photo-grid-title {
+  flex:none;
+  color:#d2bce9;
+  font-size:12px;
+  font-weight:650;
+  margin:14px 0 9px;
+}
+.site-editor .cato-site-photo-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  align-content:start;
+  gap:8px;
+  flex:1 1 auto;
+  min-height:110px;
+  max-height:100%;
+  overflow-y:auto;
+  overflow-x:hidden;
+  scrollbar-width:thin;
+  scrollbar-color:#9276b0 #21192b;
+  padding:2px 6px 2px 0;
+}
+.site-editor .cato-site-photo-grid::-webkit-scrollbar {width:7px}
+.site-editor .cato-site-photo-grid::-webkit-scrollbar-track {background:#21192b;border-radius:20px}
+.site-editor .cato-site-photo-grid::-webkit-scrollbar-thumb {background:#9276b0;border-radius:20px}
+.site-editor .cato-site-photo-grid button {
+  display:block;
+  width:100%;
+  min-width:0;
+  aspect-ratio:4/3;
+  border:2px solid #4c3c5b;
+  border-radius:8px;
+  background:#261d31;
+  padding:2px;
+  overflow:hidden;
+  cursor:pointer;
+}
+.site-editor .cato-site-photo-grid button img {
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:5px;
+}
+.site-editor .cato-site-photo-grid button.active {
+  border-color:#c7a3f3;
+  box-shadow:0 0 0 1px #c7a3f3;
+}
+.site-editor .cato-site-photo-grid button:hover:not(:disabled) {border-color:#c7a3f3}
+.site-editor .cato-site-photo-grid button:disabled {cursor:default;opacity:.82}
+@media(min-width:1000px) and (max-width:1350px) {
+  .site-editor .cato-toolbar-history button {padding:8px 11px}
+}

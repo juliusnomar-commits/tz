@@ -79,8 +79,10 @@
     } else if (target && (mode === 'text' || mode === 'images')) {
       const imageElement = event.target.closest('[data-tz-image-key]');
       const textElement = event.target.closest('[data-i18n]');
-      const kind = imageElement ? 'images' : textElement ? 'text' : null;
-      const key = imageElement?.getAttribute('data-tz-image-key') || textElement?.getAttribute('data-i18n');
+      // Text inside a hero/background-image container must select the text editor,
+      // not the image on the parent. Clicking the image itself still selects Images.
+      const kind = textElement ? 'text' : imageElement ? 'images' : null;
+      const key = textElement?.getAttribute('data-i18n') || imageElement?.getAttribute('data-tz-image-key');
       if (key && kind) { event.preventDefault(); event.stopPropagation(); selectedKey = key; selectedKind = kind; markSelection(); send('select', { kind, key }); }
     }
   }, true);

@@ -470,3 +470,28 @@
     left:-10px;
   }
 }
+
+/* Expand only the right-side edit panel, align its bottom with the page thumbnails. */
+@media (min-width:1000px) {
+  .site-editor .cms-workspace {
+    grid-template-columns:minmax(0,1fr) clamp(275px,21vw,315px);
+    grid-template-rows:max-content;
+    column-gap:6px;
+    align-items:stretch;
+  }
+  .site-editor .cms-workspace>.cms-inspector {
+    grid-column:2;
+    grid-row:1;
+    position:relative;
+    left:0;
+    width:100%;
+    height:100%!important;
+    max-height:none!important;
+    min-height:0;
+    align-self:stretch;
+    box-sizing:border-box;
+  }
+  .site-editor .cms-inspector .cato-content-editor textarea {
+    min-height:215px;
+  }
+}

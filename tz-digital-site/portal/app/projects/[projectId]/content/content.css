@@ -412,3 +412,15 @@
   .site-editor .cms-pages nav { padding-bottom:1px; }
   .site-editor .cms-pages nav button { padding:4px!important; }
 }
+
+/* Larger preview + thumbnail strip only. Preserve every visual style and control. */
+@media (min-width:1000px) {
+  .site-editor .cms-main:not(.is-expanded) .cms-preview-stage.is-desktop,
+  .site-editor .cato-preview-stack>.cms-pages {
+    width:min(100%, calc((100dvh - 325px) * 16 / 9));
+    max-width:100%;
+  }
+  /* Let the full existing filmstrip occupy the available lower viewport area. */
+  .site-editor .cms-workspace,
+  .site-editor .cato-preview-stack { overflow:visible; }
+}

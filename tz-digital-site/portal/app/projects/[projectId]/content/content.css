@@ -370,3 +370,15 @@
     padding-left:max(4px,calc(clamp(14px,1.5vw,24px) - 10px))!important;
   }
 }
+
+/* Additional 20px nudge requested after the previous 10px adjustment.
+   Shift the whole editing area together, leaving the left sidebar fixed. */
+@media (min-width:1000px) {
+  .site-editor .cms-body {
+    position:relative;
+    top:-20px;
+    left:-20px;
+    width:calc(100% + 20px);
+    height:calc(100% + 20px);
+  }
+}

@@ -495,3 +495,190 @@
     min-height:215px;
   }
 }
+
+/* Easy client review editing: preserve original theme, simplify inspector layout */
+@media (min-width:1000px) {
+  .site-editor-control-row {
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto auto;
+    gap:10px;
+    align-items:center;
+  }
+  .site-editor .cms-workspace {
+    grid-template-rows:max-content!important;
+    align-items:stretch!important;
+  }
+  .site-editor .cms-workspace>.cato-editor-inspector {
+    grid-row:1;
+    margin:0!important;
+    padding:16px 15px 13px;
+    align-self:stretch;
+    height:100%!important;
+    max-height:none!important;
+    min-height:0!important;
+    overflow:hidden!important;
+    display:flex;
+    flex-direction:column;
+    box-sizing:border-box;
+    transform:none;
+  }
+}
+.site-editor .cato-editor-inspector {
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  overflow:hidden;
+}
+.site-editor .cato-editor-inspector .cato-inspector-main {
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:#57446d transparent;
+}
+.site-editor .cato-editor-inspector .cato-inspector-main h3 {
+  margin:15px 0 9px;
+}
+.site-editor .cato-editor-divider {
+  margin:14px 0 15px;
+  border-top:1px solid #42354c;
+}
+.site-editor .cato-editor-inspector .cms-inspector-compare {
+  margin:13px 0 4px;
+}
+.site-editor .cato-editor-inspector .cato-inspector-footer {
+  flex:0 0 auto;
+  min-height:0;
+  border-top:1px solid #42354c;
+  padding-top:10px;
+  margin-top:auto;
+}
+.site-editor .cato-inspector-footer .cms-message {
+  margin:7px 0;
+}
+.site-editor .cato-inspector-footer .cms-version {
+  margin:10px 0 0;
+  padding:4px 0;
+  font-size:11px;
+}
+.site-editor .cato-toolbar-history {
+  display:flex;
+  align-items:center;
+  gap:5px;
+  flex:none;
+}
+.site-editor .cato-toolbar-history button {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid #4e3e60;
+  border-radius:9px;
+  background:#21192b;
+  color:#decbee;
+  padding:8px 9px;
+  font:600 11px inherit;
+  font-size:11px;
+  cursor:pointer;
+}
+.site-editor .cato-toolbar-history button:hover:not(:disabled) {background:#3f3054;color:white}
+.site-editor .cato-toolbar-history button:disabled {opacity:.36;cursor:not-allowed}
+.site-editor .cato-selected-label {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:12px;
+  color:#d9c5ec;
+  margin:10px 0;
+  font-weight:650;
+}
+.site-editor .cato-selected-label span {
+  color:#d4b3f9;
+  font-size:15px;
+}
+.site-editor .cato-selected-image {
+  display:grid;
+  gap:8px;
+  margin:10px 0 15px;
+}
+.site-editor .cato-selected-image img {
+  display:block;
+  width:100%;
+  height:145px;
+  object-fit:cover;
+  border:2px solid #b58be8;
+  border-radius:9px;
+  background:#20182b;
+}
+.site-editor .cato-selected-image span {
+  color:#a99ab9;
+  font-size:11px;
+}
+.site-editor .cato-image-upload {
+  padding:0;
+  margin:12px 0 8px;
+  border:0;
+  background:transparent;
+}
+.site-editor .cato-image-upload label {
+  display:flex;
+  position:relative;
+  justify-content:center;
+  align-items:center;
+  min-height:43px;
+  padding:9px;
+  border-radius:10px;
+  background:#c3a1f0;
+  color:#21142d;
+  font-weight:700;
+  font-size:13px;
+  cursor:pointer;
+  text-align:center;
+}
+.site-editor .cato-image-upload label:hover {background:#ddc7fb}
+.site-editor .cato-image-upload input {
+  position:absolute;
+  opacity:0;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+}
+.site-editor .cato-photo-library {
+  margin-top:16px;
+  color:#d8c0ed;
+  border-top:1px solid #473858;
+  padding-top:13px;
+}
+.site-editor .cato-photo-library summary {
+  cursor:pointer;
+  font-size:12px;
+}
+.site-editor .cato-photo-library .site-editor-images {
+  margin-top:9px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:7px;
+  max-height:190px;
+  overflow:auto;
+}
+.site-editor .cato-photo-library .site-editor-images button {
+  padding:2px;
+  border:2px solid transparent;
+  background:#2a2035;
+  border-radius:8px;
+  overflow:hidden;
+}
+.site-editor .cato-photo-library .site-editor-images button.active {border-color:#c3a1f0}
+.site-editor .cato-photo-library .site-editor-images img {
+  width:100%;
+  height:75px;
+  object-fit:cover;
+  border-radius:5px;
+}
+@media (min-width:1000px) and (max-width:1350px) {
+  .site-editor .cato-toolbar-history button span {display:none}
+  .site-editor-control-row {gap:5px}
+}
+@media (max-width:999px) {
+  .site-editor .cato-toolbar-history {justify-content:flex-start}
+  .site-editor .cato-editor-inspector {max-height:650px;overflow:hidden}
+}

@@ -382,3 +382,33 @@
     height:calc(100% + 20px);
   }
 }
+
+/* Viewport fit refinement: identical visual design, reduced spacing only.
+   Reserve vertical room for the complete existing 6-slide filmstrip. */
+@media (min-width:1000px) {
+  .site-editor .cms-intro {
+    height:57px!important;
+    min-height:57px!important;
+    padding-bottom:6px!important;
+  }
+  .site-editor .site-editor-control-row {
+    min-height:52px;
+    padding-top:6px;
+    padding-bottom:6px;
+    margin-bottom:7px!important;
+  }
+  .site-editor .cato-preview-stack { gap:7px!important; }
+  .site-editor .cms-main:not(.is-expanded) .cms-preview-stage.is-desktop,
+  .site-editor .cato-preview-stack>.cms-pages {
+    width:min(100%, calc((100dvh - 375px) * 16 / 9));
+    max-width:100%;
+  }
+  .site-editor .cato-preview-stack>.cms-pages {
+    padding:7px 10px;
+    margin:0;
+    flex-shrink:0;
+  }
+  .site-editor .cms-pages>.eyebrow { margin-bottom:4px; }
+  .site-editor .cms-pages nav { padding-bottom:1px; }
+  .site-editor .cms-pages nav button { padding:4px!important; }
+}

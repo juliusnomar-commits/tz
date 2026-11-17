@@ -30,7 +30,7 @@ export function SiteStudio({ projectId, profile, initialPages, initialPublished 
   const undoHistory = useRef<Record<string,Review[]>>({})
   const redoHistory = useRef<Record<string,Review[]>>({})
   const lastHistoryGroup = useRef<{ key:string; group:string; at:number } | null>(null)
-  const [historyTick, setHistoryTick] = useState(0)
+  const [, setHistoryTick] = useState(0)
   const canUndo = Boolean(undoHistory.current[pageKey]?.length)
   const canRedo = Boolean(redoHistory.current[pageKey]?.length)
   const [pending, setPending] = useState<Omit<VisualPin,'id'|'comment'>|null>(null)

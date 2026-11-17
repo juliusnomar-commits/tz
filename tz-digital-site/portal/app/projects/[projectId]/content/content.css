@@ -361,3 +361,12 @@
  .site-editor .cms-workspace>.cms-inspector{height:calc(100dvh - 173px)!important;max-height:calc(100dvh - 173px)!important}
 }
 @media(max-width:999px){.site-editor .cms-intro-copy{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.site-editor .cms-intro h1{margin:0}.site-editor .cms-intro{padding-bottom:12px!important}}
+
+/* Main workspace alignment: move header, toolbar, preview, page slides and inspector
+   together as one group; leave the independent left navigation untouched. */
+@media(min-width:1000px){
+  .site-editor .cms-body{
+    padding-top:3px!important;
+    padding-left:max(4px,calc(clamp(14px,1.5vw,24px) - 10px))!important;
+  }
+}

@@ -813,3 +813,75 @@
   overflow-y:auto!important;
   overscroll-behavior:contain;
 }
+
+/* Cato workspace: the preview + page filmstrip alone determine the desktop row height.
+   The inspector is removed from grid sizing to prevent its image content from stretching
+   the page/inspector together. All modes get the exact same fixed outer bounds. */
+@media (min-width:1000px) {
+  .site-editor .cms-workspace {
+    position:relative!important;
+    grid-template-rows:auto!important;
+    align-items:start!important;
+  }
+  .site-editor .cms-workspace > .cato-preview-stack {
+    grid-column:1;
+    grid-row:1;
+    min-height:0;
+  }
+  .site-editor .cms-workspace > .cato-editor-inspector {
+    position:absolute!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+    top:0!important;
+    right:0!important;
+    left:auto!important;
+    bottom:auto!important;
+    width:clamp(275px,21vw,315px)!important;
+    height:100%!important;
+    max-height:100%!important;
+    min-height:0!important;
+    margin:0!important;
+    box-sizing:border-box;
+    overflow:hidden!important;
+  }
+}
+/* The photo library is the only vertically scrolling part of Images mode.
+   max-content rows prevent grid tracks from collapsing pictures into thin strips. */
+.site-editor .cato-site-photo-grid {
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-auto-rows:max-content;
+  align-content:start;
+  min-height:0!important;
+  height:0;
+  flex:1 1 0%;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain;
+}
+.site-editor .cato-site-photo-grid button {
+  aspect-ratio:4/3;
+  min-height:0;
+  flex:none;
+}
+/* Real, non-interactive page snapshots in the existing clickable page cards. */
+.site-editor .cms-pages .cato-slide-art:has(.cato-slide-preview) {
+  padding:0;
+  display:block;
+  isolation:isolate;
+  background:#17121d;
+}
+.site-editor .cms-pages .cato-slide-art:has(.cato-slide-preview)::after {
+  content:none;
+}
+.site-editor .cms-pages .cato-slide-preview {
+  position:absolute;
+  inset:0 auto auto 0;
+  display:block;
+  width:800%;
+  height:800%;
+  border:0;
+  transform:scale(.125);
+  transform-origin:top left;
+  pointer-events:none;
+  background:#fff;
+}

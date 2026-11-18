@@ -29,7 +29,7 @@ export async function agencyFeedback() {
     db.from('portal_activity').select('id,project_id,title,detail,created_at')
       .in('project_id',ids).like('title','Site review comment ·%').order('created_at',{ascending:false}).limit(1000),
     db.from('portal_site_pages').select('project_id,page_key,pins,changes,images,colors,status,updated_at,submitted_at,snapshot_path')
-      .in('project_id',ids).order('updated_at',{ascending:false}).limit(1000),
+      .in('project_id',ids).not('page_key','like','live-%').order('updated_at',{ascending:false}).limit(1000),
   ])
   if (activities.error) throw activities.error
   if (pages.error) throw pages.error
@@ -60,7 +60,7 @@ export async function agencyFeedback() {
       ...values(row.colors).map(([field,value])=>({field:'Color · '+field,value})),
     ]
     if (details.length) project.items.push({
-      id:'changes-'+row.project_id+'-'+row.page_key,projectId:row.project_id,page:row.page_key,
+      id:'change-'+row.project_id+'-'+row.page_key,projectId:row.project_id,page:row.page_key,
       kind:'Saved changes',body:details.map(d=>d.field).join(', '),createdAt:date,details,snapshot,
     })
   }

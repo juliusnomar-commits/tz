@@ -44,14 +44,14 @@ export async function GET(request: NextRequest) {
   const add=(path:string,value:string|Uint8Array)=>entries.push({path:folder+'/'+path,data:typeof value==='string'?encoder.encode(value):value})
   const groups = new Map<string,typeof items>()
   items.forEach(i=>{const d=dayKey(i.createdAt);groups.set(d,[...(groups.get(d)??[]),i])})
-  const manifest = items.map((i,index)=>({
-    number:index+1,id:i.id,page:i.page,type:i.kind,request:i.body,values:i.details,
+  const manifest = items.map(i=>({
+    number:groups.get(dayKey(i.createdAt))!.indexOf(i)+1,id:i.id,page:i.page,type:i.kind,request:i.body,values:i.details,
     pin:i.pin,receivedAt:i.createdAt,capture:i.snapshot?'See captures/'+safe(i.page)+'.jpg if available':null,
   }))
   add('README.md','# '+selectedProject.name+' — feedback brief\n\nExported '+new Date().toISOString()+'\n\nThe page edits listed here are the current saved values. A page capture is the latest available submitted capture; it is not an image of every historical edit. Agency statuses and notes are separate from client feedback.\n')
   for (const [day,dayItems] of groups) {
     add(day+'/requests.md','# '+selectedProject.name+' — '+day+'\n\n'+dayItems.map(i=>{
-      const n=items.indexOf(i)+1
+      const n=dayItems.indexOf(i)+1
       return '## '+n+'. '+i.kind+' · '+i.page+'\n\n'+(i.body||'No comment provided')+'\n\n'+
         i.details.map(d=>'- **'+d.field+'**: '+d.value.replaceAll('\n',' ')).join('\n')+
         (i.pin?'\n\nPin: '+i.pin.target+' ('+i.pin.x+'%, '+i.pin.y+'%)':'')+'\n\nReceived: '+i.createdAt+'\n'

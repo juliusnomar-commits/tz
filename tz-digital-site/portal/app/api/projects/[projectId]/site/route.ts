@@ -3,7 +3,7 @@ import { adminClient } from '@/lib/supabase'
 import { parseVisualPins } from '@/lib/content'
 import { projectAccess } from '@/lib/project-access'
 import { siteProfile, sitePage, validateSiteChanges, validateSiteColors, validateSiteImages } from '@/lib/site-profiles'
-import { CATO_PROJECT_ID, writeLivePage } from '@/lib/cato-live'
+import { writeLivePage } from '@/lib/cato-live'
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params
@@ -64,8 +64,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       if (fileError || !file?.mime_type?.startsWith('image/')) throw new Error('Choose an image from this project')
     }
     if (intent === 'publish') {
-      if (projectId !== CATO_PROJECT_ID || profile.key !== 'cato') return NextResponse.json({ error: 'Live publishing is unavailable for this site' }, { status: 403 })
-      await writeLivePage(pageKey, access.project.tenant_id, { changes, images, colors })
+      await writeLivePage(projectId, pageKey, access.project.tenant_id, { changes, images, colors })
       return NextResponse.json({ published: true, publishedAt: new Date().toISOString() })
     }
     if (!Number.isInteger(body.expectedVersion) || body.expectedVersion < 0) throw new Error('Invalid version')
@@ -96,7 +95,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     if (!result.data) return NextResponse.json({ error: 'This page changed elsewhere. Reload before saving.' }, { status: 409 })
     if (intent !== 'save') {
       const { error: activityError } = await db.from('portal_activity').insert({ tenant_id: access.project.tenant_id, project_id: projectId,
-        title: `${page.title} changes ${status}`, detail: `${pins.length} pinned comment${pins.length === 1 ? '' : 's'} in the Cato site editor.`, actor_type: isAgency ? 'agency' : 'client' })
+        title: `${page.title} changes ${status}`, detail: `${pins.length} pinned comment${pins.length === 1 ? '' : 's'} in the ${profile.name} site editor.`, actor_type: isAgency ? 'agency' : 'client' })
       if (activityError) console.error('Unable to record site review activity')
     }
     return NextResponse.json({ page: result.data })

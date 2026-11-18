@@ -22,6 +22,11 @@ if (configPath) {
 }
 const resolvedSiteKey = siteKey ?? (typeof siteConfig.key === 'string' ? siteConfig.key : null)
 if (siteKey && typeof siteConfig.key === 'string' && siteConfig.key !== siteKey) throw new Error('The site key must match the --site value')
+if (Object.keys(siteConfig).length && typeof siteConfig.key !== 'string') throw new Error('A site config must include its key')
+if (siteConfig.key && siteConfig.key !== 'cato') {
+  const required = ['name', 'domain', 'previewRoot', 'pages', 'copy', 'images', 'colors']
+  if (required.some(field => !(field in siteConfig))) throw new Error('Custom site configs need name, domain, previewRoot, pages, copy, images, and colors')
+}
 if (siteKey && !['cato'].includes(siteKey)) throw new Error('Unknown site profile. Available: cato')
 const name = args.join(' ').trim()
 if (!name || name.length > 160) {

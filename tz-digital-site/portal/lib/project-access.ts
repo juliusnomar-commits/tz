@@ -10,5 +10,5 @@ export async function projectAccess(projectId: string) {
   const { data: membership } = await supabase.from('portal_memberships').select('role').eq('tenant_id', project.tenant_id).eq('user_id', auth.user.id).maybeSingle()
   if (!membership) return null
   return { supabase, project, role: membership.role, userId: auth.user.id,
-    canEdit: ['agency_owner', 'agency_admin', 'agency_member', 'client_owner', 'client_editor'].includes(membership.role) }
+    canEdit: ['client_owner', 'client_editor'].includes(membership.role) }
 }

@@ -890,8 +890,8 @@
    Top stays fixed; the panel is shortened by 5px only at its bottom edge. */
 @media (min-width:1000px) {
   .site-editor .cms-workspace > .cato-editor-inspector {
-    height:calc(100% - 16px)!important;
-    max-height:calc(100% - 16px)!important;
+    height:calc(100% - 20px)!important;
+    max-height:calc(100% - 20px)!important;
   }
 }
 .site-editor .cato-editor-inspector .cato-inspector-main {

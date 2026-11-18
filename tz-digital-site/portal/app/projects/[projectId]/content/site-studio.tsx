@@ -237,6 +237,30 @@ export function SiteStudio({ projectId, profile, initialPages, initialPublished 
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'Upload failed') }
     finally { setUploading(false) }
   }
+  async function captureReview() {
+    const document = frame.current?.contentDocument
+    if (!document?.body || !frameConfigured.current) throw new Error('The page preview is still loading. Please wait and try again.')
+    const { toJpeg } = await import('html-to-image')
+    const image = await toJpeg(document.documentElement, {
+      quality: 0.8, pixelRatio: 1, cacheBust: true,
+      backgroundColor: '#ffffff', fontEmbedCSS: '',
+    })
+    const blob = await (await fetch(image)).blob()
+    if (blob.size < 1 || blob.size > 10 * 1024 * 1024) throw new Error('The page capture is too large. Try the mobile preview.')
+    const prepare = await fetch(`/api/projects/${projectId}/site-snapshot`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pageKey, size: blob.size }),
+    })
+    const signed = await prepare.json()
+    if (!prepare.ok) throw new Error(signed.error ?? 'Unable to prepare the page capture')
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+    if (!url || !key) throw new Error('Image storage is not configured')
+    const upload = await createClient(url, key).storage.from('portal-intake')
+      .uploadToSignedUrl(signed.path, signed.token, blob, { contentType: 'image/jpeg' })
+    if (upload.error) throw upload.error
+    return { snapshotPath: signed.path as string, snapshotDevice: device }
+  }
   async function save(intent: 'save'|'submit'|'approve') {
     if (busy) return
     setBusy(true); setProgress(intent === 'submit' ? 'Preparing your review…' : 'Saving changes…'); setError(''); setNotice('')
@@ -249,8 +273,10 @@ export function SiteStudio({ projectId, profile, initialPages, initialPublished 
         if (intent === 'submit') setConfirmation(next)
         return
       }
+      setProgress(intent === 'submit' ? 'Capturing your pinned page…' : 'Saving changes…')
+      const snapshot = intent === 'submit' ? await captureReview() : {}
       setProgress(intent === 'submit' ? 'Sending feedback to TZ Digital…' : 'Saving changes…')
-      const response = await fetch(`/api/projects/${projectId}/site`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, signal: AbortSignal.timeout(20000), body: JSON.stringify({ pageKey, ...state, intent, expectedVersion: page.version }) })
+      const response = await fetch(`/api/projects/${projectId}/site`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, signal: AbortSignal.timeout(20000), body: JSON.stringify({ pageKey, ...state, ...snapshot, intent, expectedVersion: page.version }) })
       const data = await response.json()
       if (!response.ok) throw new Error(data.error ?? 'Unable to save')
       setReviews(old => ({ ...old, [pageKey]: data.page })); setSaved(old => ({ ...old, [pageKey]: data.page }))

@@ -20,7 +20,7 @@ export default async function ContentPage({ params }: { params: Promise<{ projec
     const [pages, files, livePages, activity] = await Promise.all([
       access.supabase.from('portal_site_pages').select('page_key, changes, images, colors, pins, status, version, updated_at, snapshot_path, snapshot_device').eq('project_id', projectId),
       access.supabase.from('portal_file_records').select('id, display_name').eq('project_id', projectId).eq('category', 'brand').like('mime_type', 'image/%'),
-      Promise.all(profile.pages.map(async page => [page.key, await readLivePage(page.key)] as const)),
+      Promise.all(profile.pages.map(async page => [page.key, await readLivePage(projectId, page.key)] as const)),
       access.supabase.from('portal_activity').select('id, title, detail, actor_type, created_at').eq('project_id', projectId).like('title', 'Site review comment ·%').order('created_at', { ascending: false }).limit(30),
     ])
     if (pages.error) throw pages.error

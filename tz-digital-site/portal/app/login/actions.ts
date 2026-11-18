@@ -41,10 +41,14 @@ export async function login(form: FormData) {
   const user = data.user
   if (error || !user || user.id !== loginId?.auth_user_id) redirect('/login?error=1')
 
-  const { data: membership } = await supabase.from('portal_memberships').select('tenant_id').eq('user_id', user.id).limit(1).maybeSingle()
-  if (!membership) {
+  const { data: memberships, error: membershipError } = await supabase.from('portal_memberships')
+    .select('tenant_id,role').eq('user_id', user.id)
+  if (membershipError || !memberships?.length) {
     await supabase.auth.signOut()
     redirect('/login?error=1')
+  }
+  if (memberships.some(member => ['agency_owner', 'agency_admin', 'agency_member'].includes(member.role))) {
+    redirect('/agency')
   }
   redirect('/dashboard')
 }

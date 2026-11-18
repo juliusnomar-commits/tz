@@ -1108,3 +1108,28 @@
     margin-top:0;
   }
 }
+
+/* Tighter hierarchy within Text mode only; retain the exact outer inspector size.
+   Reclaimed vertical space flows into the editable textarea. */
+.site-editor .cato-inspector-text .cato-editor-divider {
+  margin-bottom:10px;
+}
+.site-editor .cato-inspector-text .cato-text-panel h3 {
+  margin:0 0 8px!important;
+  line-height:1.2;
+}
+.site-editor .cato-inspector-text .cato-selected-label {
+  margin:7px 0 5px;
+  line-height:1.35;
+}
+.site-editor .cato-inspector-text .cato-text-panel .cato-content-editor {
+  margin-top:8px!important;
+  gap:0;
+}
+.site-editor .cato-inspector-text .cato-text-panel .cato-content-editor textarea {
+  margin-top:7px;
+}
+.site-editor .cato-inspector-text .cato-auto-publish {
+  margin-top:9px;
+  margin-bottom:8px;
+}

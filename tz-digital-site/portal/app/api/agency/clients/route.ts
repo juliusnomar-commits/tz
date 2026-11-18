@@ -3,7 +3,7 @@ import { randomBytes, randomInt } from 'node:crypto'
 import { adminClient, userClient } from '@/lib/supabase'
 import { projectSiteProfile } from '@/lib/project-site-profile'
 
-const agencyRoles = ['agency_owner', 'agency_admin', 'agency_member']
+const agencyRoles = ['agency_owner', 'agency_admin']
 
 export async function POST(request: NextRequest) {
   const origin = request.headers.get('origin')

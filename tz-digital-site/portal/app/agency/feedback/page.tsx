@@ -15,6 +15,8 @@ const button = {border:'1px solid #775d9f',borderRadius:9,padding:'8px 12px',bac
 export default async function Feedback() {
   const {projects,authorized}=await agencyFeedback()
   if (!authorized) redirect('/login')
+  const latest=projects.flatMap(project=>project.items.filter(item=>item.kind!=='Saved changes').map(item=>({project,item})))
+    .sort((a,b)=>b.item.createdAt.localeCompare(a.item.createdAt))[0]
   const db=await userClient()
   const ids=projects.map(p=>p.id)
   const {data:triageRows,error}=ids.length?await db.from('portal_feedback_triage')
@@ -30,6 +32,13 @@ export default async function Feedback() {
         <div><p style={{...muted,letterSpacing:2,textTransform:'uppercase'}}>TZ DIGITAL · PRIVATE WORKSPACE</p><h1 style={{fontSize:32,margin:'6px 0'}}>Feedback Inbox</h1><p style={muted}>Requests by client, day, and task.</p></div>
         <nav aria-label="Agency pages" style={{display:'flex',gap:18,alignItems:'center'}}><Link href="/agency" style={link}>Overview</Link><strong>Feedback Inbox</strong></nav>
       </header>
+      <section aria-label="Latest feedback" style={{...panel,marginBottom:20,background:'#2a203d'}}>
+        <p style={{...muted,letterSpacing:1.2,textTransform:'uppercase',margin:'0 0 8px'}}>Latest feedback</p>
+        {latest?<div>
+          <p style={{fontSize:18,fontWeight:700,margin:'0 0 8px',overflowWrap:'anywhere'}}>{latest.item.body?.trim()||'New client request'}</p>
+          <p style={{...muted,margin:0}}>From <strong style={{color:'#f7f3ff'}}>{latest.project.name}</strong> · {new Date(latest.item.createdAt).toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short',timeZone:'UTC'})} UTC</p>
+        </div>:<p style={{...muted,margin:0}}>No client feedback yet.</p>}
+      </section>
       {!projects.length&&<section style={panel}><h2 style={{marginTop:0}}>No projects yet</h2><p style={muted}>Client requests will appear here when a project is ready.</p></section>}
       <div style={{display:'grid',gap:16}}>
         {projects.map((project,projectIndex)=>{
@@ -74,7 +83,7 @@ export default async function Feedback() {
                               <input type="hidden" name="status" value={isDone?'new':'completed'}/>
                               <input type="hidden" name="note" value={saved?.internal_note??''}/>
                               <button type="submit" aria-label={(isDone?'Reopen':'Mark done')+' request: '+title} title={isDone?'Reopen request':'Mark request done'}
-                                style={{width:27,height:27,borderRadius:7,border:'1px solid #a980e4',background:isDone?'#a980e4':'transparent',color:isDone?'#1b102d':'#d5b7ff',cursor:'pointer',fontWeight:700}}>{isDone?'✓':''}</button>
+                                style={{minHeight:30,borderRadius:7,border:'1px solid #a980e4',background:isDone?'#a980e4':'transparent',color:isDone?'#1b102d':'#d5b7ff',cursor:'pointer',fontWeight:700,padding:'3px 9px',whiteSpace:'nowrap'}}>{isDone?'✓ Done':'○ Mark done'}</button>
                             </form>
                             <details style={{minWidth:0,flex:1}}>
                               <summary style={{cursor:'pointer',lineHeight:1.5,overflowWrap:'anywhere'}}>

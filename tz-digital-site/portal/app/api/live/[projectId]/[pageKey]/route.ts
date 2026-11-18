@@ -17,7 +17,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ proj
     const page = await readLivePage(projectId, pageKey)
     const origin = new URL(request.url).origin
     const images = Object.fromEntries(Object.entries(page.images).map(([key, value]) => {
-      const candidate = value.split('/files/').pop() ?? ''
+      const prefix = `/api/projects/${projectId}/files/`
+      const candidate = value.startsWith(prefix) ? value.slice(prefix.length) : ''
       const fileId = /^[0-9a-f-]{36}$/i.test(candidate) ? candidate : null
       return [key, fileId ? `${origin}/api/live/${projectId}/image/${fileId}` : value]
     }))

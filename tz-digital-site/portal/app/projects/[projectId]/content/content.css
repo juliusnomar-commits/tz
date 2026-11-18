@@ -890,8 +890,8 @@
    Top stays fixed; the panel is shortened by 5px only at its bottom edge. */
 @media (min-width:1000px) {
   .site-editor .cms-workspace > .cato-editor-inspector {
-    height:calc(100% - 20px)!important;
-    max-height:calc(100% - 20px)!important;
+    height:calc(100% - 22px)!important;
+    max-height:calc(100% - 22px)!important;
   }
 }
 .site-editor .cato-editor-inspector .cato-inspector-main {
@@ -1064,4 +1064,47 @@
   border-color:#80639c;
   background:#261d31;
   outline:none;
+}
+
+/* Keep Help near footer; match main navigation size, icon and hover behavior. */
+@media(min-width:1000px) {
+  .dash-shell:has(.site-editor) .dash-sidebar {
+    display:flex;
+    flex-direction:column;
+  }
+  .dash-shell:has(.site-editor) .cato-sidebar-howto {
+    margin:auto 0 12px;
+    padding:11px 12px;
+    width:100%;
+    min-height:45px;
+    border:1px solid transparent;
+    border-radius:10px;
+    background:transparent;
+    color:#c4b8d5;
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    gap:12px;
+    font:inherit;
+    font-size:13px;
+    font-weight:650;
+    text-align:left;
+    cursor:pointer;
+  }
+  .dash-shell:has(.site-editor) .cato-sidebar-howto svg {
+    width:19px;
+    height:19px;
+    flex:none;
+  }
+  .dash-shell:has(.site-editor) .cato-sidebar-howto span {
+    font-size:inherit;
+  }
+  .dash-shell:has(.site-editor) .cato-sidebar-howto:hover,
+  .dash-shell:has(.site-editor) .cato-sidebar-howto:focus-visible {
+    background:#292036;
+    color:#f5edff;
+  }
+  .dash-shell:has(.site-editor) .dash-sidebar-bottom {
+    margin-top:0;
+  }
 }

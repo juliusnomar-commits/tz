@@ -80,7 +80,7 @@ export default async function AgencyDashboard() {
     <div style={{maxWidth:1280,margin:'0 auto'}}>
       <header style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:16,flexWrap:'wrap',marginBottom:28}}>
         <div><p style={{...small,letterSpacing:2,textTransform:'uppercase'}}>TZ DIGITAL · PRIVATE WORKSPACE</p><h1 style={{fontSize:32,margin:'6px 0'}}>Agency overview</h1><p style={small}>Clients, website progress and everything needing attention.</p></div>
-        <nav aria-label="Agency navigation" style={{display:'flex',gap:16}}><Link href="/agency" style={link}>Overview</Link><Link href="/agency/feedback" style={link}>Feedback inbox</Link><Link href="/dashboard" style={link}>Client portal</Link></nav>
+        <nav aria-label="Agency navigation" style={{display:'flex',gap:16}}><Link href="/agency" style={link}>Overview</Link><Link href="/agency/feedback" style={link}>Feedback inbox</Link><Link href="/dashboard" style={link}>Client portal</Link><Link href="/agency/password" style={link}>Change password</Link></nav>
       </header>
       <section aria-label="Summary" style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:14,marginBottom:28}}>
         {[['Active projects',projects.length],['Agency tasks',agencyTasks.length],['Waiting on clients',clientTasks.length],['Submitted reviews',outstanding]].map(([label,value])=><div key={label} style={box}><div style={small}>{label}</div><div style={{fontSize:32,fontWeight:750,marginTop:10}}>{value}</div></div>)}

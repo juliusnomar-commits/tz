@@ -16,7 +16,7 @@ export default async function Feedback() {
   const {projects,authorized}=await agencyFeedback()
   if (!authorized) redirect('/login')
   const latest=projects.flatMap(project=>project.items.filter(item=>item.kind!=='Saved changes').map(item=>({project,item})))
-    .sort((a,b)=>b.item.createdAt.localeCompare(a.item.createdAt))[0]
+    .sort((a,b)=>b.item.createdAt.localeCompare(a.item.createdAt)).slice(0,3)
   const db=await userClient()
   const ids=projects.map(p=>p.id)
   const {data:triageRows,error}=ids.length?await db.from('portal_feedback_triage')
@@ -33,11 +33,13 @@ export default async function Feedback() {
         <nav aria-label="Agency pages" style={{display:'flex',gap:18,alignItems:'center'}}><Link href="/agency" style={link}>Overview</Link><strong>Feedback Inbox</strong></nav>
       </header>
       <section aria-label="Latest feedback" style={{...panel,marginBottom:20,background:'#2a203d'}}>
-        <p style={{...muted,letterSpacing:1.2,textTransform:'uppercase',margin:'0 0 8px'}}>Latest feedback</p>
-        {latest?<div>
-          <p style={{fontSize:18,fontWeight:700,margin:'0 0 8px',overflowWrap:'anywhere'}}>{latest.item.body?.trim()||'New client request'}</p>
-          <p style={{...muted,margin:0}}>From <strong style={{color:'#f7f3ff'}}>{latest.project.name}</strong> · {new Date(latest.item.createdAt).toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short',timeZone:'UTC'})} UTC</p>
-        </div>:<p style={{...muted,margin:0}}>No client feedback yet.</p>}
+        <p style={{...muted,letterSpacing:1.2,textTransform:'uppercase',margin:'0 0 8px'}}>Recent feedback</p>
+        {latest.length?<ol style={{listStyle:'none',padding:0,margin:0}}>
+          {latest.map(({project,item},index)=><li key={project.id+':'+item.id} style={{padding:'11px 0',borderTop:index?'1px solid #49395d':'none'}}>
+            <div style={{fontWeight:700,overflowWrap:'anywhere',marginBottom:4}}>{item.body?.trim()||'New client request'}</div>
+            <div style={muted}>{project.name} · {new Date(item.createdAt).toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short',timeZone:'UTC'})} UTC</div>
+          </li>)}
+        </ol>:<p style={{...muted,margin:0}}>No client feedback yet.</p>}
       </section>
       {!projects.length&&<section style={panel}><h2 style={{marginTop:0}}>No projects yet</h2><p style={muted}>Client requests will appear here when a project is ready.</p></section>}
       <div style={{display:'grid',gap:16}}>

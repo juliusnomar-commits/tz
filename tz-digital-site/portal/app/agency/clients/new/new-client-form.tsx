@@ -62,7 +62,12 @@ export function NewClientForm() {
         </select>
       </label>
       {siteMode === 'cato' && <p style={{ color: '#bdb0d3', margin: '-10px 0 0', lineHeight: 1.55 }}>Creates a separate client project using Cato’s sample editor profile. Their draft and live records remain project-scoped.</p>}
-      {siteMode === 'custom' && <label style={labelStyle}>Site profile JSON<textarea required rows={12} value={configText} onChange={event => setConfigText(event.target.value)} spellCheck={false} style={{ ...inputStyle, fontFamily: 'monospace', fontSize: 12 }} placeholder={'{\n  "key": "client-site",\n  "name": "Client website",\n  "domain": "example.com",\n  "previewRoot": "/site-previews/cato",\n  "pages": [],\n  "copy": {},\n  "images": {},\n  "colors": {}\n}'} /></label>}
+      {siteMode === 'custom' && <><p style={{ color: '#bdb0d3', margin: '-10px 0 0', lineHeight: 1.55 }}>For the Cato sample, the minimal override below inherits its pages, editable text, images, colors, and preview. A different site key needs those fields in the JSON too.</p><label style={labelStyle}>Site profile JSON<textarea required rows={12} value={configText} onChange={event => setConfigText(event.target.value)} spellCheck={false} style={{ ...inputStyle, fontFamily: 'monospace', fontSize: 12 }} placeholder={'{
+  "key": "cato",
+  "name": "Client website",
+  "domain": "cato-brown.vercel.app",
+  "previewRoot": "/site-previews/cato"
+}'} /></label></>
       {error && <p role="alert" style={{ color: '#ff9c9c', margin: 0 }}>{error}</p>}
       <button type="submit" disabled={busy} style={{ justifySelf: 'start', border: 0, borderRadius: 10, padding: '12px 18px', background: '#d6b8ff', color: '#241638', fontWeight: 750, cursor: busy ? 'wait' : 'pointer' }}>{busy ? 'Creating workspace…' : 'Create client workspace'}</button>
     </form> : <section style={{ ...panel, marginTop: 24 }}>

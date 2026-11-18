@@ -2,7 +2,7 @@ import { notFound, redirect } from 'next/navigation'
 import { projectAccess } from '@/lib/project-access'
 import { ContentStudio } from './studio'
 import type { ContentRecord } from '@/lib/content'
-import { siteProfile } from '@/lib/site-profiles'
+import { projectSiteProfile } from '@/lib/project-site-profile'
 import { SiteStudio } from './site-studio'
 import { readLivePage } from '@/lib/cato-live'
 import { PortalSidebar } from '@/app/dashboard/portal-sidebar'
@@ -15,7 +15,7 @@ export default async function ContentPage({ params }: { params: Promise<{ projec
   const access = await projectAccess(projectId)
   if (!access) redirect('/login')
   if (access.project.service !== 'website') notFound()
-  const profile = siteProfile(access.project.site_key)
+  const profile = projectSiteProfile(access.project.site_key, access.project.site_config)
   if (profile) {
     const [pages, files, livePages, activity] = await Promise.all([
       access.supabase.from('portal_site_pages').select('page_key, changes, images, colors, pins, status, version, updated_at, snapshot_path, snapshot_device').eq('project_id', projectId),

@@ -8,7 +8,7 @@ function stringMap(value: unknown, label: string, maxEntries = 300): Record<stri
   if (!isRecord(value) || Object.keys(value).length > maxEntries) throw new Error(`Invalid site ${label}`)
   const result: Record<string, string> = {}
   for (const [key, item] of Object.entries(value)) {
-    if (!/^[a-zA-Z0-9_-]{1,100}$/.test(key) || typeof item !== 'string' || item.length > 20000) throw new Error(`Invalid site ${label}`)
+    if (!/^[a-zA-Z0-9_-]{1,100}$/.test(key) || ['__proto__', 'prototype', 'constructor'].includes(key) || typeof item !== 'string' || item.length > 20000) throw new Error(`Invalid site ${label}`)
     result[key] = item
   }
   return result
@@ -27,7 +27,7 @@ function pages(value: unknown): SitePage[] {
 
 /** Resolve a trusted project-level profile, falling back to the built-in manifest for legacy projects. */
 export function projectSiteProfile(siteKey: string | null | undefined, config: unknown): SiteProfile | undefined {
-  const base = siteKey ? siteProfiles[siteKey] : undefined
+  const base = siteKey && Object.hasOwn(siteProfiles, siteKey) ? siteProfiles[siteKey] : undefined
   if (!isRecord(config) || Object.keys(config).length === 0) return base
   const merged = { ...(base ?? {}), ...config }
   const domain = merged.domain

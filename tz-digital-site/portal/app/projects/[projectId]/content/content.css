@@ -890,8 +890,8 @@
    Top stays fixed; the panel is shortened by 5px only at its bottom edge. */
 @media (min-width:1000px) {
   .site-editor .cms-workspace > .cato-editor-inspector {
-    height:calc(100% - 12px)!important;
-    max-height:calc(100% - 12px)!important;
+    height:calc(100% - 16px)!important;
+    max-height:calc(100% - 16px)!important;
   }
 }
 .site-editor .cato-editor-inspector .cato-inspector-main {
@@ -1026,4 +1026,42 @@
   height:auto!important;
   aspect-ratio:16 / 9;
   object-fit:cover;
+}
+
+/* Compact editable hex inputs alongside the native color swatch. */
+.site-editor .cato-inspector-colors .cms-color-row {
+  grid-template-columns:minmax(0,1fr) minmax(122px,auto);
+}
+.site-editor .cato-inspector-colors .cato-color-control {
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  min-width:0;
+}
+.site-editor .cato-inspector-colors .cato-color-control input[type="color"] {
+  width:40px;
+  height:32px;
+  flex:none;
+  padding:0;
+}
+.site-editor .cato-inspector-colors .cato-color-hex-input {
+  display:block;
+  width:74px;
+  min-width:0;
+  height:34px;
+  border:1px solid transparent;
+  border-radius:7px;
+  background:transparent;
+  color:#d3c6de;
+  padding:5px 4px;
+  font:500 11px/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:0;
+  text-align:left;
+}
+.site-editor .cato-inspector-colors .cato-color-hex-input:hover,
+.site-editor .cato-inspector-colors .cato-color-hex-input:focus-visible {
+  border-color:#80639c;
+  background:#261d31;
+  outline:none;
 }

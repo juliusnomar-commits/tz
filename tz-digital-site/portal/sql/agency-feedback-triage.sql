@@ -17,25 +17,25 @@ DROP POLICY IF EXISTS agency_feedback_triage_select ON public.portal_feedback_tr
 CREATE POLICY agency_feedback_triage_select ON public.portal_feedback_triage FOR SELECT TO authenticated
 USING (EXISTS (
  SELECT 1 FROM public.portal_projects p JOIN public.portal_memberships m ON m.tenant_id = p.tenant_id
- WHERE p.id = project_id AND p.tenant_id = tenant_id AND m.user_id = auth.uid()
+ WHERE p.id = project_id AND p.tenant_id = portal_feedback_triage.tenant_id AND m.user_id = auth.uid()
  AND m.role IN ('agency_owner','agency_admin','agency_member')
 ));
 DROP POLICY IF EXISTS agency_feedback_triage_insert ON public.portal_feedback_triage;
 CREATE POLICY agency_feedback_triage_insert ON public.portal_feedback_triage FOR INSERT TO authenticated
 WITH CHECK (EXISTS (
  SELECT 1 FROM public.portal_projects p JOIN public.portal_memberships m ON m.tenant_id = p.tenant_id
- WHERE p.id = project_id AND p.tenant_id = tenant_id AND m.user_id = auth.uid()
+ WHERE p.id = project_id AND p.tenant_id = portal_feedback_triage.tenant_id AND m.user_id = auth.uid()
  AND m.role IN ('agency_owner','agency_admin','agency_member')
 ));
 DROP POLICY IF EXISTS agency_feedback_triage_update ON public.portal_feedback_triage;
 CREATE POLICY agency_feedback_triage_update ON public.portal_feedback_triage FOR UPDATE TO authenticated
 USING (EXISTS (
  SELECT 1 FROM public.portal_projects p JOIN public.portal_memberships m ON m.tenant_id = p.tenant_id
- WHERE p.id = project_id AND p.tenant_id = tenant_id AND m.user_id = auth.uid()
+ WHERE p.id = project_id AND p.tenant_id = portal_feedback_triage.tenant_id AND m.user_id = auth.uid()
  AND m.role IN ('agency_owner','agency_admin','agency_member')
 ))
 WITH CHECK (EXISTS (
  SELECT 1 FROM public.portal_projects p JOIN public.portal_memberships m ON m.tenant_id = p.tenant_id
- WHERE p.id = project_id AND p.tenant_id = tenant_id AND m.user_id = auth.uid()
+ WHERE p.id = project_id AND p.tenant_id = portal_feedback_triage.tenant_id AND m.user_id = auth.uid()
  AND m.role IN ('agency_owner','agency_admin','agency_member')
 ));

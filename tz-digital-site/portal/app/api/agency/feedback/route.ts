@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
     if (!bytes) return NextResponse.json({error:'Capture unavailable'},{status:404})
     return new NextResponse(bytes,{headers:{'Content-Type':'image/jpeg','Cache-Control':'private, no-store'}})
   }
-  if (format!=='zip' || (selectedDay && !/^\\d{4}-\\d{2}-\\d{2}$/.test(selectedDay)))
+  if (format!=='zip' || (selectedDay && !/^\d{4}-\d{2}-\d{2}$/.test(selectedDay)))
     return NextResponse.json({error:'Invalid export'},{status:400})
   const items = selectedProject.items.filter(i=>!selectedDay || dayKey(i.createdAt)===selectedDay)
   const folder = safe(selectedProject.name)+'-feedback'
@@ -48,14 +48,14 @@ export async function GET(request: NextRequest) {
     number:index+1,id:i.id,page:i.page,type:i.kind,request:i.body,values:i.details,
     pin:i.pin,receivedAt:i.createdAt,capture:i.snapshot?'See captures/'+safe(i.page)+'.jpg if available':null,
   }))
-  add('README.md','# '+selectedProject.name+' — feedback brief\\n\\nExported '+new Date().toISOString()+'\\n\\nThe page edits listed here are the current saved values. A page capture is the latest available submitted capture; it is not an image of every historical edit. Agency statuses and notes are separate from client feedback.\\n')
+  add('README.md','# '+selectedProject.name+' — feedback brief\n\nExported '+new Date().toISOString()+'\n\nThe page edits listed here are the current saved values. A page capture is the latest available submitted capture; it is not an image of every historical edit. Agency statuses and notes are separate from client feedback.\n')
   for (const [day,dayItems] of groups) {
-    add(day+'/requests.md','# '+selectedProject.name+' — '+day+'\\n\\n'+dayItems.map(i=>{
+    add(day+'/requests.md','# '+selectedProject.name+' — '+day+'\n\n'+dayItems.map(i=>{
       const n=items.indexOf(i)+1
-      return '## '+n+'. '+i.kind+' · '+i.page+'\\n\\n'+(i.body||'No comment provided')+'\\n\\n'+
-        i.details.map(d=>'- **'+d.field+'**: '+d.value.replaceAll('\\n',' ')).join('\\n')+
-        (i.pin?'\\n\\nPin: '+i.pin.target+' ('+i.pin.x+'%, '+i.pin.y+'%)':'')+'\\n\\nReceived: '+i.createdAt+'\\n'
-    }).join('\\n'))
+      return '## '+n+'. '+i.kind+' · '+i.page+'\n\n'+(i.body||'No comment provided')+'\n\n'+
+        i.details.map(d=>'- **'+d.field+'**: '+d.value.replaceAll('\n',' ')).join('\n')+
+        (i.pin?'\n\nPin: '+i.pin.target+' ('+i.pin.x+'%, '+i.pin.y+'%)':'')+'\n\nReceived: '+i.createdAt+'\n'
+    }).join('\n'))
   }
   add('feedback.json',JSON.stringify({project:selectedProject.name,exportedAt:new Date().toISOString(),items:manifest},null,2))
   const pages=[...new Set(items.filter(i=>i.snapshot).map(i=>i.page))]

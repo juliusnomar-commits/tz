@@ -30,15 +30,15 @@ export function projectSiteProfile(siteKey: string | null | undefined, config: u
   const base = siteKey ? siteProfiles[siteKey] : undefined
   if (!isRecord(config) || Object.keys(config).length === 0) return base
   const merged = { ...(base ?? {}), ...config }
-  const labels = typeof merged.domain === 'string' ? merged.domain.split('.') : []
-  const validDomain = typeof merged.domain === 'string' && merged.domain.length <= 253 && labels.length >= 2 && labels.every((label: string) => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i.test(label))
+  const domain = merged.domain
   if (typeof merged.key !== 'string' || !/^[a-z0-9_-]{1,40}$/.test(merged.key) ||
     (base && merged.key !== base.key) || typeof merged.name !== 'string' || !merged.name.trim() || merged.name.length > 160 ||
-    !validDomain || typeof merged.previewRoot !== 'string' || !merged.previewRoot.startsWith('/site-previews/') || merged.previewRoot.includes('..') || merged.previewRoot.includes('?') || merged.previewRoot.includes('#')) throw new Error('Invalid site configuration')
+    typeof domain !== 'string' || domain.length > 253 || domain.split('.').length < 2 || domain.split('.').some(label => !/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i.test(label)) ||
+    typeof merged.previewRoot !== 'string' || !merged.previewRoot.startsWith('/site-previews/') || merged.previewRoot.includes('..') || merged.previewRoot.includes('?') || merged.previewRoot.includes('#')) throw new Error('Invalid site configuration')
   const pageList = pages(merged.pages)
   const copy = stringMap(merged.copy, 'text fields')
   const images = stringMap(merged.images, 'images')
   const colors = stringMap(merged.colors, 'colors', 50)
   if (!Object.keys(copy).length || !Object.keys(images).length || !Object.keys(colors).length || Object.values(colors).some(color => !/^#[0-9a-f]{6}$/i.test(color))) throw new Error('Invalid site configuration')
-  return { key: merged.key, name: merged.name.trim(), domain: merged.domain.toLowerCase(), previewRoot: merged.previewRoot.replace(/\/$/, ''), pages: pageList, copy, images, colors }
+  return { key: merged.key, name: merged.name.trim(), domain: domain.toLowerCase(), previewRoot: merged.previewRoot.replace(/\/$/, ''), pages: pageList, copy, images, colors }
 }

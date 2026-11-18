@@ -1015,3 +1015,15 @@
     flex:auto;
   }
 }
+
+/* Image inspector fine-tuning: raise only its heading/content by 10px,
+   and keep the selected image at a true 16:9, full-width preview. */
+.site-editor .cato-inspector-images .cato-photo-panel h3 {
+  margin-top:5px!important;
+}
+.site-editor .cato-inspector-images .cato-selected-image img {
+  width:100%;
+  height:auto!important;
+  aspect-ratio:16 / 9;
+  object-fit:cover;
+}

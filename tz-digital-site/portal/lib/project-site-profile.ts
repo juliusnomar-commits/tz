@@ -31,7 +31,7 @@ export function projectSiteProfile(siteKey: string | null | undefined, config: u
   if (!isRecord(config) || Object.keys(config).length === 0) return base
   const merged = { ...(base ?? {}), ...config }
   const labels = typeof merged.domain === 'string' ? merged.domain.split('.') : []
-  const validDomain = merged.domain.length <= 253 && labels.length >= 2 && labels.every((label: string) => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i.test(label))
+  const validDomain = typeof merged.domain === 'string' && merged.domain.length <= 253 && labels.length >= 2 && labels.every((label: string) => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i.test(label))
   if (typeof merged.key !== 'string' || !/^[a-z0-9_-]{1,40}$/.test(merged.key) ||
     (base && merged.key !== base.key) || typeof merged.name !== 'string' || !merged.name.trim() || merged.name.length > 160 ||
     !validDomain || typeof merged.previewRoot !== 'string' || !merged.previewRoot.startsWith('/site-previews/') || merged.previewRoot.includes('..') || merged.previewRoot.includes('?') || merged.previewRoot.includes('#')) throw new Error('Invalid site configuration')

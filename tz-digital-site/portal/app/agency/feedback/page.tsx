@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { userClient } from '@/lib/supabase'
+import { updateFeedbackTriage } from './actions'
 
 export const dynamic = 'force-dynamic'
 
@@ -47,6 +48,11 @@ export default async function AgencyFeedbackPage({ searchParams }: { searchParam
     activities = (activityResult.data ?? []) as Activity[]
     reviews = (reviewResult.data ?? []) as SiteReview[]
   }
+  // Workflow metadata is stored separately so original client submissions remain unchanged.
+  const { data: triageData, error: triageError } = projectIds.length ? await supabase.from('portal_feedback_triage')
+    .select('project_id,feedback_key,status,internal_note').in('project_id',projectIds) : { data: [], error: null }
+  if (triageError) throw triageError
+  const triage = new Map((triageData ?? []).map(t => [t.project_id + ':' + t.feedback_key,t]))
   const entries = [
     ...(kind === 'all' || kind === 'comments' ? activities.filter(a => !page || a.title.endsWith(' · ' + page)).map(a => ({
       id: 'comment-' + a.id, projectId: a.project_id, page: a.title.split(' · ').slice(1).join(' · '),
@@ -70,6 +76,16 @@ export default async function AgencyFeedbackPage({ searchParams }: { searchParam
     else p.delete(key)
     return '/agency/feedback?' + p.toString()
   }
+  const folder = (stamp: string) => {
+    const d = new Date(stamp), now = new Date()
+    const today = Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate())
+    const day = Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())
+    const gap = Math.floor((today-day)/86400000)
+    return gap === 0 ? 'Today' : gap === 1 ? 'Yesterday' : gap < 7 && gap >= 0 ? 'Earlier this week' :
+      d.toLocaleDateString('en-GB',{year:'numeric',month:'long',timeZone:'UTC'})
+  }
+  const groups = new Map<string,typeof entries>()
+  for (const item of entries) { const key = folder(item.createdAt); groups.set(key,[...(groups.get(key) ?? []),item]) }
   return <main style={{ minHeight: '100vh', padding: '36px clamp(18px, 5vw, 84px)', background: '#140e25', color: '#f3efff', fontFamily: 'inherit' }}>
     <div style={{ maxWidth: 1180, margin: '0 auto' }}>
       <Link href="/dashboard" style={{ color: '#cdb4fa' }}>← Client dashboard</Link>
@@ -83,21 +99,39 @@ export default async function AgencyFeedbackPage({ searchParams }: { searchParam
       </nav>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 22 }}><Link href={filter('client', '')}>All clients</Link>{projects.map(p => <Link key={p.id} href={filter('client', p.id)} style={{ color: client === p.id ? '#fff' : '#bda4ed' }}>{p.name}</Link>)}</div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 22 }}><Link href={filter('page', '')}>All pages</Link>{pages.map(p => <Link key={p} href={filter('page', p)} style={{ color: page === p ? '#fff' : '#bda4ed' }}>{p}</Link>)}</div>
-      <section aria-label="Feedback entries" style={{ display: 'grid', gap: 12 }}>
+      <section aria-label="Feedback entries" style={{ display: 'grid', gap: 14 }}>
         {entries.length === 0 && <p>No matching feedback found in the accessible projects.</p>}
-        {entries.map(item => <article key={item.id} style={{ border: '1px solid #46325f', borderRadius: 14, padding: 20, background: '#211733' }}>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'space-between' }}>
-            <strong>{projectMap.get(item.projectId)?.name || 'Project'} · {item.page}</strong>
-            <span style={{ color: '#cbbbe0' }}>{item.kind} · {item.status}</span>
-          </div>
-          <p style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{item.body || 'No message provided'}</p>
-          <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-            <small style={{ color: '#b8aacb' }}>{date(item.createdAt)}</small>
-            <Link href={`/projects/${item.projectId}/content`} style={{ color: '#cdb4fa' }}>Open website editor</Link>
-          </div>
-        </article>)}
+        {[...groups].map(([group,items]) => <details key={group} open={group==='Today'||group==='Yesterday'} style={{ border:'1px solid #46325f',borderRadius:14,padding:16 }}>
+          <summary style={{cursor:'pointer',fontWeight:650,marginBottom:12}}>▸ {group} ({items.length})</summary>
+          <div style={{display:'grid',gap:12}}>{items.map(item => {
+            const saved = triage.get(item.projectId + ':' + item.id)
+            return <article key={item.id} style={{ border: '1px solid #46325f', borderRadius: 14, padding: 20, background: '#211733' }}>
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                <strong>{projectMap.get(item.projectId)?.name || 'Project'} · {item.page}</strong>
+                <span style={{ color: '#cbbbe0' }}>{item.kind} · {item.status}</span>
+              </div>
+              <p style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{item.body || 'No message provided'}</p>
+              <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+                <small style={{ color: '#b8aacb' }}>{date(item.createdAt)}</small>
+                <Link href={`/projects/${item.projectId}/content`} style={{ color: '#cdb4fa' }}>Open website editor</Link>
+              </div>
+              <form action={updateFeedbackTriage} style={{marginTop:16,paddingTop:14,borderTop:'1px solid #493a5d',display:'grid',gap:8}}>
+                <input name="projectId" type="hidden" value={item.projectId}/>
+                <input name="feedbackKey" type="hidden" value={item.id}/>
+                <label htmlFor={'status-'+item.id} style={{fontSize:12,color:'#b8aacb'}}>Internal workflow status</label>
+                <select id={'status-'+item.id} name="status" defaultValue={saved?.status ?? 'new'} style={{padding:8,borderRadius:8,background:'#302543',color:'#fff'}}>
+                  <option value="new">New</option><option value="in_progress">In progress</option>
+                  <option value="needs_client">Needs client response</option><option value="completed">Completed</option>
+                </select>
+                <label htmlFor={'note-'+item.id} style={{fontSize:12,color:'#b8aacb'}}>Agency note (private)</label>
+                <textarea id={'note-'+item.id} name="note" rows={2} maxLength={4000} defaultValue={saved?.internal_note ?? ''} style={{padding:8,borderRadius:8,background:'#302543',color:'#fff'}}/>
+                <button type="submit" style={{justifySelf:'start',padding:'8px 16px',borderRadius:8,color:'#fff',background:'#7557ac',border:0,cursor:'pointer'}}>Save status</button>
+              </form>
+            </article>
+          })}</div>
+        </details>)}
       </section>
-      <p style={{ color: '#a89bbd', marginTop: 24 }}>This MVP does not change feedback or publishing state. Results are limited to the newest 250 comments and 250 page records per selected scope.</p>
+      <p style={{ color: '#a89bbd', marginTop: 24 }}>Agency statuses and notes are stored separately from original feedback. Results are limited to the newest 250 comments and 250 page records per selected scope.</p>
     </div>
   </main>
 }

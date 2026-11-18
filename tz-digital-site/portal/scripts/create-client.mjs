@@ -1,5 +1,6 @@
 import { randomBytes, randomInt } from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
+import { readFile } from 'node:fs/promises'
 
 const args = process.argv.slice(2)
 const loginFlag = args.indexOf('--login-id')
@@ -10,10 +11,21 @@ const siteFlag = args.indexOf('--site')
 const siteKey = siteFlag >= 0 ? args[siteFlag + 1] : null
 if (siteFlag >= 0 && !siteKey) throw new Error('Specify a site profile after --site')
 if (siteFlag >= 0) args.splice(siteFlag, 2)
+const configFlag = args.indexOf('--site-config')
+const configPath = configFlag >= 0 ? args[configFlag + 1] : null
+if (configFlag >= 0 && !configPath) throw new Error('Specify a JSON file after --site-config')
+if (configFlag >= 0) args.splice(configFlag, 2)
+let siteConfig = {}
+if (configPath) {
+  siteConfig = JSON.parse(await readFile(configPath, 'utf8'))
+  if (!siteConfig || typeof siteConfig !== 'object' || Array.isArray(siteConfig)) throw new Error('Site configuration must be a JSON object')
+}
+const resolvedSiteKey = siteKey ?? (typeof siteConfig.key === 'string' ? siteConfig.key : null)
+if (siteKey && typeof siteConfig.key === 'string' && siteConfig.key !== siteKey) throw new Error('The site key must match the --site value')
 if (siteKey && !['cato'].includes(siteKey)) throw new Error('Unknown site profile. Available: cato')
 const name = args.join(' ').trim()
 if (!name || name.length > 160) {
-  process.stderr.write('Usage: npm run create-client -- "Client organization name" [--site cato]\n')
+  process.stderr.write('Usage: npm run create-client -- "Client organization name" [--site cato] [--site-config ./profile.json]\n')
   process.exit(1)
 }
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -51,7 +63,7 @@ try {
   if (memberError) throw memberError
   const { error: idError } = await db.from('portal_login_ids').insert({ login_id: id, auth_user_id: userId, auth_email: email })
   if (idError) throw idError
-  const { data: project, error: projectError } = await db.from('portal_projects').insert({ tenant_id: tenant.id, name: siteKey === 'cato' ? 'Cato by Cato website' : `${name} website`, service: 'website', site_key: siteKey,
+  const { data: project, error: projectError } = await db.from('portal_projects').insert({ tenant_id: tenant.id, name: siteKey === 'cato' ? 'Cato by Cato website' : `${name} website`, service: 'website', site_key: resolvedSiteKey, site_config: siteConfig,
     status: siteKey === 'cato' ? 'awaiting_client' : 'active', summary: siteKey === 'cato' ? 'Your website is ready for review. You can suggest edits and leave comments whenever you are ready.' : 'Your website project and review workspace.', next_milestone: siteKey === 'cato' ? 'Cato review' : 'Review website content' }).select('id').single()
   if (projectError || !project) throw projectError ?? new Error('Project was not created')
   if (siteKey === 'cato') {

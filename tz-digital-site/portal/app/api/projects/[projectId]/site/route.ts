@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { adminClient } from '@/lib/supabase'
 import { parseVisualPins } from '@/lib/content'
 import { projectAccess } from '@/lib/project-access'
-import { siteProfile, sitePage, validateSiteChanges, validateSiteColors, validateSiteImages } from '@/lib/site-profiles'
+import { sitePage, validateSiteChanges, validateSiteColors, validateSiteImages } from '@/lib/site-profiles'
+import { projectSiteProfile } from '@/lib/project-site-profile'
 import { writeLivePage } from '@/lib/cato-live'
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   if (!access.canEdit) return NextResponse.json({ error: 'Editing access required' }, { status: 403 })
   try {
     const body = await request.json()
-    const profile = siteProfile(access.project.site_key)
+    const profile = projectSiteProfile(access.project.site_key, access.project.site_config)
     const page = profile && sitePage(profile, String(body.pageKey ?? ''))
     const comment = typeof body.comment === 'string' ? body.comment.trim() : ''
     if (!page) throw new Error('Choose a valid page')

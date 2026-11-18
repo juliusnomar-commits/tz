@@ -14,6 +14,7 @@ export default async function ContentPage({ params }: { params: Promise<{ projec
   const { projectId } = await params
   const access = await projectAccess(projectId)
   if (!access) redirect('/login')
+  if (access.role.startsWith('agency_')) redirect('/agency/feedback?project=' + encodeURIComponent(projectId))
   if (access.project.service !== 'website') notFound()
   const profile = projectSiteProfile(access.project.site_key, access.project.site_config)
   if (profile) {

@@ -34,7 +34,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   const access = await projectAccess(projectId)
   if (!access) return NextResponse.json({ error: 'Sign in to this project first' }, { status: 404 })
   if (!access.canEdit) return NextResponse.json({ error: 'Editing access required' }, { status: 403 })
-  const profile = siteProfile(access.project.site_key)
+  const profile = projectSiteProfile(access.project.site_key, access.project.site_config)
   if (!profile) return NextResponse.json({ error: 'This project has no connected site' }, { status: 404 })
   try {
     const body = await request.json()

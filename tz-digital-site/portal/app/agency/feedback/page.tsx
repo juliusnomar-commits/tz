@@ -88,9 +88,9 @@ export default async function AgencyFeedbackPage({ searchParams }: { searchParam
   for (const item of entries) { const key = folder(item.createdAt); groups.set(key,[...(groups.get(key) ?? []),item]) }
   return <main style={{ minHeight: '100vh', padding: '36px clamp(18px, 5vw, 84px)', background: '#140e25', color: '#f3efff', fontFamily: 'inherit' }}>
     <div style={{ maxWidth: 1180, margin: '0 auto' }}>
-      <Link href="/dashboard" style={{ color: '#cdb4fa' }}>← Client dashboard</Link>
+      <Link href="/agency" style={{ color: '#cdb4fa' }}>← Agency overview</Link>
       <h1 style={{ fontSize: 32, marginBottom: 8 }}>Agency feedback inbox</h1>
-      <p style={{ color: '#b8aacb', marginTop: 0 }}>Read-only first version · {entries.length} matching items across {filteredProjects.length} authorized projects</p>
+      <p style={{ color: '#b8aacb', marginTop: 0 }}>{entries.length} matching items across {filteredProjects.length} authorized projects</p>
       <nav aria-label="Feedback filters" style={{ display: 'flex', flexWrap: 'wrap', gap: 12, margin: '24px 0' }}>
         <span>Client filters are available below</span>
         <span style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>

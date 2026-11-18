@@ -105,7 +105,7 @@ export default async function AgencyDashboard() {
       <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,390px),1fr))',gap:24}}>
         <section style={box}><h2 style={{marginTop:0,fontSize:21}}>What needs doing</h2>
           <h3 style={{fontSize:15,color:'#d2c0ed'}}>Waiting on TZ Digital ({agencyTasks.length})</h3>
-          {agencyTasks.slice(0,12).map(t=><p key={t.id} style={{borderBottom:'1px solid #382b4a',paddingBottom:10}}><Link style={link} href={`/projects/${t.project_id}/tasks`}>{t.title}</Link><br/><span style={small}>{projectNames.get(t.project_id)}</span></p>)}
+          {agencyTasks.slice(0,12).map(t=><p key={t.id} style={{borderBottom:'1px solid #382b4a',paddingBottom:10}}><Link style={link} href={`/dashboard?project=${encodeURIComponent(t.project_id)}#tasks`}>{t.title}</Link><br/><span style={small}>{projectNames.get(t.project_id)}</span></p>)}
           {!agencyTasks.length && <p style={small}>No outstanding agency tasks.</p>}
           <h3 style={{fontSize:15,color:'#d2c0ed'}}>Waiting on clients ({clientTasks.length})</h3>
           {clientTasks.slice(0,12).map(t=><p key={t.id} style={{borderBottom:'1px solid #382b4a',paddingBottom:10}}>{t.title}<br/><span style={small}>{projectNames.get(t.project_id)}</span></p>)}

@@ -57,6 +57,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       if (!snapshotPath || !expectedPath.test(snapshotPath)) throw new Error('Review capture path is invalid')
     }
     if (intent === 'submit' && !pins.length) throw new Error('Add a comment pin before sending for review')
+    if (intent === 'submit' && !snapshotPath) throw new Error('A pinned page capture is required before sending feedback')
     const db = adminClient()
     for (const value of Object.values(images)) {
       const fileId = value.match(/\/files\/([0-9a-f-]{36})$/i)?.[1]

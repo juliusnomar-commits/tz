@@ -17,7 +17,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ proj
     const page = await readLivePage(projectId, pageKey)
     const origin = new URL(request.url).origin
     const images = Object.fromEntries(Object.entries(page.images).map(([key, value]) => {
-      const fileId = value.match(/\\/files\\/([0-9a-f-]{36})$/i)?.[1]
+      const candidate = value.split('/files/').pop() ?? ''
+      const fileId = /^[0-9a-f-]{36}$/i.test(candidate) ? candidate : null
       return [key, fileId ? `${origin}/api/live/${projectId}/image/${fileId}` : value]
     }))
     return NextResponse.json({ ...page, images }, { headers: { 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'no-store' } })

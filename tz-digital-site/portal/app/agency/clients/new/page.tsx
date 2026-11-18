@@ -3,7 +3,7 @@ import { userClient } from '@/lib/supabase'
 import { NewClientForm } from './new-client-form'
 
 export const dynamic = 'force-dynamic'
-const agencyRoles = ['agency_owner', 'agency_admin', 'agency_member']
+const agencyRoles = ['agency_owner', 'agency_admin']
 
 export default async function NewClientPage() {
   const supabase = await userClient()

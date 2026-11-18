@@ -6,6 +6,9 @@ import { projectSiteProfile } from '@/lib/project-site-profile'
 const agencyRoles = ['agency_owner', 'agency_admin', 'agency_member']
 
 export async function POST(request: NextRequest) {
+  const origin = request.headers.get('origin')
+  const host = request.headers.get('host')
+  if (!origin || !host || new URL(origin).host !== host) return NextResponse.json({ error: 'Same-origin requests only' }, { status: 403 })
   const supabase = await userClient()
   const { data: auth } = await supabase.auth.getUser()
   if (!auth.user) return NextResponse.json({ error: 'Sign in first' }, { status: 401 })

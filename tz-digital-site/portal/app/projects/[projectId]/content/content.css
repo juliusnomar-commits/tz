@@ -813,3 +813,323 @@
   overflow-y:auto!important;
   overscroll-behavior:contain;
 }
+
+/* Cato workspace: the preview + page filmstrip alone determine the desktop row height.
+   The inspector is removed from grid sizing to prevent its image content from stretching
+   the page/inspector together. All modes get the exact same fixed outer bounds. */
+@media (min-width:1000px) {
+  .site-editor .cms-workspace {
+    position:relative!important;
+    grid-template-rows:auto!important;
+    align-items:start!important;
+  }
+  .site-editor .cms-workspace > .cato-preview-stack {
+    grid-column:1;
+    grid-row:1;
+    min-height:0;
+  }
+  .site-editor .cms-workspace > .cato-editor-inspector {
+    position:absolute!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+    top:0!important;
+    right:0!important;
+    left:auto!important;
+    bottom:auto!important;
+    width:clamp(275px,21vw,315px)!important;
+    height:100%!important;
+    max-height:100%!important;
+    min-height:0!important;
+    margin:0!important;
+    box-sizing:border-box;
+    overflow:hidden!important;
+  }
+}
+/* The photo library is the only vertically scrolling part of Images mode.
+   max-content rows prevent grid tracks from collapsing pictures into thin strips. */
+.site-editor .cato-site-photo-grid {
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-auto-rows:max-content;
+  align-content:start;
+  min-height:0!important;
+  height:0;
+  flex:1 1 0%;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain;
+}
+.site-editor .cato-site-photo-grid button {
+  aspect-ratio:4/3;
+  min-height:0;
+  flex:none;
+}
+/* Real, non-interactive page snapshots in the existing clickable page cards. */
+.site-editor .cms-pages .cato-slide-art:has(.cato-slide-preview) {
+  padding:0;
+  display:block;
+  isolation:isolate;
+  background:#17121d;
+}
+.site-editor .cms-pages .cato-slide-art:has(.cato-slide-preview)::after {
+  content:none;
+}
+.site-editor .cms-pages .cato-slide-preview {
+  position:absolute;
+  inset:0 auto auto 0;
+  display:block;
+  width:800%;
+  height:800%;
+  border:0;
+  transform:scale(.125);
+  transform-origin:top left;
+  pointer-events:none;
+  background:#fff;
+}
+
+/* Inspector polish: precise bottom alignment and cleaner, content-led spacing.
+   Top stays fixed; the panel is shortened by 5px only at its bottom edge. */
+@media (min-width:1000px) {
+  .site-editor .cms-workspace > .cato-editor-inspector {
+    height:calc(100% - 22px)!important;
+    max-height:calc(100% - 22px)!important;
+  }
+}
+.site-editor .cato-editor-inspector .cato-inspector-main {
+  display:flex;
+  flex-direction:column;
+  flex:1 1 0%;
+  min-height:0;
+  overflow-y:auto;
+}
+.site-editor .cato-editor-inspector .cato-editor-divider {
+  flex:none;
+  margin:15px 0 18px;
+  border-color:#403449;
+}
+/* One quiet metadata row, adjacent to the content region: no blank actions
+   container or stacked ornamental horizontal rules. */
+.site-editor .cato-editor-inspector .cato-inspector-footer {
+  flex:0 0 auto;
+  margin-top:0!important;
+  padding-top:0!important;
+  border:0!important;
+}
+.site-editor .cato-inspector-footer .cms-actions:empty {
+  display:none!important;
+}
+.site-editor .cato-inspector-footer .cms-actions:not(:has(button)) {
+  display:none!important;
+}
+.site-editor .cato-inspector-footer .cms-version {
+  margin:0!important;
+  padding:12px 0 1px!important;
+  border:0!important;
+  font-size:11px;
+  line-height:1.4;
+  color:#a99bb8;
+  font-variant-numeric:tabular-nums;
+}
+/* Text editor takes advantage of remaining space instead of having a short
+   textarea floating above an empty footer. */
+.site-editor .cato-inspector-text .cato-text-panel {
+  display:flex;
+  flex-direction:column;
+  flex:1 1 0%;
+  min-height:0;
+}
+.site-editor .cato-inspector-text .cato-text-panel h3 {
+  flex:none;
+  margin-top:3px;
+}
+.site-editor .cato-inspector-text .cato-text-panel .cato-content-editor {
+  display:flex!important;
+  flex-direction:column;
+  flex:1 1 0%;
+  min-height:0;
+  margin-top:18px;
+}
+.site-editor .cato-inspector-text .cato-text-panel .cato-content-editor textarea {
+  display:block;
+  flex:1 1 0%;
+  min-height:160px;
+  height:100%;
+  resize:none;
+}
+.site-editor .cato-inspector-text .cato-auto-publish {
+  margin-top:13px;
+  margin-bottom:12px;
+  flex:none;
+}
+/* The five brand colors are evenly spaced within their inspector, with
+   a single subtle separation between items instead of piled-up lines. */
+.site-editor .cato-inspector-colors .cato-colors-panel {
+  display:flex;
+  flex-direction:column;
+  flex:1 1 0%;
+  min-height:0;
+}
+.site-editor .cato-inspector-colors .cato-colors-panel h3 {
+  flex:none;
+  margin:3px 0 8px;
+}
+.site-editor .cato-inspector-colors .cato-colors-panel > p {
+  flex:none;
+  margin:0 0 10px;
+  font-size:12px;
+  line-height:1.5;
+  color:#c3b5d0;
+}
+.site-editor .cato-inspector-colors .cato-color-list {
+  display:flex;
+  flex-direction:column;
+  justify-content:space-around;
+  flex:1 1 0%;
+  min-height:0;
+}
+.site-editor .cato-inspector-colors .cms-color-row {
+  flex:1 1 0%;
+  min-height:51px;
+  padding:8px 0;
+  border:0;
+  border-top:1px solid #332a3d;
+}
+.site-editor .cato-inspector-colors .cms-color-row:first-child {
+  border-top:0;
+}
+.site-editor .cato-inspector-images .cato-photo-panel {
+  flex:1 1 0%;
+  min-height:0;
+}
+.site-editor .cato-inspector-images .cato-site-photo-grid {
+  flex:1 1 0%;
+  min-height:0;
+  overflow-y:auto!important;
+}
+@media (max-width:999px) {
+  .site-editor .cato-inspector-text .cato-text-panel .cato-content-editor textarea {
+    min-height:220px;
+    height:auto;
+    flex:auto;
+  }
+  .site-editor .cato-inspector-colors .cato-color-list {
+    flex:auto;
+  }
+}
+
+/* Image inspector fine-tuning: raise only its heading/content by 10px,
+   and keep the selected image at a true 16:9, full-width preview. */
+.site-editor .cato-inspector-images .cato-photo-panel h3 {
+  margin-top:5px!important;
+}
+.site-editor .cato-inspector-images .cato-selected-image img {
+  width:100%;
+  height:auto!important;
+  aspect-ratio:16 / 9;
+  object-fit:cover;
+}
+
+/* Compact editable hex inputs alongside the native color swatch. */
+.site-editor .cato-inspector-colors .cms-color-row {
+  grid-template-columns:minmax(0,1fr) minmax(122px,auto);
+}
+.site-editor .cato-inspector-colors .cato-color-control {
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  min-width:0;
+}
+.site-editor .cato-inspector-colors .cato-color-control input[type="color"] {
+  width:40px;
+  height:32px;
+  flex:none;
+  padding:0;
+}
+.site-editor .cato-inspector-colors .cato-color-hex-input {
+  display:block;
+  width:74px;
+  min-width:0;
+  height:34px;
+  border:1px solid transparent;
+  border-radius:7px;
+  background:transparent;
+  color:#d3c6de;
+  padding:5px 4px;
+  font:500 11px/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:0;
+  text-align:left;
+}
+.site-editor .cato-inspector-colors .cato-color-hex-input:hover,
+.site-editor .cato-inspector-colors .cato-color-hex-input:focus-visible {
+  border-color:#80639c;
+  background:#261d31;
+  outline:none;
+}
+
+/* Keep Help near footer; match main navigation size, icon and hover behavior. */
+@media(min-width:1000px) {
+  .dash-shell:has(.site-editor) .dash-sidebar {
+    display:flex;
+    flex-direction:column;
+  }
+  .dash-shell:has(.site-editor) .cato-sidebar-howto {
+    margin:auto 0 12px;
+    padding:11px 12px;
+    width:100%;
+    min-height:45px;
+    border:1px solid transparent;
+    border-radius:10px;
+    background:transparent;
+    color:#c4b8d5;
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    gap:12px;
+    font:inherit;
+    font-size:13px;
+    font-weight:650;
+    text-align:left;
+    cursor:pointer;
+  }
+  .dash-shell:has(.site-editor) .cato-sidebar-howto svg {
+    width:19px;
+    height:19px;
+    flex:none;
+  }
+  .dash-shell:has(.site-editor) .cato-sidebar-howto span {
+    font-size:inherit;
+  }
+  .dash-shell:has(.site-editor) .cato-sidebar-howto:hover,
+  .dash-shell:has(.site-editor) .cato-sidebar-howto:focus-visible {
+    background:#292036;
+    color:#f5edff;
+  }
+  .dash-shell:has(.site-editor) .dash-sidebar-bottom {
+    margin-top:0;
+  }
+}
+
+/* Tighter hierarchy within Text mode only; retain the exact outer inspector size.
+   Reclaimed vertical space flows into the editable textarea. */
+.site-editor .cato-inspector-text .cato-editor-divider {
+  margin-bottom:10px;
+}
+.site-editor .cato-inspector-text .cato-text-panel h3 {
+  margin:0 0 8px!important;
+  line-height:1.2;
+}
+.site-editor .cato-inspector-text .cato-selected-label {
+  margin:7px 0 5px;
+  line-height:1.35;
+}
+.site-editor .cato-inspector-text .cato-text-panel .cato-content-editor {
+  margin-top:8px!important;
+  gap:0;
+}
+.site-editor .cato-inspector-text .cato-text-panel .cato-content-editor textarea {
+  margin-top:7px;
+}
+.site-editor .cato-inspector-text .cato-auto-publish {
+  margin-top:9px;
+  margin-bottom:8px;
+}

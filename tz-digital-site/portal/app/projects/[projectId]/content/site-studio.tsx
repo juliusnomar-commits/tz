@@ -35,6 +35,7 @@ function ColorControl({ value, disabled, onChange }: { value: string; disabled: 
 }
 
 export function SiteStudio({ projectId, profile, initialPages, initialPublished = {}, initialImages, initialComments = [], canEdit, isAgency, demo = false }: Props) {
+  const editorBody = useRef<HTMLDivElement>(null)
   const initialReviews = () => Object.fromEntries(initialPages.map(page => [page.page_key, { ...page, changes: initialPublished[page.page_key]?.changes ?? {}, images: initialPublished[page.page_key]?.images ?? {}, colors: initialPublished[page.page_key]?.colors ?? {} }])) as Record<string,Review>
   const [pageKey, setPageKey] = useState(profile.pages[0].key)
   const [reviews, setReviews] = useState<Record<string,Review>>(initialReviews)
@@ -86,6 +87,20 @@ export function SiteStudio({ projectId, profile, initialPages, initialPublished 
   const state = { changes: page.changes, images: page.images, colors: page.colors, pins: page.pins }
   const liveContent = { changes: page.changes, images: page.images, colors: page.colors }
   const liveDirty = JSON.stringify(liveContent) !== JSON.stringify(published[pageKey] ?? { changes: {}, images: {}, colors: {} })
+  useEffect(() => {
+    const body = editorBody.current
+    if (!body) return
+    const alignRightEdge = () => {
+      const rightPadding = parseFloat(getComputedStyle(body).paddingRight) || 0
+      const contentRight = body.getBoundingClientRect().right - rightPadding
+      body.style.setProperty('--cato-right-trim', `${Math.max(0, Math.ceil(contentRight - window.innerWidth + 10))}px`)
+    }
+    const observer = new ResizeObserver(alignRightEdge)
+    observer.observe(body)
+    window.addEventListener('resize', alignRightEdge)
+    alignRightEdge()
+    return () => { observer.disconnect(); window.removeEventListener('resize', alignRightEdge) }
+  }, [])
   useEffect(() => { const open = () => setHowToOpen(true); window.addEventListener("tz-open-howto", open); return () => window.removeEventListener("tz-open-howto", open) }, [])
   useEffect(() => {
     if (!canEdit || demo) return
@@ -286,7 +301,7 @@ export function SiteStudio({ projectId, profile, initialPages, initialPublished 
     finally { setBusy(false); setProgress('') }
   }
   return <div className="cms-app site-editor"><div className="site-editor-main">{demo && <div className="dash-demo-banner">Cato editor preview · Changes stay in this browser session</div>}
-    <div className="cms-body"><div className="cms-intro"><div className="cms-intro-copy"><h1>{current.title} page</h1><span className="cato-submission-status" aria-live="polite">{page.status === "submitted" ? "● Submitted" : "● Draft"}</span></div></div>
+    <div className="cms-body" ref={editorBody}><div className="cms-intro"><div className="cms-intro-copy"><h1>{current.title} page</h1><span className="cato-submission-status" aria-live="polite">{page.status === "submitted" ? "● Submitted" : "● Draft"}</span></div></div>
       <div className="site-editor-control-row"><div className="cms-tools" role="toolbar" aria-label="Editor tools">{([['text','✎ Text'],['images','▧ Images'],['colors','◉ Colors'],['pins','⊕ Add a pin']] as const).map(([key,label]) => <button type="button" key={key} className={mode === key ? 'active' : ''} onClick={() => { setMode(key); setSelected('') }}>{label}</button>)}</div><div className="cato-toolbar-history"><button type="button" onClick={() => travelHistory("undo")} disabled={!canUndo} aria-label="Undo last edit" title="Undo"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg><span>Undo</span></button><button type="button" onClick={() => travelHistory("redo")} disabled={!canRedo} aria-label="Redo last edit" title="Redo"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg><span>Redo</span></button></div><div className="cms-device-switch" aria-label="Preview size"><button type="button" className={device === 'desktop' ? 'active' : ''} onClick={() => setDevice('desktop')}>▣ Desktop</button><button type="button" className={device === 'mobile' ? 'active' : ''} onClick={() => setDevice('mobile')}>▯ Mobile</button></div></div>
       <div className="cms-workspace"><div className="cato-preview-stack" ref={previewStack}>
         <section className={'cms-main' + (expanded ? ' is-expanded' : '')}><div className="cms-toolbar"><span className="cms-status-copy" aria-live="polite">{liveDirty ? "Publishing live…" : ""}</span></div>

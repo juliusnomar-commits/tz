@@ -453,10 +453,10 @@
 
 /* Fine tune the current approved layout — only sizing and placement. */
 @media (min-width:1000px) {
-  /* 7px flex gap + 3px panel spacing = 10px tighter. */
+  /* Position the thumbnail strip at the inspector's bottom edge. */
   .site-editor .cato-preview-stack { gap:0!important; }
   .site-editor .cato-preview-stack>.cms-pages {
-    margin-top:-3px!important;
+    margin-top:22px!important;
   }
   /* Enlarge the preview and matching strip together, preserving 16:9. */
   .site-editor .cms-main:not(.is-expanded) .cms-preview-stage.is-desktop,

@@ -1152,6 +1152,10 @@
     height:calc(100% - 14px)!important;
     max-height:calc(100% - 14px)!important;
   }
+  .site-editor .cms-workspace > .cato-preview-stack {
+    position:relative;
+    top:-1.5px;
+  }
   .site-editor .cato-preview-stack > .cms-main:not(.is-expanded) {
     position:relative;
     top:8px;

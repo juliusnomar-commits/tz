@@ -886,12 +886,11 @@
   background:#fff;
 }
 
-/* Inspector polish: precise bottom alignment and cleaner, content-led spacing.
-   Top stays fixed; the panel is shortened by 5px only at its bottom edge. */
+/* Keep the four inspector modes flush with the page thumbnail strip. */
 @media (min-width:1000px) {
   .site-editor .cms-workspace > .cato-editor-inspector {
-    height:calc(100% - 22px)!important;
-    max-height:calc(100% - 22px)!important;
+    height:100%!important;
+    max-height:100%!important;
   }
 }
 .site-editor .cato-editor-inspector .cato-inspector-main {

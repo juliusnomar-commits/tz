@@ -456,7 +456,7 @@
   /* Position the thumbnail strip at the inspector's bottom edge. */
   .site-editor .cato-preview-stack { gap:0!important; }
   .site-editor .cato-preview-stack>.cms-pages {
-    margin-top:22px!important;
+    margin-top:32px!important;
   }
   /* Enlarge the preview and matching strip together, preserving 16:9. */
   .site-editor .cms-main:not(.is-expanded) .cms-preview-stage.is-desktop,

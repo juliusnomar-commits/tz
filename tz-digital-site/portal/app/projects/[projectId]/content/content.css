@@ -1149,6 +1149,12 @@
   .site-editor .cms-workspace > .cato-editor-inspector {
     right:var(--cato-right-trim, 0px)!important;
     width:calc(clamp(289px,calc(21vw + 14px),329px) - var(--cato-right-trim, 0px))!important;
+    height:calc(100% - 14px)!important;
+    max-height:calc(100% - 14px)!important;
+  }
+  .site-editor .cato-preview-stack > .cms-main:not(.is-expanded) {
+    position:relative;
+    top:8px;
   }
   .site-editor .cato-preview-stack > .cms-pages {
     margin-top:0!important;

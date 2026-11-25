@@ -31,8 +31,11 @@ function TaskList({ tasks, timezone, projectId }: { tasks: DashboardData['tasks'
 function WalkthroughCard() {
   return <section className="dash-howto" aria-labelledby="howto-title">
     <div className="dash-card-heading"><div><span className="eyebrow accent">NEW TO THE PORTAL?</span><h2 id="howto-title">How it works</h2></div></div>
-    <div className="dash-video-placeholder" role="img" aria-label="Space reserved for a project portal walkthrough video"><span className="dash-play-icon" aria-hidden="true">▶</span></div>
-    <span className="dash-video-caption">Walkthrough video coming soon</span>
+    <video className="dash-walkthrough-video" controls preload="metadata" playsInline poster="/videos/tz-portal-walkthrough-poster.jpg" aria-label="How the TZ Digital client portal works">
+      <source src="/videos/tz-portal-walkthrough.mp4" type="video/mp4" />
+      Your browser does not support video playback.
+    </video>
+    <span className="dash-video-caption">A quick tour of your portal and website editor</span>
   </section>
 }
 

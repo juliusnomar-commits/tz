@@ -1170,3 +1170,6 @@
     flex:0 0 calc(16.666667% - 19.333333px);
   }
 }
+
+.site-editor .cms-howto-dialog{width:min(760px,100%)}
+.site-editor .cms-howto-video{display:block;width:100%;aspect-ratio:16/9;margin:18px 0;border:1px solid #624b7e;border-radius:10px;background:#0b0910;object-fit:contain}

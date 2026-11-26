@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { WalkthroughVideo } from '@/app/walkthrough-video'
 import { createClient } from '@supabase/supabase-js'
 import type { SiteProfile } from '@/lib/site-profiles'
 import type { VisualPin } from '@/lib/content'

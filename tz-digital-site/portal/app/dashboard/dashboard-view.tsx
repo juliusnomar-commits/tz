@@ -1,6 +1,7 @@
 import { type DashboardData, formatDate, statusLabel } from '@/lib/dashboard'
 import { ProjectFiles } from './project-files'
 import { PortalSidebar } from './portal-sidebar'
+import { WalkthroughVideo } from '@/app/walkthrough-video'
 
 function TaskItem({ task, timezone, projectId }: { task: DashboardData['tasks'][number], timezone: string, projectId: string }) {
   const complete = task.status === 'done'
@@ -31,10 +32,7 @@ function TaskList({ tasks, timezone, projectId }: { tasks: DashboardData['tasks'
 function WalkthroughCard() {
   return <section className="dash-howto" aria-labelledby="howto-title">
     <div className="dash-card-heading"><div><span className="eyebrow accent">NEW TO THE PORTAL?</span><h2 id="howto-title">How it works</h2></div></div>
-    <video className="dash-walkthrough-video" controls preload="metadata" playsInline poster="/videos/tz-portal-walkthrough-poster.jpg" aria-label="How the TZ Digital client portal works">
-      <source src="/videos/tz-portal-walkthrough.mp4" type="video/mp4" />
-      Your browser does not support video playback.
-    </video>
+    <WalkthroughVideo label="How the TZ Digital client portal works" />
     <span className="dash-video-caption">A quick tour of your portal and website editor</span>
   </section>
 }

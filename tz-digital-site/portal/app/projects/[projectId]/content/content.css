@@ -1171,5 +1171,8 @@
   }
 }
 
-.site-editor .cms-howto-dialog{width:min(760px,100%)}
-.site-editor .cms-howto-video{display:block;width:100%;aspect-ratio:16/9;margin:18px 0;border:1px solid #624b7e;border-radius:10px;background:#0b0910;object-fit:contain}
+.site-editor .cms-howto-dialog{width:min(760px,100%);max-height:calc(100dvh - 32px);padding:24px}
+.site-editor .cms-howto-dialog h2{margin:8px 0 16px}
+.site-editor .cms-howto-dialog ol{gap:10px;margin:16px 0}
+.site-editor .cms-howto-dialog .walkthrough-player{margin:0}
+@media(max-width:600px){.site-editor .cms-howto-dialog{padding:18px}.site-editor .cms-howto-dialog h2{font-size:23px}}

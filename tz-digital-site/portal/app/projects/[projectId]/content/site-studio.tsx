@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { WalkthroughVideo } from '@/app/walkthrough-video'
 import { createClient } from '@supabase/supabase-js'
 import type { SiteProfile } from '@/lib/site-profiles'
 import type { VisualPin } from '@/lib/content'
@@ -35,6 +36,7 @@ function ColorControl({ value, disabled, onChange }: { value: string; disabled: 
 }
 
 export function SiteStudio({ projectId, profile, initialPages, initialPublished = {}, initialImages, initialComments = [], canEdit, isAgency, demo = false }: Props) {
+  const editorBody = useRef<HTMLDivElement>(null)
   const initialReviews = () => Object.fromEntries(initialPages.map(page => [page.page_key, { ...page, changes: initialPublished[page.page_key]?.changes ?? {}, images: initialPublished[page.page_key]?.images ?? {}, colors: initialPublished[page.page_key]?.colors ?? {} }])) as Record<string,Review>
   const [pageKey, setPageKey] = useState(profile.pages[0].key)
   const [reviews, setReviews] = useState<Record<string,Review>>(initialReviews)
@@ -86,6 +88,20 @@ export function SiteStudio({ projectId, profile, initialPages, initialPublished 
   const state = { changes: page.changes, images: page.images, colors: page.colors, pins: page.pins }
   const liveContent = { changes: page.changes, images: page.images, colors: page.colors }
   const liveDirty = JSON.stringify(liveContent) !== JSON.stringify(published[pageKey] ?? { changes: {}, images: {}, colors: {} })
+  useEffect(() => {
+    const body = editorBody.current
+    if (!body) return
+    const alignRightEdge = () => {
+      const rightPadding = parseFloat(getComputedStyle(body).paddingRight) || 0
+      const contentRight = body.getBoundingClientRect().right - rightPadding
+      body.style.setProperty('--cato-right-trim', `${Math.max(0, Math.ceil(contentRight - window.innerWidth + 10))}px`)
+    }
+    const observer = new ResizeObserver(alignRightEdge)
+    observer.observe(body)
+    window.addEventListener('resize', alignRightEdge)
+    alignRightEdge()
+    return () => { observer.disconnect(); window.removeEventListener('resize', alignRightEdge) }
+  }, [])
   useEffect(() => { const open = () => setHowToOpen(true); window.addEventListener("tz-open-howto", open); return () => window.removeEventListener("tz-open-howto", open) }, [])
   useEffect(() => {
     if (!canEdit || demo) return
@@ -237,6 +253,30 @@ export function SiteStudio({ projectId, profile, initialPages, initialPublished 
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'Upload failed') }
     finally { setUploading(false) }
   }
+  async function captureReview() {
+    const document = frame.current?.contentDocument
+    if (!document?.body || !frameConfigured.current) throw new Error('The page preview is still loading. Please wait and try again.')
+    const { toJpeg } = await import('html-to-image')
+    const image = await toJpeg(document.documentElement, {
+      quality: 0.8, pixelRatio: 1, cacheBust: true,
+      backgroundColor: '#ffffff', fontEmbedCSS: '',
+    })
+    const blob = await (await fetch(image)).blob()
+    if (blob.size < 1 || blob.size > 10 * 1024 * 1024) throw new Error('The page capture is too large. Try the mobile preview.')
+    const prepare = await fetch(`/api/projects/${projectId}/site-snapshot`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pageKey, size: blob.size }),
+    })
+    const signed = await prepare.json()
+    if (!prepare.ok) throw new Error(signed.error ?? 'Unable to prepare the page capture')
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+    if (!url || !key) throw new Error('Image storage is not configured')
+    const upload = await createClient(url, key).storage.from('portal-intake')
+      .uploadToSignedUrl(signed.path, signed.token, blob, { contentType: 'image/jpeg' })
+    if (upload.error) throw upload.error
+    return { snapshotPath: signed.path as string, snapshotDevice: device }
+  }
   async function save(intent: 'save'|'submit'|'approve') {
     if (busy) return
     setBusy(true); setProgress(intent === 'submit' ? 'Preparing your review…' : 'Saving changes…'); setError(''); setNotice('')
@@ -249,8 +289,10 @@ export function SiteStudio({ projectId, profile, initialPages, initialPublished 
         if (intent === 'submit') setConfirmation(next)
         return
       }
+      setProgress(intent === 'submit' ? 'Capturing your pinned page…' : 'Saving changes…')
+      const snapshot = intent === 'submit' ? await captureReview() : {}
       setProgress(intent === 'submit' ? 'Sending feedback to TZ Digital…' : 'Saving changes…')
-      const response = await fetch(`/api/projects/${projectId}/site`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, signal: AbortSignal.timeout(20000), body: JSON.stringify({ pageKey, ...state, intent, expectedVersion: page.version }) })
+      const response = await fetch(`/api/projects/${projectId}/site`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, signal: AbortSignal.timeout(20000), body: JSON.stringify({ pageKey, ...state, ...snapshot, intent, expectedVersion: page.version }) })
       const data = await response.json()
       if (!response.ok) throw new Error(data.error ?? 'Unable to save')
       setReviews(old => ({ ...old, [pageKey]: data.page })); setSaved(old => ({ ...old, [pageKey]: data.page }))
@@ -260,11 +302,11 @@ export function SiteStudio({ projectId, profile, initialPages, initialPublished 
     finally { setBusy(false); setProgress('') }
   }
   return <div className="cms-app site-editor"><div className="site-editor-main">{demo && <div className="dash-demo-banner">Cato editor preview · Changes stay in this browser session</div>}
-    <div className="cms-body"><div className="cms-intro"><div className="cms-intro-copy"><h1>{current.title} page</h1><span className="cato-submission-status" aria-live="polite">{page.status === "submitted" ? "● Submitted" : "● Draft"}</span></div></div>
+    <div className="cms-body" ref={editorBody}><div className="cms-intro"><div className="cms-intro-copy"><h1>{current.title} page</h1><span className="cato-submission-status" aria-live="polite">{page.status === "submitted" ? "● Submitted" : "● Draft"}</span></div></div>
       <div className="site-editor-control-row"><div className="cms-tools" role="toolbar" aria-label="Editor tools">{([['text','✎ Text'],['images','▧ Images'],['colors','◉ Colors'],['pins','⊕ Add a pin']] as const).map(([key,label]) => <button type="button" key={key} className={mode === key ? 'active' : ''} onClick={() => { setMode(key); setSelected('') }}>{label}</button>)}</div><div className="cato-toolbar-history"><button type="button" onClick={() => travelHistory("undo")} disabled={!canUndo} aria-label="Undo last edit" title="Undo"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg><span>Undo</span></button><button type="button" onClick={() => travelHistory("redo")} disabled={!canRedo} aria-label="Redo last edit" title="Redo"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg><span>Redo</span></button></div><div className="cms-device-switch" aria-label="Preview size"><button type="button" className={device === 'desktop' ? 'active' : ''} onClick={() => setDevice('desktop')}>▣ Desktop</button><button type="button" className={device === 'mobile' ? 'active' : ''} onClick={() => setDevice('mobile')}>▯ Mobile</button></div></div>
       <div className="cms-workspace"><div className="cato-preview-stack" ref={previewStack}>
         <section className={'cms-main' + (expanded ? ' is-expanded' : '')}><div className="cms-toolbar"><span className="cms-status-copy" aria-live="polite">{liveDirty ? "Publishing live…" : ""}</span></div>
-          <div className={'cms-preview-stage is-' + device}><div className="cms-browser"><div className="cms-browser-bar"><i/><i/><i/><button type="button" className="cato-preview-expand" title={expanded ? "Exit full preview" : "Expand preview"} aria-label={expanded ? "Exit full preview" : "Expand preview"} aria-pressed={expanded} onClick={() => setExpanded(value => !value)}><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{expanded ? <><path d="M9 3v6H3M15 3v6h6M9 21v-6H3M15 21v-6h6"/></> : <><path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5"/></>}</svg></button></div><div className="site-editor-viewport" ref={viewport}><iframe key={pageKey + device} ref={frame} className="site-editor-frame" title={`${profile.name} ${current.title} preview`} src={`${profile.previewRoot}/${current.path}`} onLoad={() => { frameConfigured.current = false; post('configure') }} /></div></div></div>{mode === 'pins' && <p className="cms-preview-note">Choose a spot on the page, then add your comment.</p>}</section><aside className="cms-pages"><span className="eyebrow">PAGES</span><nav aria-label="Site pages">{profile.pages.map((item,index) => <button type="button" key={item.key} className={pageKey === item.key ? 'active' : ''} onClick={() => pickPage(item.key)}><span className="cms-page-index">{String(index+1).padStart(2,'0')}</span><span className="cato-slide-copy"><span className="cato-slide-art" aria-hidden="true"><iframe className="cato-slide-preview" src={`${profile.previewRoot}/${item.path}`} title="" tabIndex={-1} loading="lazy" scrolling="no" /></span><strong>{item.title}</strong></span></button>)}</nav>{isAgency && <a className="cms-export" href={`/api/projects/${projectId}/export`}>↓ Download review handoff</a>}</aside></div>
+          <div className={'cms-preview-stage is-' + device}><div className="cms-browser"><div className="cms-browser-bar"><i/><i/><i/><button type="button" className="cato-preview-expand" title={expanded ? "Exit full preview" : "Expand preview"} aria-label={expanded ? "Exit full preview" : "Expand preview"} aria-pressed={expanded} onClick={() => setExpanded(value => !value)}><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{expanded ? <><path d="M9 3v6H3M15 3v6h6M9 21v-6H3M15 21v-6h6"/></> : <><path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5"/></>}</svg></button></div><div className="site-editor-viewport" ref={viewport}><iframe key={pageKey + device} ref={frame} className="site-editor-frame" title={`${profile.name} ${current.title} preview`} src={`${profile.previewRoot}/${current.path}`} onLoad={() => { frameConfigured.current = false; post('configure') }} /></div></div></div></section><aside className="cms-pages"><span className="eyebrow">PAGES</span><nav aria-label="Site pages">{profile.pages.map((item,index) => <button type="button" key={item.key} className={pageKey === item.key ? 'active' : ''} onClick={() => pickPage(item.key)}><span className="cms-page-index">{String(index+1).padStart(2,'0')}</span><span className="cato-slide-copy"><span className="cato-slide-art" aria-hidden="true"><iframe className="cato-slide-preview" src={`${profile.previewRoot}/${item.path}`} title="" tabIndex={-1} loading="lazy" scrolling="no" /></span><strong>{item.title}</strong></span></button>)}</nav>{isAgency && <a className="cms-export" href={`/api/projects/${projectId}/export`}>↓ Download review handoff</a>}</aside></div>
 
         <aside className={`cms-inspector cato-editor-inspector cato-inspector-${mode}`}><div className="cato-inspector-main">
           <span className="eyebrow accent">INSPECTOR / {mode.toUpperCase()}</span>
@@ -286,7 +328,7 @@ export function SiteStudio({ projectId, profile, initialPages, initialPublished 
           {mode === 'pins' && <><h3>Comments</h3><p>Leave a general comment, or pin feedback to a specific place on the page.</p><div className="cms-comment-form cms-general-comment"><button type="button" className="cms-comment-toggle" aria-expanded={generalCommentOpen} onClick={() => setGeneralCommentOpen(value => !value)}><strong>Leave a comment</strong><span aria-hidden="true">{generalCommentOpen ? '−' : '＋'}</span></button>{generalCommentOpen && <><textarea rows={3} maxLength={1000} value={generalComment} onChange={event => setGeneralComment(event.target.value)} placeholder="Write a comment for TZ Digital…" aria-label="General comment" disabled={!canEdit} /><button type="button" onClick={() => void sendGeneralComment()} disabled={!canEdit || !generalComment.trim() || commentBusy}>{commentBusy ? 'Sending…' : 'Send comment'}</button></>}</div>{pageComments.length > 0 && <><h4 className="cms-subheading">Sent comments</h4><ul className="cms-general-comment-list">{pageComments.map(item => <li key={item.id}><b>{item.actor_type === 'agency' ? 'TZ Digital' : 'You'} · {new Date(item.created_at).toLocaleDateString('en-GB')}</b><p>{item.detail}</p></li>)}</ul></>}{pending && <div className="cms-comment-form"><strong>New page pin</strong><textarea rows={4} maxLength={1000} value={comment} onChange={event => setComment(event.target.value)} placeholder="What should change here?" aria-label="Comment" /><div><button type="button" onClick={addPin}>Add pin</button><button type="button" onClick={() => setPending(null)}>Cancel</button></div></div>}{page.pins.length ? <ol className="cms-pin-list">{page.pins.map((pin,index) => <li key={pin.id}><button type="button" onClick={() => setSelected(pin.id)}><b>{index+1}</b>{pin.comment}</button>{canEdit && <button type="button" className="site-editor-remove" aria-label={`Remove comment pin ${index + 1}`} title="Remove pin" onClick={() => update({ pins: page.pins.filter(item => item.id !== pin.id) })}>🗑</button>}</li>)}</ol> : !pending && <p>No pinned comments on this page.</p>}</>}
           </div><div className="cato-inspector-footer">          {error && <p className="cms-error" role="alert">{error}</p>}{publishError && <p className="cms-error" role="alert">Live publishing failed: {publishError} <button type="button" onClick={() => setRetryPublish(value => value + 1)}>Retry</button></p>}{notice && <p className="cms-message" role="status">{notice}</p>}{(publishing || liveDirty) && canEdit && !demo && <p className="cms-message" role="status">{publishing ? 'Publishing to Cato…' : 'Waiting to publish to Cato…'}</p>}{busy && <p className="cms-submit-progress" role="status" aria-live="polite"><span className="cms-progress-spinner" aria-hidden="true" />{progress}</p>}{canEdit && <div className="cms-actions">{mode === 'pins' && (page.pins.length > 0 || dirty) && <><button type="button" className="cms-secondary" disabled={busy} onClick={() => save('save')}>Save pin draft</button><button type="button" className="cms-primary" disabled={busy || uploading || publishing || liveDirty || !page.pins.length} onClick={() => save('submit')}>{busy ? 'Submitting…' : 'Submit feedback'}</button></>}{isAgency && page.status === 'submitted' && !dirty && <button type="button" className="cms-approve" disabled={busy} onClick={() => save('approve')}>Approve comments ✓</button>}</div>}{page.updated_at && <p className="cms-version">Last updated · {new Date(page.updated_at).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>}</div></aside></div>
       </div>
-    {howToOpen && <div className="cms-dialog-backdrop" onClick={() => setHowToOpen(false)}><section className="cms-confirm-dialog cms-howto-dialog" role="dialog" aria-modal="true" aria-label="How the site review works" onClick={event => event.stopPropagation()}><button type="button" className="cms-dialog-close" aria-label="Close" onClick={() => setHowToOpen(false)}>×</button><span className="eyebrow accent">HOW IT WORKS</span><h2>Your site review in three steps</h2><ol><li><b>Choose a page</b><span>Use the page list to move around the website.</span></li><li><b>Make edits or leave a comment</b><span>Click text to edit, or open Comments to write a note. Add a pin when feedback relates to a specific spot.</span></li><li><b>Send pinned feedback</b><span>Your text, image, and color edits publish automatically. Send pins to TZ Digital for review.</span></li></ol><button type="button" className="cms-primary" onClick={() => setHowToOpen(false)}>Got it</button></section></div>}</div>
+    {howToOpen && <div className="cms-dialog-backdrop" onClick={() => setHowToOpen(false)}><section className="cms-confirm-dialog cms-howto-dialog" role="dialog" aria-modal="true" aria-label="How the site review works" onClick={event => event.stopPropagation()}><button type="button" className="cms-dialog-close" aria-label="Close" onClick={() => setHowToOpen(false)}>×</button><span className="eyebrow accent">HOW IT WORKS</span><h2>Your portal walkthrough</h2><WalkthroughVideo label="How the TZ Digital client portal and site editor work" /><ol><li><b>Choose a page</b><span>Use the page list to move around the website.</span></li><li><b>Make edits or leave a comment</b><span>Click text to edit, or open Comments to write a note. Add a pin when feedback relates to a specific spot.</span></li><li><b>Send pinned feedback</b><span>Your text, image, and color edits publish automatically. Send pins to TZ Digital for review.</span></li></ol><button type="button" className="cms-primary" onClick={() => setHowToOpen(false)}>Got it</button></section></div>}</div>
     {confirmation && <div className="cms-dialog-backdrop" onClick={() => { setConfirmation(null); setCompareOpen(false) }}><section className={'cms-confirm-dialog' + (compareOpen ? ' is-comparing' : '')} role="dialog" aria-modal="true" aria-label={compareOpen ? 'Before and after review' : 'Review sent'} onClick={event => event.stopPropagation()}>
       <button type="button" className="cms-dialog-close" aria-label="Close" onClick={() => { setConfirmation(null); setCompareOpen(false) }}>×</button>
       {!compareOpen ? <><span className="cms-confirm-check" aria-hidden="true">✓</span><h2>Feedback submitted</h2><p>Your feedback has been submitted. We’ll get back to you as soon as possible.</p><div className="cms-dialog-actions"><button type="button" className="cms-primary" onClick={() => setConfirmation(null)}>Done</button></div></> : <><h2>Before and after</h2><p>Compare the original Cato page with your submitted draft. Scroll inside either preview to inspect the full page.</p><div className="cms-compare-grid" ref={compareViewport}><div className="cms-compare-card"><strong>Before · original site</strong><div className="cms-compare-viewport"><iframe ref={compareBefore} title="Original Cato page" src={`${profile.previewRoot}/${current.path}`} onLoad={postBefore} /></div></div><div className="cms-compare-card"><strong>After · submitted draft</strong><div className="cms-compare-viewport"><iframe ref={compareAfter} title="Submitted Cato draft" src={`${profile.previewRoot}/${current.path}`} onLoad={postComparison} /></div></div></div><div className="cms-dialog-actions"><button type="button" className="cms-secondary" onClick={() => setCompareOpen(false)}>Back to confirmation</button><button type="button" className="cms-primary" onClick={() => { setConfirmation(null); setCompareOpen(false) }}>Done</button></div></>}

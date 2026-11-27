@@ -9,7 +9,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ fil
   const { fileId } = await params
   if (!/^[0-9a-f-]{36}$/i.test(fileId)) return new NextResponse(null, { status: 404 })
   try {
-    const pages = await Promise.all(siteProfile('cato')!.pages.map(page => readLivePage(page.key)))
+    const pages = await Promise.all(siteProfile('cato')!.pages.map(page => readLivePage(CATO_PROJECT_ID, page.key)))
     const expected = `/api/projects/${CATO_PROJECT_ID}/files/${fileId}`
     if (!pages.some(page => Object.values(page.images).includes(expected))) return new NextResponse(null, { status: 404 })
     const db = adminClient()

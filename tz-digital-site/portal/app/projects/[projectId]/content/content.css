@@ -453,10 +453,10 @@
 
 /* Fine tune the current approved layout — only sizing and placement. */
 @media (min-width:1000px) {
-  /* 7px flex gap + 3px panel spacing = 10px tighter. */
+  /* Position the thumbnail strip at the inspector's bottom edge. */
   .site-editor .cato-preview-stack { gap:0!important; }
   .site-editor .cato-preview-stack>.cms-pages {
-    margin-top:-3px!important;
+    margin-top:50px!important;
   }
   /* Enlarge the preview and matching strip together, preserving 16:9. */
   .site-editor .cms-main:not(.is-expanded) .cms-preview-stage.is-desktop,
@@ -886,12 +886,11 @@
   background:#fff;
 }
 
-/* Inspector polish: precise bottom alignment and cleaner, content-led spacing.
-   Top stays fixed; the panel is shortened by 5px only at its bottom edge. */
+/* Keep the four inspector modes flush with the page thumbnail strip. */
 @media (min-width:1000px) {
   .site-editor .cms-workspace > .cato-editor-inspector {
-    height:calc(100% - 22px)!important;
-    max-height:calc(100% - 22px)!important;
+    height:100%!important;
+    max-height:100%!important;
   }
 }
 .site-editor .cato-editor-inspector .cato-inspector-main {
@@ -1133,3 +1132,47 @@
   margin-top:9px;
   margin-bottom:8px;
 }
+
+/* Widen the desktop editor without changing the toolbar, filmstrip, or inspector height.
+   The 16:9 preview gains 71px of width (about 40px of height), replacing the
+   50px space above the filmstrip with a 10px space. */
+@media (min-width:1400px) {
+  .site-editor .cms-body {
+    width:calc(100% + 105px);
+  }
+  .site-editor .site-editor-control-row {
+    width:calc(100% - var(--cato-right-trim, 0px));
+  }
+  .site-editor .cms-workspace {
+    grid-template-columns:minmax(0,1fr) clamp(289px,calc(21vw + 14px),329px);
+  }
+  .site-editor .cms-workspace > .cato-editor-inspector {
+    right:var(--cato-right-trim, 0px)!important;
+    width:calc(clamp(289px,calc(21vw + 14px),329px) - var(--cato-right-trim, 0px))!important;
+    height:calc(100% - 14px)!important;
+    max-height:calc(100% - 14px)!important;
+  }
+  .site-editor .cms-workspace > .cato-preview-stack {
+    position:relative;
+    top:-1.5px;
+  }
+  .site-editor .cato-preview-stack > .cms-main:not(.is-expanded) {
+    position:relative;
+    top:8px;
+  }
+  .site-editor .cato-preview-stack > .cms-pages {
+    margin-top:0!important;
+  }
+  .site-editor .cms-pages nav {
+    justify-content:space-between;
+  }
+  .site-editor .cms-pages nav button {
+    flex:0 0 calc(16.666667% - 19.333333px);
+  }
+}
+
+.site-editor .cms-howto-dialog{width:min(760px,100%);max-height:calc(100dvh - 32px);padding:24px}
+.site-editor .cms-howto-dialog h2{margin:8px 0 16px}
+.site-editor .cms-howto-dialog ol{gap:10px;margin:16px 0}
+.site-editor .cms-howto-dialog .walkthrough-player{margin:0}
+@media(max-width:600px){.site-editor .cms-howto-dialog{padding:18px}.site-editor .cms-howto-dialog h2{font-size:23px}}

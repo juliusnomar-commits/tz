@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { adminClient } from '@/lib/supabase'
 import { parseVisualPins } from '@/lib/content'
 import { projectAccess } from '@/lib/project-access'
-import { siteProfile, sitePage, validateSiteChanges, validateSiteColors, validateSiteImages } from '@/lib/site-profiles'
-import { CATO_PROJECT_ID, writeLivePage } from '@/lib/cato-live'
+import { sitePage, validateSiteChanges, validateSiteColors, validateSiteImages } from '@/lib/site-profiles'
+import { projectSiteProfile } from '@/lib/project-site-profile'
+import { writeLivePage } from '@/lib/cato-live'
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   if (!access.canEdit) return NextResponse.json({ error: 'Editing access required' }, { status: 403 })
   try {
     const body = await request.json()
-    const profile = siteProfile(access.project.site_key)
+    const profile = projectSiteProfile(access.project.site_key, access.project.site_config)
     const page = profile && sitePage(profile, String(body.pageKey ?? ''))
     const comment = typeof body.comment === 'string' ? body.comment.trim() : ''
     if (!page) throw new Error('Choose a valid page')
@@ -33,7 +34,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   const access = await projectAccess(projectId)
   if (!access) return NextResponse.json({ error: 'Sign in to this project first' }, { status: 404 })
   if (!access.canEdit) return NextResponse.json({ error: 'Editing access required' }, { status: 403 })
-  const profile = siteProfile(access.project.site_key)
+  const profile = projectSiteProfile(access.project.site_key, access.project.site_config)
   if (!profile) return NextResponse.json({ error: 'This project has no connected site' }, { status: 404 })
   try {
     const body = await request.json()
@@ -56,6 +57,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       if (!snapshotPath || !expectedPath.test(snapshotPath)) throw new Error('Review capture path is invalid')
     }
     if (intent === 'submit' && !pins.length) throw new Error('Add a comment pin before sending for review')
+    if (intent === 'submit' && !snapshotPath) throw new Error('A pinned page capture is required before sending feedback')
     const db = adminClient()
     for (const value of Object.values(images)) {
       const fileId = value.match(/\/files\/([0-9a-f-]{36})$/i)?.[1]
@@ -64,8 +66,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       if (fileError || !file?.mime_type?.startsWith('image/')) throw new Error('Choose an image from this project')
     }
     if (intent === 'publish') {
-      if (projectId !== CATO_PROJECT_ID || profile.key !== 'cato') return NextResponse.json({ error: 'Live publishing is unavailable for this site' }, { status: 403 })
-      await writeLivePage(pageKey, access.project.tenant_id, { changes, images, colors })
+      await writeLivePage(projectId, pageKey, access.project.tenant_id, { changes, images, colors })
       return NextResponse.json({ published: true, publishedAt: new Date().toISOString() })
     }
     if (!Number.isInteger(body.expectedVersion) || body.expectedVersion < 0) throw new Error('Invalid version')
@@ -96,7 +97,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     if (!result.data) return NextResponse.json({ error: 'This page changed elsewhere. Reload before saving.' }, { status: 409 })
     if (intent !== 'save') {
       const { error: activityError } = await db.from('portal_activity').insert({ tenant_id: access.project.tenant_id, project_id: projectId,
-        title: `${page.title} changes ${status}`, detail: `${pins.length} pinned comment${pins.length === 1 ? '' : 's'} in the Cato site editor.`, actor_type: isAgency ? 'agency' : 'client' })
+        title: `${page.title} changes ${status}`, detail: `${pins.length} pinned comment${pins.length === 1 ? '' : 's'} in the ${profile.name} site editor.`, actor_type: isAgency ? 'agency' : 'client' })
       if (activityError) console.error('Unable to record site review activity')
     }
     return NextResponse.json({ page: result.data })
